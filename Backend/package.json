@@ -1,0 +1,21 @@
+{
+  "name": "cooking-recipe-suggester",
+  "version": "1.0.0",
+  "description": "The backend for the cooking recipe suggester",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Cooking",
+    "Recipe",
+    "Suggestions"
+  ],
+  "author": "Vincent Abeln",
+  "license": "ISC",
+  "dependencies": {
+    "@astrajs/rest": "^0.3.4",
+    "cassandra-driver": "^4.7.2",
+    "dotenv": "^16.4.5"
+  }
+}
