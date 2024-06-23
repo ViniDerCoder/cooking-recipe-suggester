@@ -1,12 +1,12 @@
-CREATE TABLE IF NOT EXISTS ingredients (
+CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.ingredients (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name TEXT NOT NULL
 
-    vegan BOOLEAN DEFAULT TRUE,
-    vegetarian BOOLEAN DEFAULT TRUE,
-    gluten_free BOOLEAN DEFAULT TRUE,
-    dairy_free BOOLEAN DEFAULT TRUE,
-    nut_free BOOLEAN DEFAULT TRUE,
-    egg_free BOOLEAN DEFAULT TRUE,
-    fish_free BOOLEAN DEFAULT TRUE
+    vegan BOOLEAN,
+    vegetarian BOOLEAN,
+    gluten_free BOOLEAN,
+    dairy_free BOOLEAN,
+    nut_free BOOLEAN,
+    egg_free BOOLEAN,
+    fish_free BOOLEAN
 );

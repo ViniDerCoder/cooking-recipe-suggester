@@ -1,17 +1,15 @@
-CREATE TABLE IF NOT EXISTS recipes (
+CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.recipes (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name TEXT,
     description TEXT
     instructions LIST<TEXT>,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP
     created_by UUID,
-    FOREIGN KEY (created_by) REFERENCES users(id),
     cooking_time INT,
     waiting_time INT,
     servings INT,
-    public BOOLEAN DEFAULT FALSE,
+    public BOOLEAN,
     type_id UUID,
-    FOREIGN KEY (type_id) REFERENCES recipe_types(id)
     source_url TEXT,
     image_url TEXT
 );

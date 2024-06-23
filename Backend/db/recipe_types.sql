@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS recipe_types (
+CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.recipe_types (
     id UUID PRIMARY KEY,
-    name VARCHAR(50)
+    name TEXT
 );

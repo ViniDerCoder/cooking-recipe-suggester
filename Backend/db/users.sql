@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.users (
     id UUID PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    username VARCHAR(50) UNIQUE,
-    email VARCHAR(255) UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    first_name TEXT,
+    last_name TEXT,
+    username TEXT,
+    email TEXT,
+    created_at TIMESTAMP
 );
