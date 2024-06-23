@@ -1,4 +1,4 @@
-CREATE TABLE user_recipes (
+CREATE TABLE IF NOT EXISTS user_recipes (
     user_id INT,
     recipe_id INT,
     rating INT,

@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS ingredients (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT
+    name VARCHAR(255) NOT NULL
 
     vegan BOOLEAN DEFAULT TRUE,
     vegetarian BOOLEAN DEFAULT TRUE,
@@ -9,8 +8,5 @@ CREATE TABLE IF NOT EXISTS ingredients (
     dairy_free BOOLEAN DEFAULT TRUE,
     nut_free BOOLEAN DEFAULT TRUE,
     egg_free BOOLEAN DEFAULT TRUE,
-    fish_free BOOLEAN DEFAULT TRUE,
-    shellfish_free BOOLEAN DEFAULT TRUE,
-    soy_free BOOLEAN DEFAULT TRUE,
-    wheat_free BOOLEAN DEFAULT TRUE
+    fish_free BOOLEAN DEFAULT TRUE
 );

@@ -1,17 +1,21 @@
-const cassandra = require('cassandra-driver');
+import { config } from 'dotenv'
 
-require('dotenv').config();
+config();
 
-const cloud = { secureConnectBundle: process.env['ASTRA_DB_SECURE_BUNDLE_PATH'] };
-const authProvider = new cassandra.auth.PlainTextAuthProvider('token', process.env['ASTRA_DB_APPLICATION_TOKEN']);
-const client = new cassandra.Client({ cloud, authProvider });
+import app from './app.js';
+import client from './db.js';
 
-async function run() {
-    await client.connect();
-    
+console.log("Setting up the Express server");
 
-    console.log("Tables created successfully");
-    await client.shutdown();
-}
+if (!process.env['EXPRESS_PORT']) throw new Error('Please provide the port for the Express server in the .env file');
 
-//run().catch(console.error);
+const port = process.env['EXPRESS_PORT'];
+app.listen(port, () => {
+    console.log(`Express Server running on port ${port}`);
+});
+
+console.log("Setting up the Cassandra client");
+
+client.connect().then(() => {
+    console.log("Connected to Cassandra");
+})
