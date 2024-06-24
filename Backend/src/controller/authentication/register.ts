@@ -1,4 +1,5 @@
 import { checkIfEmailExists, checkIfUsernameExists } from "../../database/authentication/register_validation.js";
+import { emailRegex } from "../../utils/emailer.js";
 
 let emailVerificationSessions: { email: string, verificationCode: string, expirationDate: number }[] = [];
 
@@ -7,14 +8,17 @@ export function cleanUpEmailVerificationSessions() {
 }
 /**
  * Registers a new user
- * @param email
+ * @param email must be verified first (email verification code)
  * @param username length must be between 4 and 30 characters
  * @param fistName length must be between 2 and 20 characters
  * @param lastName length must be between 2 and 20 characters
+ * @param emailVerificationCode must be valid and not expired (verify email)
  * @returns undefined if the input is valid, otherwise a string with the error
  */
-export default function register(email: string, username: string, fistName: string, lastName: string, emailVerificationCode: string): undefined | string {
-    if(typeof email !== 'string' || typeof username !== 'string' || typeof fistName !== 'string' || typeof lastName !== 'string') return "Invalid input";
+export function register(email: string, username: string, fistName: string, lastName: string, emailVerificationCode: string) {
+    if(typeof email !== 'string' || typeof username !== 'string' || typeof fistName !== 'string' || typeof lastName !== 'string' || typeof emailVerificationCode !== "string") return "Invalid input";
+
+    if(!emailVerificationSessions.find(session => session.email === email && session.verificationCode === emailVerificationCode && session.expirationDate > Date.now())) return "Invalid or expired email verification code";
 
     //constraints
     if(username.length < 4 || username.length > 30) return "Username must be between 4 and 30 characters";
@@ -29,11 +33,17 @@ export default function register(email: string, username: string, fistName: stri
 
 
 /**
- * Generates a random email verification code
+ * Sends a random email verification code to register a new user
  * @param email
  * @returns the verification code
  */
 export function sendRegistrationEmail(email: string) {
+    if(typeof email !== 'string') return "Invalid input";
+
+    if(!email.match(emailRegex)) return "Invalid email";
+
+    if(checkIfEmailExists(email)) return "Email already exists";
+
     const verificationCode = generateVerificationCode();
     emailVerificationSessions.push({ email, verificationCode, expirationDate: (Date.now() + 1000 * 60 * 30) });
 
