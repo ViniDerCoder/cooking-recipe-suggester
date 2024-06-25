@@ -26,8 +26,8 @@ export async function register(email: string, username: string, fistName: string
     if(fistName.length < 2 || fistName.length > 20) return "First name must be between 2 and 20 characters";
     if(lastName.length < 2 || lastName.length > 20) return "Last name must be between 2 and 20 characters";
 
-    if(checkIfEmailExists(email)) return "Email already exists";
-    if(checkIfUsernameExists(username)) return "Username already exists";
+    if(await checkIfEmailExists(email)) return "Email already exists";
+    if(await checkIfUsernameExists(username)) return "Username already exists";
 
     return await registerNewUser(username, email, fistName, lastName);
 }
@@ -43,7 +43,7 @@ export async function sendRegistrationEmail(email: string) {
 
     if(!email.match(emailRegex)) return "Invalid email";
 
-    if(checkIfEmailExists(email)) return "Email already exists";
+    if(await checkIfEmailExists(email)) return "Email already exists";
 
     const verificationCode = generateVerificationCode();
     console.log(verificationCode);
