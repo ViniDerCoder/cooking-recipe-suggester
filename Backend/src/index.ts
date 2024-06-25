@@ -16,6 +16,6 @@ app.listen(port, () => {
 
 console.log("Setting up the Cassandra client");
 
-/*client.connect().then(() => {
+client.connect().then(() => {
     console.log("Connected to Cassandra");
-})*/
+})

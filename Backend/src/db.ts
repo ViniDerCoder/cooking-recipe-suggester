@@ -7,6 +7,9 @@ if(!process.env['ASTRA_DB_APPLICATION_TOKEN'] || !process.env['ASTRA_DB_SECURE_B
 
 const cloud = { secureConnectBundle: process.env['ASTRA_DB_SECURE_BUNDLE_PATH'] };
 const authProvider = new cassandra.auth.PlainTextAuthProvider('token', process.env['ASTRA_DB_APPLICATION_TOKEN']);
-const client = new cassandra.Client({ cloud, authProvider });
+const client = new cassandra.Client({ 
+    cloud: cloud, 
+    authProvider: authProvider,
+});
 
 export default client;

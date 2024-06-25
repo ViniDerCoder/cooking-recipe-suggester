@@ -19,9 +19,9 @@ router.post('/login/validate-email', limit(), async (req, res) => {
 });
 
 router.post('/register', limit(), async (req, res) => {
-    const { email, username, fistName, lastName, emailVerificationCode } = req.body;
+    const { email, username, firstName, lastName, emailVerificationCode } = req.body;
 
-    const registrationResult = register(email, username, fistName, lastName, emailVerificationCode);
+    const registrationResult = await register(email, username, firstName, lastName, emailVerificationCode);
 
     if(registrationResult) return res.status(400).send({error: registrationResult});
     else {
@@ -32,7 +32,7 @@ router.post('/register', limit(), async (req, res) => {
 router.post('/register/validate-email', limit(1, 1), async (req, res) => {
     const { email } = req.body;
 
-    const emailSendResult = sendRegistrationEmail(email);
+    const emailSendResult = await sendRegistrationEmail(email);
 
     if(emailSendResult) return res.status(400).send({error: emailSendResult});
     else {

@@ -1,5 +1,6 @@
 import { checkIfEmailExists, checkIfUsernameExists } from "../../database/authentication/register_validation.js";
 import { emailRegex } from "../../utils/emailer.js";
+import { registerNewUser } from "../../database/authentication/register_new_user.js";
 
 let emailVerificationSessions: { email: string, verificationCode: string, expirationDate: number }[] = [];
 
@@ -15,7 +16,7 @@ export function cleanUpEmailVerificationSessions() {
  * @param emailVerificationCode must be valid and not expired (verify email)
  * @returns undefined if the input is valid, otherwise a string with the error
  */
-export function register(email: string, username: string, fistName: string, lastName: string, emailVerificationCode: string) {
+export async function register(email: string, username: string, fistName: string, lastName: string, emailVerificationCode: string) {
     if(typeof email !== 'string' || typeof username !== 'string' || typeof fistName !== 'string' || typeof lastName !== 'string' || typeof emailVerificationCode !== "string") return "Invalid input";
 
     if(!emailVerificationSessions.find(session => session.email === email && session.verificationCode === emailVerificationCode && session.expirationDate > Date.now())) return "Invalid or expired email verification code";
@@ -28,7 +29,7 @@ export function register(email: string, username: string, fistName: string, last
     if(checkIfEmailExists(email)) return "Email already exists";
     if(checkIfUsernameExists(username)) return "Username already exists";
 
-    return undefined;
+    return await registerNewUser(username, email, fistName, lastName);
 }
 
 
@@ -37,7 +38,7 @@ export function register(email: string, username: string, fistName: string, last
  * @param email
  * @returns the verification code
  */
-export function sendRegistrationEmail(email: string) {
+export async function sendRegistrationEmail(email: string) {
     if(typeof email !== 'string') return "Invalid input";
 
     if(!email.match(emailRegex)) return "Invalid email";
@@ -45,6 +46,7 @@ export function sendRegistrationEmail(email: string) {
     if(checkIfEmailExists(email)) return "Email already exists";
 
     const verificationCode = generateVerificationCode();
+    console.log(verificationCode);
     emailVerificationSessions.push({ email, verificationCode, expirationDate: (Date.now() + 1000 * 60 * 30) });
 
     //send email with verification code
