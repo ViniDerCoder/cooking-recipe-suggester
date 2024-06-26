@@ -1,12 +1,15 @@
 import { checkIfEmailExists, checkIfUsernameExists } from "../../database/authentication/register_validation.js";
 import { emailRegex } from "../../utils/emailer.js";
 import { registerNewUser } from "../../database/authentication/register_new_user.js";
+import onCleanup from "../../utils/cleanup.js";
 
 let emailVerificationSessions: { email: string, verificationCode: string, expirationDate: number }[] = [];
 
-export function cleanUpEmailVerificationSessions() {
+onCleanup("emailVerificationSessions", "MEMORY", async () => {
     emailVerificationSessions = emailVerificationSessions.filter(session => session.expirationDate > Date.now());
-}
+    return true;
+});
+
 /**
  * Registers a new user
  * @param email must be verified first (email verification code)
