@@ -23,7 +23,12 @@ onCleanup("userAuthenticationTokesCleanup", "DATABASE", async () => {
     return true;
 });
 
-export async function getUserFromToken(token: string) {
+type AuthenticationUser = {
+    userId: string,
+    expiresAt: Date
+}
+
+export async function getUserIdFromToken(token: string) {
     const params = [token];
     const q = ''
     + 'SELECT user_id, expires_at '
@@ -35,12 +40,15 @@ export async function getUserFromToken(token: string) {
     if(typeof result === "string") return 'Error checking token exists';
     if(result.rows.length > 0) {
         if(result.rows[0].expires_at < new Date()) return 'Token expired';
-        return result.rows;
+        else return {
+            userId: result.rows[0].user_id,
+            expiresAt: result.rows[0].expires_at
+        } as AuthenticationUser;
     }
-    else return 'Something went wrong checking token';
+    else return 'Token not found';
 }
 
-const tokenExpiresIn = 1000 * 60 * 60 * 24 * 7; // 7 days
+const tokenExpiresIn = 1000 * 60 * 60 * 24 * 30; // 30 days
 
 export async function insertToken(token: string, userId: string) {
     const params = [token, userId, new Date(Date.now() - tokenExpiresIn)];

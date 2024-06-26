@@ -3,9 +3,7 @@ import express from 'express';
 import { sendRegistrationEmail, register } from '../controller/authentication/register.js';
 import { isTokenValid } from '../controller/authentication/validate.js';
 import limit from '../utils/rate-limiter.js';
-import { insertToken } from '../database/authentication/user_token.js';
-import { v4 } from 'uuid';
-import { cleanup } from '../utils/cleanup.js';
+import { login } from '../controller/authentication/login.js';
 
 const router = express.Router();
 
@@ -13,19 +11,31 @@ const router = express.Router();
 router.get('/', limit(1000 * 60 * 2), async (req, res) => {
     if(!req.headers.authorization) return res.status(400).send({error: 'No token provided. Provide it in the header as `authorization`'});
     const isTokenValidResult = await isTokenValid(req.headers.authorization);
-    if(!isTokenValidResult) return res.status(400).send({error: 'Invalid or expired token'});
+    if(typeof isTokenValidResult === "string") return res.status(400).send({error: "Error on checking the provided token" });
+    if(!isTokenValidResult) return res.status(200).send({error: undefined, message: "Token is invalid or expired", data: { tokenValid: false }});
     else {
-        res.send('Return user data');
+        res.status(200).send({ error: undefined, message: "Token is valid", data: { tokenValid: true }});
     }
 });
 
 router.get('/login', limit(), async (req, res) => {
-    insertToken('test3', v4());
-    res.send('Login user and return token');
+    const { email, emailVerificationCode } = req.body;
+
+    const loginResult = await login(email, emailVerificationCode);
+
+    if(typeof loginResult === "string") return res.status(400).send({error: loginResult});
+    else res.status(200).send({error: undefined, message: "Login successful", data: { 
+        token: loginResult.token, 
+        user: { 
+            username: loginResult.user.username, 
+            email: loginResult.user.email,
+            firstName: loginResult.user.firstName,
+            lastName: loginResult.user.lastName
+        }
+    }});
 });
 
 router.post('/login/validate-email', limit(), async (req, res) => {
-    cleanup();
     res.send('Sends an email with a verification code to the user (to login)');
 });
 

@@ -2,10 +2,11 @@ import { checkIfEmailExists, checkIfUsernameExists } from "../../database/authen
 import { emailRegex } from "../../utils/emailer.js";
 import { registerNewUser } from "../../database/authentication/register_new_user.js";
 import onCleanup from "../../utils/cleanup.js";
+import {generateVerificationCode} from "../../utils/generateTokens.js";
 
 let emailVerificationSessions: { email: string, verificationCode: string, expirationDate: number }[] = [];
 
-onCleanup("emailVerificationSessions", "MEMORY", async () => {
+onCleanup("emailRegisterVerificationSessions", "MEMORY", async () => {
     emailVerificationSessions = emailVerificationSessions.filter(session => session.expirationDate > Date.now());
     return true;
 });
@@ -53,14 +54,5 @@ export async function sendRegistrationEmail(email: string) {
     emailVerificationSessions.push({ email, verificationCode, expirationDate: (Date.now() + 1000 * 60 * 30) });
 
     //send email with verification code
-}
-
-function generateVerificationCode(): string {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
-    for (let i = 0; i < 6; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
 }
 
