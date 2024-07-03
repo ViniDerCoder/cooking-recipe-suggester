@@ -1,9 +1,9 @@
 import express from 'express';
 
 import { sendRegistrationEmail, register } from '../controller/authentication/register.js';
-import { isTokenValid } from '../controller/authentication/validate.js';
+import { getUserInformation, isTokenValid } from '../controller/authentication/validate.js';
 import limit from '../utils/rate-limiter.js';
-import { login } from '../controller/authentication/login.js';
+import { login, sendLoginEmail } from '../controller/authentication/login.js';
 
 const router = express.Router();
 
@@ -14,7 +14,17 @@ router.get('/', limit(1000 * 60 * 2), async (req, res) => {
     if(typeof isTokenValidResult === "string") return res.status(400).send({error: "Error on checking the provided token" });
     if(!isTokenValidResult) return res.status(200).send({error: undefined, message: "Token is invalid or expired", data: { tokenValid: false }});
     else {
-        res.status(200).send({ error: undefined, message: "Token is valid", data: { tokenValid: true }});
+        const userData = await getUserInformation(isTokenValidResult.userId);
+        if(typeof userData === "string") return res.status(400).send({error: userData });
+        else res.status(200).send({ error: undefined, message: "Token is valid", data: { 
+            tokenValid: true,
+            user: {
+                username: userData.username,
+                email: userData.email,
+                firstName: userData.firstName,
+                lastName: userData.lastName
+            } 
+        }});
     }
 });
 
@@ -36,7 +46,12 @@ router.get('/login', limit(), async (req, res) => {
 });
 
 router.post('/login/validate-email', limit(), async (req, res) => {
-    res.send('Sends an email with a verification code to the user (to login)');
+    const { email } = req.body;
+
+    const emailSendResult = await sendLoginEmail(email);
+
+    if(emailSendResult) return res.status(400).send({error: emailSendResult});
+    else res.status(200).send({error: undefined, message: "Sent email succesfull", data: { address: email }});
 });
 
 router.post('/register', limit(), async (req, res) => {
@@ -44,10 +59,17 @@ router.post('/register', limit(), async (req, res) => {
 
     const registrationResult = await register(email, username, firstName, lastName, emailVerificationCode);
 
-    if(registrationResult) return res.status(400).send({error: registrationResult});
-    else {
-        return res.send('Register a new user and return token');
-    }
+    if(typeof registrationResult === "string") return res.status(400).send({error: registrationResult});
+    else res.status(200).send({error: undefined, message: "Registration successful", data: { 
+        token: registrationResult.token, 
+        user: { 
+            username: registrationResult.user.username, 
+            email: registrationResult.user.email,
+            firstName: registrationResult.user.firstName,
+            lastName: registrationResult.user.lastName
+        }
+    }});
+    
 });
 
 router.post('/register/validate-email', limit(1, 1), async (req, res) => {
@@ -56,9 +78,7 @@ router.post('/register/validate-email', limit(1, 1), async (req, res) => {
     const emailSendResult = await sendRegistrationEmail(email);
 
     if(emailSendResult) return res.status(400).send({error: emailSendResult});
-    else {
-        res.send('Sends an email with a verification code to the user (to register)');
-    }
+    else res.status(200).send({error: undefined, message: "Sent email succesfull", data: { address: email }});
 });
 
 export default router;

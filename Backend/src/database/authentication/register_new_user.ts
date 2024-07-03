@@ -1,6 +1,7 @@
 import { v4 as uuidV4 } from 'uuid';
 
 import query from '../../utils/query.js';
+import { User } from '../../utils/types.js';
 
 export async function registerNewUser(username: string, email: string, firstName: string, lastName: string) {
     const userId = uuidV4();
@@ -16,5 +17,14 @@ export async function registerNewUser(username: string, email: string, firstName
     const result = await query(q, params)
 
     if(typeof result === "string") return 'Error registering user';
-    else return undefined;
+    else return {
+        user: {
+            id: userId,
+            firstName: firstName,
+            lastName: lastName,
+            username: username,
+            email: email,
+            createdAt: createdAt
+        } as User
+    };
 }

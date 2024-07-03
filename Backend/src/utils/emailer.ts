@@ -30,6 +30,8 @@ export function sendMail(to: Array<string>, subject: string, text: string, html?
     });
 }
 
+export async function sendVerificationEmail(email: string, verificationCode: string) {}
+
 
 transporter.verify(function(error, success) {
     if (error) {

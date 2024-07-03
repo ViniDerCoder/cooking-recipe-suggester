@@ -1,8 +1,9 @@
 import { checkIfEmailExists, checkIfUsernameExists } from "../../database/authentication/register_validation.js";
-import { emailRegex } from "../../utils/emailer.js";
+import { emailRegex, sendMail, sendVerificationEmail } from "../../utils/emailer.js";
 import { registerNewUser } from "../../database/authentication/register_new_user.js";
 import onCleanup from "../../utils/cleanup.js";
-import {generateVerificationCode} from "../../utils/generateTokens.js";
+import {generateToken, generateVerificationCode} from "../../utils/generateTokens.js";
+import { insertToken } from "../../database/authentication/user_token.js";
 
 let emailVerificationSessions: { email: string, verificationCode: string, expirationDate: number }[] = [];
 
@@ -33,7 +34,15 @@ export async function register(email: string, username: string, fistName: string
     if(await checkIfEmailExists(email)) return "Email already exists";
     if(await checkIfUsernameExists(username)) return "Username already exists";
 
-    return await registerNewUser(username, email, fistName, lastName);
+    const dbResult = await registerNewUser(username, email, fistName, lastName);
+    if(typeof dbResult === "string") return "Error registering user";
+    else {
+        const newToken = generateToken();
+        const success = await insertToken(newToken, dbResult.user.id);
+
+        if(typeof success === "string") return "Failed to create new login token";
+        else return { token: newToken, user: dbResult.user };
+    }
 }
 
 
@@ -53,6 +62,6 @@ export async function sendRegistrationEmail(email: string) {
     console.log(verificationCode);
     emailVerificationSessions.push({ email, verificationCode, expirationDate: (Date.now() + 1000 * 60 * 30) });
 
-    //send email with verification code
+    await sendVerificationEmail(email, verificationCode);
 }
 

@@ -1,5 +1,6 @@
 import onCleanup from '../../utils/cleanup.js';
 import query from '../../utils/query.js';
+import { AuthenticationUser } from '../../utils/types.js';
 
 onCleanup("userAuthenticationTokesCleanup", "DATABASE", async () => {
     const q = ''
@@ -22,11 +23,6 @@ onCleanup("userAuthenticationTokesCleanup", "DATABASE", async () => {
     
     return true;
 });
-
-type AuthenticationUser = {
-    userId: string,
-    expiresAt: Date
-}
 
 export async function getUserIdFromToken(token: string) {
     const params = [token];

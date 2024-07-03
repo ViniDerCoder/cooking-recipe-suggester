@@ -2,7 +2,7 @@ import { getUserFromEmail } from "../../database/authentication/find_user_by_ema
 import { checkIfEmailExists } from "../../database/authentication/register_validation.js";
 import { insertToken } from "../../database/authentication/user_token.js";
 import onCleanup from "../../utils/cleanup.js";
-import { emailRegex } from "../../utils/emailer.js";
+import { emailRegex, sendVerificationEmail } from "../../utils/emailer.js";
 import {generateToken, generateVerificationCode} from "../../utils/generateTokens.js";
 
 let emailVerificationSessions: { email: string, verificationCode: string, expirationDate: number }[] = [];
@@ -28,7 +28,7 @@ export async function login(email: string, emailVerificationCode: string) {
     else return { token: newToken, user: user };
 }
 
-export async function sendRegistrationEmail(email: string) {
+export async function sendLoginEmail(email: string) {
     if(typeof email !== 'string') return "Invalid input";
 
     if(!email.match(emailRegex)) return "Invalid email";
@@ -39,5 +39,5 @@ export async function sendRegistrationEmail(email: string) {
     console.log(verificationCode);
     emailVerificationSessions.push({ email, verificationCode, expirationDate: (Date.now() + 1000 * 60 * 30) });
 
-    //send email with verification code
+    await sendVerificationEmail(email, verificationCode);
 }
