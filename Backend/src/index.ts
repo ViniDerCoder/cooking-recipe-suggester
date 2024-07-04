@@ -4,7 +4,8 @@ config();
 
 import app from './app.js';
 import client from './db.js';
-import { ready } from './utils/listener/ready.js';
+import onReady, { ready } from './utils/listener/ready.js';
+import { insertAll } from './utils/default_db_vals/insertAll.js';
 
 console.log("Setting up the Express server");
 
@@ -29,7 +30,11 @@ client.connect().then(() => {
 const readyCheckInterval = setInterval(() => {
     if(clientConnected && appConnected) {
         console.log("Server is ready");
-        clearInterval(readyCheckInterval);
         ready();
+        clearInterval(readyCheckInterval);
     }
 }, 50)
+
+onReady("defaultDatabaseValues", async () => {
+    await insertAll();
+});
