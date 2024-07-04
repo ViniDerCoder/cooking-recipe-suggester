@@ -1,14 +1,23 @@
 import express from 'express';
+import { getAuthUserFromToken } from '../database/authentication/user_token.js';
+import { AuthenticationUser } from '../utils/types.js';
+import { listUserRecipes } from '../database/recipes/list_recipes.js';
 const router = express.Router();
 
 
-router.use((req, res, next) => {
-    //auth
-    next();
+router.use(async (req, res, next) => {
+    if(!req.headers.authorization) return res.status(401).send({error: 'No authorization token provided'});
+    req.body.user = await getAuthUserFromToken(req.headers.authorization);
+    if(typeof req.body.user === "string") return res.status(401).send({error: 'Invalid authorization token provided'});
+    else next();
 });
 
 router.get('/', async (req, res) => {
-    res.send('List all recipes of the user');
+    const user = req.body.user as AuthenticationUser;
+    const recipes = await listUserRecipes(user.userId)
+
+    if(typeof recipes === "string") return res.status(400).send({error: recipes});
+    else return res.status(200).send({error: undefined, data: { recipes: recipes }});
 });
 
 //late feature

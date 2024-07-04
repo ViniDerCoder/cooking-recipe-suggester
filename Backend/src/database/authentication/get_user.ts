@@ -7,7 +7,7 @@ export async function getUser(userId: string) {
     + 'SELECT * '
     + 'FROM '
     + 'cooking_recipe_suggester.users '
-    + 'WHERE authentication_token = ?';
+    + 'WHERE id = ?';
 
     const result = await query(q, params)
     if(typeof result === "string") return 'Error getting user';

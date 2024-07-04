@@ -24,7 +24,7 @@ onCleanup("userAuthenticationTokesCleanup", "DATABASE", async () => {
     return true;
 });
 
-export async function getUserIdFromToken(token: string) {
+export async function getAuthUserFromToken(token: string) {
     const params = [token];
     const q = ''
     + 'SELECT user_id, expires_at '
@@ -47,7 +47,7 @@ export async function getUserIdFromToken(token: string) {
 const tokenExpiresIn = 1000 * 60 * 60 * 24 * 30; // 30 days
 
 export async function insertToken(token: string, userId: string) {
-    const params = [token, userId, new Date(Date.now() - tokenExpiresIn)];
+    const params = [token, userId, new Date(Date.now() + tokenExpiresIn)];
     const q = ''
     + 'INSERT INTO '
     + 'cooking_recipe_suggester.user_authentication '

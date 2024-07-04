@@ -1,8 +1,8 @@
 import { getUser } from "../../database/authentication/get_user.js";
-import { getUserIdFromToken } from "../../database/authentication/user_token.js";
+import { getAuthUserFromToken } from "../../database/authentication/user_token.js";
 
 export async function isTokenValid(token: string) {
-    const result = await getUserIdFromToken(token);
+    const result = await getAuthUserFromToken(token);
 
     if(typeof result === "string" && result === "Error checking token exists") return result;
     else if(typeof result === "string") return false;
