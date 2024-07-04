@@ -1,4 +1,4 @@
-import onCleanup from '../../utils/cleanup.js';
+import onCleanup from '../../utils/listener/cleanup.js';
 import query from '../../utils/query.js';
 import { AuthenticationUser } from '../../utils/types.js';
 

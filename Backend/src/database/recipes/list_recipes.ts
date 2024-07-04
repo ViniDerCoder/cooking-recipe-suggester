@@ -23,8 +23,8 @@ export async function listUserRecipes(userId: string) {
             servings: row.servings,
             public: row.public,
             typeId: row.type_id,
-            source_url: row.source_url,
-            image_url: row.image_url
+            sourceUrl: row.source_url,
+            imageUrl: row.image_url
         } as Recipe;
     });
 }

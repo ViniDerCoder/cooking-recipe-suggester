@@ -2,6 +2,7 @@ import express from 'express';
 import { getAuthUserFromToken } from '../database/authentication/user_token.js';
 import { AuthenticationUser } from '../utils/types.js';
 import { listUserRecipes } from '../database/recipes/list_recipes.js';
+import { getRecipeById } from '../controller/recipes/get.js';
 const router = express.Router();
 
 
@@ -26,7 +27,12 @@ router.get('/search', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    res.send('Get recipe by id: ' + req.params.id);
+    const user = req.body.user as AuthenticationUser;
+    const recipe = await getRecipeById(req.params.id, user.userId);
+
+    if(typeof recipe === "string") return res.status(400).send({error: recipe});
+    if(("createdById" in recipe && recipe.createdById === user.userId) || ("createdBy" in recipe && recipe.createdBy.id === user.userId)) return res.status(200).send({error: undefined, data: { recipe: recipe }});
+    else return res.status(403).send({error: 'You are not authorized to view this recipe'})
 });
 
 router.post('/', async (req, res) => {

@@ -1,7 +1,7 @@
 import { checkIfEmailExists, checkIfUsernameExists } from "../../database/authentication/register_validation.js";
 import { emailRegex, sendMail, sendVerificationEmail } from "../../utils/emailer.js";
 import { registerNewUser } from "../../database/authentication/register_new_user.js";
-import onCleanup from "../../utils/cleanup.js";
+import onCleanup from "../../utils/listener/cleanup.js";
 import {generateToken, generateVerificationCode} from "../../utils/generateTokens.js";
 import { insertToken } from "../../database/authentication/user_token.js";
 

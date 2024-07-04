@@ -1,6 +1,6 @@
-let cleanupFunctions: {id: string, type: CleanupType, f: (() => Promise<boolean>)}[] = [];
+import { CleanupType } from "../types.js";
 
-type CleanupType = "DATABASE" | "MEMORY";
+let cleanupFunctions: {id: string, type: CleanupType, f: (() => Promise<boolean>)}[] = [];
 
 export default function onCleanup(id: string, type: CleanupType, f: () => Promise<boolean>) {
     cleanupFunctions.push({id, type, f});

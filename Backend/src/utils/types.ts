@@ -1,3 +1,5 @@
+export type CleanupType = "DATABASE" | "MEMORY"
+
 export type User = {
     id: string,
     firstName: string,
@@ -42,8 +44,8 @@ export type Recipe = {
     servings: number,
     public: boolean,
     type: RecipeType,
-    source_url: string | undefined,
-    image_url: string | undefined
+    sourceUrl: string | undefined,
+    imageUrl: string | undefined
 } | {
     id: string,
     name: string,
@@ -56,8 +58,8 @@ export type Recipe = {
     servings: number,
     public: boolean,
     typeId: string,
-    source_url: string | undefined,
-    image_url: string | undefined
+    sourceUrl: string | undefined,
+    imageUrl: string | undefined
 } | {
     id: string,
     name: string,
@@ -70,8 +72,8 @@ export type Recipe = {
     servings: number,
     public: boolean,
     type: RecipeType,
-    source_url: string | undefined,
-    image_url: string | undefined
+    sourceUrl: string | undefined,
+    imageUrl: string | undefined
 } | {
     id: string,
     name: string,
@@ -84,8 +86,8 @@ export type Recipe = {
     servings: number,
     public: boolean,
     typeId: string,
-    source_url: string | undefined,
-    image_url: string | undefined
+    sourceUrl: string | undefined,
+    imageUrl: string | undefined
 }
 
 export type RecipeType = {

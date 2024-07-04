@@ -1,6 +1,9 @@
+import onReady from "../../utils/listener/ready.js";
 import query from "../../utils/query.js";
 
 let recipeTypes: {[id: string]: string} = {};
+
+onReady('cacheAllRecipeTypes', async () => { await cacheAllRecipeTypes() });
 
 export async function cacheAllRecipeTypes() {
     const q = ''
