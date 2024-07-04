@@ -22,3 +22,12 @@ export async function cacheAllRecipeTypes() {
 export function getRecipeTypeById(id: string) {
     return recipeTypes[id];
 }
+
+export function getAllRecipeTypes() {
+    return Object.keys(recipeTypes).map((id) => {
+        return {
+            id: id,
+            name: recipeTypes[id]
+        };
+    });
+}

@@ -120,3 +120,5 @@ export type RecipeUserData = {
     notes: string | undefined,
     cooked: Array<Date>
 }
+
+export type RecipeIngredientUnit = null | 'cups' | 'tablespoons' | 'teaspoons' | 'grams' | 'kilograms' | 'milliliters' | 'liters' | 'some' | 'big' | 'small' | 'shot' | 'pinch' | 'drop' | 'packet'
