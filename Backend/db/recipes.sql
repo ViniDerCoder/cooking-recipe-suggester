@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.recipes (
     name TEXT,
     description TEXT,
     instructions LIST<TEXT>,
-    createdAt TIMESTAMP,
+    created_at TIMESTAMP,
     created_by UUID,
     cooking_time INT,
     waiting_time INT,

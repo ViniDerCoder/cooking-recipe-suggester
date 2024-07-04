@@ -32,6 +32,12 @@ export type Ingredient = {
     properties: IngredientProperties
 }
 
+export type IngredientRecipeData = {
+    id: string,
+    amount: number,
+    unit: RecipeIngredientUnit
+}
+
 export type Recipe = {
     id: string,
     name: string,
@@ -43,51 +49,20 @@ export type Recipe = {
     waitingTime: number,
     servings: number,
     public: boolean,
-    type: RecipeType,
-    sourceUrl: string | undefined,
-    imageUrl: string | undefined
-} | {
-    id: string,
-    name: string,
-    description: string,
-    instructions: Array<string>,
-    createdAt: Date,
-    createdById: string,
-    cookingTime: number,
-    waitingTime: number,
-    servings: number,
-    public: boolean,
     typeId: string,
     sourceUrl: string | undefined,
     imageUrl: string | undefined
-} | {
-    id: string,
+}
+
+export type RecipeCreationData = {
     name: string,
     description: string,
     instructions: Array<string>,
-    createdAt: Date,
-    createdBy: User,
     cookingTime: number,
     waitingTime: number,
     servings: number,
-    public: boolean,
-    type: RecipeType,
-    sourceUrl: string | undefined,
-    imageUrl: string | undefined
-} | {
-    id: string,
-    name: string,
-    description: string,
-    instructions: Array<string>,
-    createdAt: Date,
-    createdBy: User,
-    cookingTime: number,
-    waitingTime: number,
-    servings: number,
-    public: boolean,
     typeId: string,
-    sourceUrl: string | undefined,
-    imageUrl: string | undefined
+    imageUrl?: string
 }
 
 export type RecipeType = {

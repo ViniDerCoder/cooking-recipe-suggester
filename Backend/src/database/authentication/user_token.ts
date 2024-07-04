@@ -37,7 +37,7 @@ export async function getAuthUserFromToken(token: string) {
     if(result.rows.length > 0) {
         if(result.rows[0].expires_at < new Date()) return 'Token expired';
         else return {
-            userId: result.rows[0].user_id,
+            userId: result.rows[0].user_id.toString('hex'),
             expiresAt: result.rows[0].expires_at
         } as AuthenticationUser;
     }

@@ -1,3 +1,5 @@
+import * as uuid from 'uuid';
+
 import query from '../../utils/query.js';
 import { User } from '../../utils/types.js';
 
@@ -13,7 +15,7 @@ export async function getUser(userId: string) {
     if(typeof result === "string") return 'Error getting user';
     if(result.rows.length > 0) {
         return {
-            id: result.rows[0].id,
+            id: result.rows[0].id.toString('hex'),
             firstName: result.rows[0].first_name,
             lastName: result.rows[0].last_name,
             username: result.rows[0].username,

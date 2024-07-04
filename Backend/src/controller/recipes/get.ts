@@ -3,6 +3,7 @@ import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
 import { Recipe } from "../../utils/types.js";
 
 export async function getRecipeById(id: string, userId: string) {
+    if(typeof id !== "string" || typeof userId !== "string") return 'Invalid input';
     const dbResult = await dbRecipeById(id);
 
     if(typeof dbResult === "string") return dbResult;

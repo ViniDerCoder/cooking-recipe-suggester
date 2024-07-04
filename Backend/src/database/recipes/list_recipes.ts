@@ -1,3 +1,5 @@
+import * as uuid from "uuid";
+
 import query from "../../utils/query.js";
 import { Recipe } from "../../utils/types.js";
 
@@ -6,13 +8,14 @@ export async function listUserRecipes(userId: string) {
     const q = ''
     + 'SELECT * FROM '
     + 'cooking_recipe_suggester.recipes '
-    + 'WHERE user_id = ?';
+    + 'WHERE created_by = ?'
+    + 'ALLOW FILTERING';
 
     const result = await query(q, params)
     if(typeof result === "string") return 'Error listing recipes for user';
     else return result.rows.map((row) => {
         return {
-            id: row.id,
+            id: row.id.toString('hex'),
             name: row.name,
             description: row.description,
             instructions: row.instructions,

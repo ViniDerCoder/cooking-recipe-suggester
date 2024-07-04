@@ -14,7 +14,7 @@ export async function getUserFromEmail(email: string) {
     if(typeof result === "string") return 'Error checking for user by email';
     if(result.rows.length > 0) {
         return {
-            id: result.rows[0].id,
+            id: result.rows[0].id.toString('hex'),
             firstName: result.rows[0].first_name,
             lastName: result.rows[0].last_name,
             username: result.rows[0].username,

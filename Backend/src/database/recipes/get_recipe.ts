@@ -1,3 +1,5 @@
+import * as uuid from "uuid";
+
 import query from "../../utils/query.js";
 import { Recipe } from "../../utils/types.js";
 
@@ -13,7 +15,7 @@ export async function getRecipeById(id: string) {
     if(typeof result === "string") return 'Error getting recipe';
     if(result.rows.length > 0) {
         return {
-            id: result.rows[0].id,
+            id: result.rows[0].id.toString('hex'),
             name: result.rows[0].name,
             description: result.rows[0].description,
             instructions: result.rows[0].instructions,

@@ -26,10 +26,10 @@ client.connect().then(() => {
     clientConnected = true;
 })
 
-setInterval(() => {
+const readyCheckInterval = setInterval(() => {
     if(clientConnected && appConnected) {
         console.log("Server is ready");
-        clearInterval(this);
+        clearInterval(readyCheckInterval);
         ready();
     }
 }, 50)
