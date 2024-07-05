@@ -32,3 +32,37 @@ export async function getRecipeById(id: string) {
     }
     else return 'Recipe not found';
 }
+
+export async function getRecipesById(ids: Array<string>) {
+    if(ids.length === 0) return [];
+
+    const params = [...ids];
+    const q = ''
+    + 'SELECT * '
+    + 'FROM '
+    + 'cooking_recipe_suggester.recipes '
+    + `WHERE id = ? ${'OR id = ? '.repeat(ids.length - 1)}`;
+
+    const result = await query(q, params);
+    if(typeof result === "string") return 'Error getting recipe';
+    if(result.rows.length > 0) {
+        return result.rows.map((row) => { 
+            return {
+                id: row.id.toString('hex'),
+                name: row.name,
+                description: row.description,
+                instructions: row.instructions,
+                createdById: row.created_by.toString('hex'),
+                createdAt: row.created_at,
+                cookingTime: row.cooking_time,
+                waitingTime: row.waiting_time,
+                servings: row.servings,
+                public: row.public,
+                typeId: row.type_id.toString('hex'),
+                sourceUrl: row.source_url,
+                imageUrl: row.image_url
+            } as Recipe;
+        })
+    }
+    else return [];
+}

@@ -50,8 +50,8 @@ export type Recipe = {
     servings: number,
     public: boolean,
     typeId: string,
-    sourceUrl: string | undefined,
-    imageUrl: string | undefined
+    sourceUrl: string | null | undefined,
+    imageUrl: string | null | undefined
 }
 
 export type RecipeCreationData = {
@@ -62,7 +62,7 @@ export type RecipeCreationData = {
     waitingTime: number,
     servings: number,
     typeId: string,
-    imageUrl?: string
+    imageUrl: string | null | undefined
 }
 
 export type RecipeType = {
@@ -71,29 +71,12 @@ export type RecipeType = {
 }
 
 export type RecipeUserData = {
-    recipe: Recipe,
-    user: User,
-    rating: number | undefined,
-    notes: string | undefined,
-    cooked: Array<Date>
-} | {
     recipeId: string,
     userId: string,
-    rating: number | undefined,
-    notes: string | undefined,
-    cooked: Array<Date>
-} | {
-    recipe: Recipe,
-    userId: string,
-    rating: number | undefined,
-    notes: string | undefined,
-    cooked: Array<Date>
-} | {
-    recipeId: string,
-    user: User,
-    rating: number | undefined,
-    notes: string | undefined,
-    cooked: Array<Date>
+    rating: number | null | undefined,
+    notes: string | null | undefined,
+    cooked: Array<Date>,
+    recipeDeletedName: string | null | undefined
 }
 
 export const validRecipeUnits = [null, 'cups', 'tablespoons', 'teaspoons', 'grams', 'kilograms', 'milliliters', 'liters', 'some', 'big', 'small', 'shot', 'pinch', 'drop', 'packet'] as const

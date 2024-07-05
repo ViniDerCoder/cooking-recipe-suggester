@@ -1,6 +1,6 @@
 import express from 'express';
 import { AuthenticationUser } from '../utils/types.js';
-import { getRecipeById, getUserRecipes } from '../controller/recipes/get.js';
+import { getRecipeById, getUserRecipes, getUsersAdddedRecipes } from '../controller/recipes/get.js';
 import { createCustomRecipe } from '../controller/recipes/create.js';
 import { isTokenValid } from '../controller/authentication/validate.js';
 import { deleteRecipe } from '../controller/recipes/delete.js';
@@ -20,6 +20,14 @@ router.get('/', async (req, res) => {
 
     if(typeof recipes === "string") return res.status(400).send({error: recipes});
     else return res.status(200).send({error: undefined, data: { recipes: recipes }});
+});
+
+router.get('/marked', async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const recipes = await getUsersAdddedRecipes(user.userId)
+
+    if(typeof recipes === "string") return res.status(400).send({error: recipes});
+    else return res.status(200).send({error: undefined, data: { userRecipes: recipes }});
 });
 
 //late feature

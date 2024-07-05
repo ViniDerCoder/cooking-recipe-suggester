@@ -14,7 +14,7 @@ export async function cacheAllRecipeTypes() {
     if(typeof result === "string") return 'Error caching recipe types';
     else {
         result.rows.forEach((row) => {
-            recipeTypes[row.id] = row.name;
+            recipeTypes[row.id.toString('hex')] = row.name;
         });
     }
 }

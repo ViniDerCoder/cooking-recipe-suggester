@@ -1,7 +1,7 @@
-import { getRecipeById as dbRecipeById } from "../../database/recipes/get_recipe.js";
-import { listUserRecipes } from "../../database/recipes/list_recipes.js";
+import { getRecipeById as dbRecipeById, getRecipesById } from "../../database/recipes/get_recipe.js";
+import { listUserRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
-import { Recipe } from "../../utils/types.js";
+import { Recipe, RecipeUserData } from "../../utils/types.js";
 
 export async function getRecipeById(id: string, userId: string) {
     if(typeof id !== "string" || typeof userId !== "string") return 'Invalid input';
@@ -29,4 +29,23 @@ export async function getUserRecipes(id: string) {
     if(typeof id !== "string") return 'Invalid input';
     const recipe = await listUserRecipes(id);
     return recipe
+}
+
+export async function getUsersAdddedRecipes(id: string) {
+    if(typeof id !== "string") return 'Invalid input';
+    const recipesUserData = await listUsersAddedRecipeData(id);
+
+    if(typeof recipesUserData === "string") return recipesUserData;
+    
+    const recipes = await getRecipesById(recipesUserData.filter((recipe) => !recipe.recipeDeletedName).map((recipe) => recipe.recipeId));
+
+    if(typeof recipes === "string") return recipes;
+    else {
+        return recipesUserData.map((recipeUserData) => {
+            return {
+                userData: recipeUserData,
+                recipe: recipes.find((recipe) => recipe.id === recipeUserData.recipeId) as Recipe
+            }
+        })
+    }
 }

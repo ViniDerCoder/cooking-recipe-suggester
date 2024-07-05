@@ -13,8 +13,8 @@ export async function createRecipe(options:
         servings: number,
         public: boolean,
         typeId: string,
-        sourceUrl: string | undefined,
-        imageUrl: string | undefined
+        sourceUrl: string | null | undefined,
+        imageUrl: string | null | undefined
     }
 ) {
     const recipeId = uuidV4();
