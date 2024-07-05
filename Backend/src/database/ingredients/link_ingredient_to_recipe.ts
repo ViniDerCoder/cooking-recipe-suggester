@@ -5,7 +5,7 @@ export async function linkIngredientToRecipe(ingredientId: string, recipeId: str
     const q = ''
     + 'INSERT INTO '
     + 'cooking_recipe_suggester.recipe_ingredients '
-    + '(recipe_id, ingredient_id, amount, unit) '
+    + '(recipe_id, ingredient_id, quantity, unit) '
     + 'VALUES (?, ?, ?, ?)';
 
     const result = await query(q, params)

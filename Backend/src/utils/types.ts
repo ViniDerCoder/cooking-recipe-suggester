@@ -96,4 +96,5 @@ export type RecipeUserData = {
     cooked: Array<Date>
 }
 
-export type RecipeIngredientUnit = null | 'cups' | 'tablespoons' | 'teaspoons' | 'grams' | 'kilograms' | 'milliliters' | 'liters' | 'some' | 'big' | 'small' | 'shot' | 'pinch' | 'drop' | 'packet'
+export const validRecipeUnits = [null, 'cups', 'tablespoons', 'teaspoons', 'grams', 'kilograms', 'milliliters', 'liters', 'some', 'big', 'small', 'shot', 'pinch', 'drop', 'packet'] as const
+export type RecipeIngredientUnit = typeof validRecipeUnits[number]

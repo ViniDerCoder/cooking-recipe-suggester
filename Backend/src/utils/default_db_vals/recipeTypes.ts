@@ -26,6 +26,10 @@ const defaultTypes = [
     {
         id: 'a7c71004-2ec0-5343-aacb-45e909d1a056',
         name: 'Salad'
+    },
+    {
+        id: '48657636-1cd0-5b90-a416-b6f48154d2ed',
+        name: 'Baked Goods'
     }
 ];
 

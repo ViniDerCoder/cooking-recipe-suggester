@@ -19,7 +19,7 @@ export async function cleanup(type: CleanupType | "ALL" = "ALL") {
             break;
         }
         const cleanupSuccesfull = await cleanup.f();
-        if(!cleanupSuccesfull) console.log("Cleanup failed for: " + cleanup.id + " (type: " + cleanup.type + ")");
-        else console.log("Cleanup successful for: " + cleanup.id + " (type: " + cleanup.type + ")");
+        if(!cleanupSuccesfull) console.log("[onCleanup] Cleanup failed for: " + cleanup.id + " (type: " + cleanup.type + ")");
+        else console.log("[onCleanup] Cleanup successful for: " + cleanup.id + " (type: " + cleanup.type + ")");
     }
 }

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.user_recipes (
-    user_id INT,
-    recipe_id INT,
+    user_id UUID,
+    recipe_id UUID,
     rating INT,
     notes TEXT,
     cooked LIST<TIMESTAMP>,

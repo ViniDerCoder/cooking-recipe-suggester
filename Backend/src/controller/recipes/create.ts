@@ -1,7 +1,9 @@
+import { getIngredientById } from "../../database/ingredients/get.js";
 import { linkIngredientToRecipe } from "../../database/ingredients/link_ingredient_to_recipe.js";
 import { createRecipe } from "../../database/recipes/create_recipe.js";
 import { linkUserToRecipe } from "../../database/recipes/link_user_to_recipe.js";
-import { IngredientRecipeData, Recipe, RecipeCreationData } from "../../utils/types.js";
+import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
+import { IngredientRecipeData, Recipe, RecipeCreationData, validRecipeUnits } from "../../utils/types.js";
 
 export async function createCustomRecipe(userId: string, recipe: RecipeCreationData, ingredients: Array<IngredientRecipeData>) {
     console.log(userId, recipe, ingredients);
@@ -12,10 +14,13 @@ export async function createCustomRecipe(userId: string, recipe: RecipeCreationD
         if(typeof ingredient !== "object") return true;
         if(typeof ingredient.id !== "string") return true;
         if(typeof ingredient.amount !== "number") return true;
-        if(typeof ingredient.unit !== "string") return true;
-        //check if unit is valid
+        if(ingredient.unit) {
+            if(typeof ingredient.unit !== "string") return true;
+            if(!validRecipeUnits.includes(ingredient.unit)) return true;
+        }
         return false;
     });
+    console.log(invalidIngredients);
     if(invalidIngredients.length >= 1) return 'Invalid ingredient list provided';
 
     //check recipe validity
@@ -25,10 +30,11 @@ export async function createCustomRecipe(userId: string, recipe: RecipeCreationD
     if(typeof recipe.cookingTime !== "number") return 'Invalid recipe cooking time';
     if(typeof recipe.waitingTime !== "number") return 'Invalid recipe waiting time';
     if(typeof recipe.servings !== "number") return 'Invalid recipe servings';
-    if(typeof recipe.typeId !== "string") return 'Invalid recipe type';
-    //check if type is valid
     if(recipe.imageUrl && typeof recipe.imageUrl !== "string") return 'Invalid recipe image url';
+    if(typeof recipe.typeId !== "string" || !getRecipeTypeById(recipe.typeId)) return 'Invalid recipe type';
 
+    const unexistingIngredients = (await Promise.all(ingredients.map(async (ingredient) => typeof await getIngredientById(ingredient.id) === "string"))).filter((result) => result);
+    if(unexistingIngredients.length >= 1) return 'Invalid ingredients provided';
 
     const dbResult = await createRecipe({ 
         name: recipe.name, 
@@ -46,7 +52,7 @@ export async function createCustomRecipe(userId: string, recipe: RecipeCreationD
 
     if(typeof dbResult === "string") return dbResult;
     const valid = ingredients.map(async (ingredient, i) => {
-        const linkResult = await linkIngredientToRecipe(ingredient.id, dbResult.id, ingredient.amount, ingredient.unit);
+        const linkResult = await linkIngredientToRecipe(ingredient.id, dbResult.id, ingredient.amount, ingredient.unit ? ingredient.unit : null);
         if(typeof linkResult === "string") return linkResult;
         else return undefined;
     }).filter((result) => result).length >= 1;
