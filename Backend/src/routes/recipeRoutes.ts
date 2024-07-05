@@ -4,6 +4,7 @@ import { getRecipeById, getUserRecipes, getUsersAdddedRecipes } from '../control
 import { createCustomRecipe } from '../controller/recipes/create.js';
 import { isTokenValid } from '../controller/authentication/validate.js';
 import { deleteRecipe } from '../controller/recipes/delete.js';
+import { editRecipeById } from '../controller/recipes/edit.js';
 const router = express.Router();
 
 
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
     const recipes = await getUserRecipes(user.userId)
 
     if(typeof recipes === "string") return res.status(400).send({error: recipes});
-    else return res.status(200).send({error: undefined, data: { recipes: recipes }});
+    else return res.status(200).send({message: "Fetching of all created recipes was successfull", error: undefined, data: { recipes: recipes }});
 });
 
 router.get('/marked', async (req, res) => {
@@ -27,7 +28,7 @@ router.get('/marked', async (req, res) => {
     const recipes = await getUsersAdddedRecipes(user.userId)
 
     if(typeof recipes === "string") return res.status(400).send({error: recipes});
-    else return res.status(200).send({error: undefined, data: { userRecipes: recipes }});
+    else return res.status(200).send({message: "Fetching of all marked recipe was successfull", error: undefined, data: { userRecipes: recipes }});
 });
 
 //late feature
@@ -40,7 +41,7 @@ router.get('/:id', async (req, res) => {
     const recipe = await getRecipeById(req.params.id, user.userId);
 
     if(typeof recipe === "string") return res.status(400).send({error: recipe});
-    if("createdById" in recipe && recipe.createdById === user.userId) return res.status(200).send({error: undefined, data: { recipe: recipe }});
+    if("createdById" in recipe && recipe.createdById === user.userId) return res.status(200).send({message: "Fetching recipe was successfull", error: undefined, data: { recipe: recipe }});
     else return res.status(403).send({error: 'You are not authorized to view this recipe'})
 });
 
@@ -50,11 +51,17 @@ router.post('/', async (req, res) => {
 
     const result = await createCustomRecipe(user.userId, recipe, ingredients);
     if(typeof result === "string") return res.status(400).send({error: result});
-    else return res.status(200).send({error: undefined, data: { recipe: result }});
+    else return res.status(200).send({message: "Recipe creation was successfull", error: undefined, data: { recipe: result }});
 });
 
 router.put('/:id', async (req, res) => {
-    res.send('Update a users recipe by id: ' + req.params.id);
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id;
+    const { recipe, ingredients } = req.body;
+
+    const result = await editRecipeById(recipeId, user.userId, recipe, ingredients);
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Editing was successfull", error: undefined, data: { recipe: result }});
 });
 
 router.delete('/:id', async (req, res) => {
@@ -63,7 +70,7 @@ router.delete('/:id', async (req, res) => {
 
     const result = await deleteRecipe(recipeId, user.userId);
     if(typeof result === "string") return res.status(400).send({error: result});
-    else return res.status(200).send({error: undefined});
+    else return res.status(200).send({message: "Deletion was successfull", error: undefined});
 });
 
 export default router;

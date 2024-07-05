@@ -8,10 +8,12 @@ import { IngredientRecipeData, Recipe, RecipeCreationData, validRecipeUnits } fr
 export async function createCustomRecipe(userId: string, recipe: RecipeCreationData, ingredients: Array<IngredientRecipeData>) {
     console.log(userId, recipe, ingredients);
     if(typeof userId !== "string" || typeof recipe !== "object" || !Array.isArray(ingredients)) return 'Invalid input';
+    if(!recipe) return 'Invalid recipe data provided';
 
     //check ingredients validity
     const invalidIngredients = ingredients.filter((ingredient) => {
         if(typeof ingredient !== "object") return true;
+        if(!ingredient) return true;
         if(typeof ingredient.id !== "string") return true;
         if(typeof ingredient.amount !== "number") return true;
         if(ingredient.unit) {
