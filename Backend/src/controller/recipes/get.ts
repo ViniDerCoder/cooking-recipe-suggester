@@ -1,4 +1,5 @@
 import { getRecipeById as dbRecipeById } from "../../database/recipes/get_recipe.js";
+import { listUserRecipes } from "../../database/recipes/list_recipes.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
 import { Recipe } from "../../utils/types.js";
 
@@ -22,4 +23,10 @@ export async function getRecipeById(id: string, userId: string) {
         } 
         else return dbResult;
     }
+}
+
+export async function getUserRecipes(id: string) {
+    if(typeof id !== "string") return 'Invalid input';
+    const recipe = await listUserRecipes(id);
+    return recipe
 }

@@ -1,22 +1,22 @@
 import express from 'express';
-import { getAuthUserFromToken } from '../database/authentication/user_token.js';
 import { AuthenticationUser } from '../utils/types.js';
-import { listUserRecipes } from '../database/recipes/list_recipes.js';
-import { getRecipeById } from '../controller/recipes/get.js';
+import { getRecipeById, getUserRecipes } from '../controller/recipes/get.js';
 import { createCustomRecipe } from '../controller/recipes/create.js';
+import { isTokenValid } from '../controller/authentication/validate.js';
+import { deleteRecipe } from '../controller/recipes/delete.js';
 const router = express.Router();
 
 
 router.use(async (req, res, next) => {
     if(!req.headers.authorization) return res.status(401).send({error: 'No authorization token provided'});
-    req.body.user = await getAuthUserFromToken(req.headers.authorization);
-    if(typeof req.body.user === "string") return res.status(401).send({error: 'Invalid authorization token provided'});
+    req.body.user = await isTokenValid(req.headers.authorization);
+    if(typeof req.body.user === "string" || !req.body.user) return res.status(401).send({error: 'Invalid authorization token provided'});
     else next();
 });
 
 router.get('/', async (req, res) => {
     const user = req.body.user as AuthenticationUser;
-    const recipes = await listUserRecipes(user.userId)
+    const recipes = await getUserRecipes(user.userId)
 
     if(typeof recipes === "string") return res.status(400).send({error: recipes});
     else return res.status(200).send({error: undefined, data: { recipes: recipes }});
@@ -50,7 +50,12 @@ router.put('/:id', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
-    res.send('Delete a users recipe by id: ' + req.params.id);
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id
+
+    const result = await deleteRecipe(recipeId, user.userId);
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({error: undefined});
 });
 
 export default router;

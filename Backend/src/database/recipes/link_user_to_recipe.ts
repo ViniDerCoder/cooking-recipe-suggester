@@ -9,7 +9,7 @@ export async function linkUserToRecipe(userId: string, recipeId: string) {
     + 'VALUES (?, ?)';
 
     const result = await query(q, params)
-    if(typeof result === "string") return 'Error linking ingredient to recipe';
+    if(typeof result === "string") return 'Error linking user to recipe';
     else return {
         userId: userId,
         recipeId: recipeId
