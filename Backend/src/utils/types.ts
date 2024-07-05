@@ -84,3 +84,13 @@ export type RecipeIngredientUnit = typeof validRecipeUnits[number]
 
 export const editabelRecipeProperties = ["name", "description", "instructions", "cookingTime", "waitingTime", "servings", "public", "typeId", "imageUrl"] as const
 export type EditableRecipeProperties = typeof editabelRecipeProperties[number]
+
+export type RecipeIngredientUpdateAcions = {
+    type: "ADD" | "UPDATE",
+    ingredientId: string,
+    amount: number,
+    unit: RecipeIngredientUnit
+} | {
+    type: "REMOVE",
+    ingredientId: string
+}

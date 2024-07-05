@@ -1,3 +1,5 @@
+import * as uuid from "uuid";
+
 import { getUser } from "../../database/authentication/get_user.js";
 import { getAuthUserFromToken } from "../../database/authentication/user_token.js";
 
@@ -12,6 +14,7 @@ export async function isTokenValid(token: string) {
 
 export async function getUserInformation(userid: string) {
     if(typeof userid !== "string") return "Invalid Input";
+    if(!uuid.validate(userid)) return "Invalid User ID";
     const result = await getUser(userid);
 
     if(typeof result === "string") return "Failed to get user information";

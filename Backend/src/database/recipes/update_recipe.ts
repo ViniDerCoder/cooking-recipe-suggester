@@ -19,24 +19,24 @@ export async function updateRecipe(recipeId: string, changedProperties: {[key: s
 
     params.push(recipeId);
 
-    const q = ''
+    let q = ''
     + 'UPDATE '
     + 'cooking_recipe_suggester.recipes '
     + 'SET '
-    + changedProperties["name"] ? 'name = ?, ' : ''
-    + changedProperties["description"] ? 'description = ?, ' : ''
-    + changedProperties["instructions"] ? 'instructions = ?, ' : ''
-    + changedProperties["cookingTime"] ? 'cooking_time = ?, ' : ''
-    + changedProperties["waitingTime"] ? 'waiting_time = ?, ' : ''
-    + changedProperties["servings"] ? 'servings = ?, ' : ''
-    + changedProperties["public"] ? 'public = ?, ' : ''
-    + changedProperties["typeId"] ? 'type_id = ?, ' : ''
-    + changedProperties["imageUrl"] ? 'image_url = ? ' : ''
-    + 'WHERE id = ?';
+    + (changedProperties["name"] ? 'name = ?, ' : '')
+    + (changedProperties["description"] ? 'description = ?, ' : '')
+    + (changedProperties["instructions"] ? 'instructions = ?, ' : '')
+    + (changedProperties["cookingTime"] ? 'cooking_time = ?, ' : '')
+    + (changedProperties["waitingTime"] ? 'waiting_time = ?, ' : '')
+    + (changedProperties["servings"] ? 'servings = ?, ' : '')
+    + (changedProperties["public"] ? 'public = ?, ' : '')
+    + (changedProperties["typeId"] ? 'type_id = ?, ' : '')
+    + (changedProperties["imageUrl"] ? 'image_url = ?, ' : '');
+
+    q = q.slice(0, -2);
+    q = q + ' WHERE id = ?';
 
     const result = await query(q, params)
     if(typeof result === "string") return 'Error updating recipe';
-
-    const newRecipe = await getRecipeById(recipeId);
-    return newRecipe;
+    return undefined;
 }   

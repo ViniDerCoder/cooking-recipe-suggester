@@ -1,3 +1,5 @@
+import * as uuid from "uuid";
+
 import { getRecipeById as dbRecipeById, getRecipesById } from "../../database/recipes/get_recipe.js";
 import { listUserRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
@@ -5,6 +7,8 @@ import { Recipe, RecipeUserData } from "../../utils/types.js";
 
 export async function getRecipeById(id: string, userId: string) {
     if(typeof id !== "string" || typeof userId !== "string") return 'Invalid input';
+    if(!uuid.validate(id)) return 'Invalid Recipe ID';
+    if(!uuid.validate(userId)) return 'Invalid User ID';
     const dbResult = await dbRecipeById(id);
 
     if(typeof dbResult === "string") return dbResult;
@@ -27,12 +31,14 @@ export async function getRecipeById(id: string, userId: string) {
 
 export async function getUserRecipes(id: string) {
     if(typeof id !== "string") return 'Invalid input';
+    if(!uuid.validate(id)) return 'Invalid User ID';
     const recipe = await listUserRecipes(id);
     return recipe
 }
 
 export async function getUsersAdddedRecipes(id: string) {
     if(typeof id !== "string") return 'Invalid input';
+    if(!uuid.validate(id)) return 'Invalid User ID';
     const recipesUserData = await listUsersAddedRecipeData(id);
 
     if(typeof recipesUserData === "string") return recipesUserData;
