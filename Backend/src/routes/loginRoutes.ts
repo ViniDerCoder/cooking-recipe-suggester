@@ -72,7 +72,7 @@ router.post('/register', limit(), async (req, res) => {
     
 });
 
-router.post('/register/validate-email', limit(1, 1), async (req, res) => {
+router.post('/register/validate-email', limit(), async (req, res) => {
     const { email } = req.body;
 
     const emailSendResult = await sendRegistrationEmail(email);

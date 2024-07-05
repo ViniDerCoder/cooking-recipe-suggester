@@ -1,21 +1,21 @@
 import express from 'express';
+
 import { AuthenticationUser } from '../utils/types.js';
 import { getRecipeById, getUserRecipes, getUsersAdddedRecipes } from '../controller/recipes/get.js';
 import { createCustomRecipe } from '../controller/recipes/create.js';
 import { isTokenValid } from '../controller/authentication/validate.js';
 import { deleteRecipe } from '../controller/recipes/delete.js';
 import { editRecipeById } from '../controller/recipes/edit.js';
+import verifyRequest from '../utils/defaultVerification.js';
+import limit from '../utils/rate-limiter.js';
 const router = express.Router();
 
 
 router.use(async (req, res, next) => {
-    if(!req.headers.authorization) return res.status(401).send({error: 'No authorization token provided'});
-    req.body.user = await isTokenValid(req.headers.authorization);
-    if(typeof req.body.user === "string" || !req.body.user) return res.status(401).send({error: 'Invalid authorization token provided'});
-    else next();
+    verifyRequest(req, res, next);
 });
 
-router.get('/', async (req, res) => {
+router.get('/', limit(1000 * 20, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipes = await getUserRecipes(user.userId)
 
@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     else return res.status(200).send({message: "Fetching of all created recipes was successfull", error: undefined, data: { recipes: recipes }});
 });
 
-router.get('/marked', async (req, res) => {
+router.get('/marked', limit(1000 * 20, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipes = await getUsersAdddedRecipes(user.userId)
 
@@ -32,11 +32,11 @@ router.get('/marked', async (req, res) => {
 });
 
 //late feature
-router.get('/search', async (req, res) => {
+router.get('/search', limit(), async (req, res) => {
     res.send('Search for recipes by name, ingredients, etc.');
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', limit(1000 * 20, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipe = await getRecipeById(req.params.id, user.userId);
 
@@ -45,7 +45,7 @@ router.get('/:id', async (req, res) => {
     else return res.status(403).send({error: 'You are not authorized to view this recipe'})
 });
 
-router.post('/', async (req, res) => {
+router.post('/', limit(1000 * 60 * 20, 5), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const { recipe, ingredients } = req.body;
 
@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
     else return res.status(200).send({message: "Recipe creation was successfull", error: undefined, data: { recipe: result }});
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', limit(1000 * 60 * 20, 5), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipeId = req.params.id;
     const { recipe, ingredients } = req.body;
@@ -64,7 +64,7 @@ router.put('/:id', async (req, res) => {
     else return res.status(200).send({message: "Editing was successfull", error: undefined, data: { recipe: result }});
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', limit(1000 * 60 * 20, 5), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipeId = req.params.id
 

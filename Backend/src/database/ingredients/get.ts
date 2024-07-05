@@ -3,6 +3,7 @@ import query from "../../utils/query.js";
 import { Ingredient, IngredientProperties } from "../../utils/types.js";
 
 let ingredientCache: {[id: string]: Ingredient} = {};
+let lastFullCache = 0;
 
 onCleanup('clearIngredientCache', 'MEMORY', async () => {
     ingredientCache = {};
@@ -38,4 +39,38 @@ export async function getIngredientById(id: string) {
     } as Ingredient;
     ingredientCache[id] = ingredient;
     return ingredient;
+}
+
+export async function getAllIngredients() {
+    if(Date.now() - lastFullCache < 1000 * 60 * 10) return Object.values(ingredientCache);
+    
+    const q = ''
+    + 'SELECT * FROM '
+    + 'cooking_recipe_suggester.ingredients';
+
+    const result = await query(q, []);
+    if(typeof result === "string") return 'Error getting all ingredients';
+
+    const ingredients: Ingredient[] = [];
+    result.rows.forEach((row) => {
+        const ingredient = {
+            id: row.id,
+            name: row.name,
+            properties: {
+                vegan: row.vegan,
+                vegetarian: row.vegetarian,
+                glutenFree: row.gluten_free,
+                dairyFree: row.dairy_free,
+                nutFree: row.nut_free,
+                eggFree: row.egg_free,
+                fishFree: row.fish_free,
+                shellfishFree: row.shellfish_free,
+                soyFree: row.soy_free
+            } as IngredientProperties
+        } as Ingredient;
+        ingredients.push(ingredient);
+        ingredientCache[row.id] = ingredient;
+    });
+    lastFullCache = Date.now();
+    return ingredients;
 }

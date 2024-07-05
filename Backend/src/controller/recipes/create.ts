@@ -37,7 +37,7 @@ export async function createCustomRecipe(userId: string, recipe: RecipeCreationD
     if(typeof recipe.waitingTime !== "number") return 'Invalid recipe waiting time';
     if(typeof recipe.servings !== "number") return 'Invalid recipe servings';
     if(recipe.imageUrl && typeof recipe.imageUrl !== "string") return 'Invalid recipe image url';
-    if(typeof recipe.typeId !== "string" || !getRecipeTypeById(recipe.typeId) || uuid.validate(recipe.typeId)) return 'Invalid recipe type';
+    if(typeof recipe.typeId !== "string" || !getRecipeTypeById(recipe.typeId) || !uuid.validate(recipe.typeId)) return 'Invalid recipe type';
 
     const unexistingIngredients = (await Promise.all(ingredients.map(async (ingredient) => typeof await getIngredientById(ingredient.id) === "string"))).filter((result) => result);
     if(unexistingIngredients.length >= 1) return 'Invalid ingredients provided';

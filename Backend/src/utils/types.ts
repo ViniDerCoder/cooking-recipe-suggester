@@ -79,7 +79,7 @@ export type RecipeUserData = {
     recipeDeletedName: string | null | undefined
 }
 
-export const validRecipeUnits = [undefined, null, 'cups', 'tablespoons', 'teaspoons', 'grams', 'kilograms', 'milliliters', 'liters', 'some', 'big', 'small', 'shot', 'pinch', 'drop', 'packet'] as const
+export const validRecipeUnits = [undefined, null, 'cup', 'tablespoon', 'teaspoon', 'gram', 'kilogram', 'milliliter', 'liter', 'some', 'big', 'small', 'shot', 'pinch', 'drop', 'packet'] as const
 export type RecipeIngredientUnit = typeof validRecipeUnits[number]
 
 export const editabelRecipeProperties = ["name", "description", "instructions", "cookingTime", "waitingTime", "servings", "public", "typeId", "imageUrl"] as const

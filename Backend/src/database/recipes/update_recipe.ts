@@ -7,15 +7,15 @@ export async function updateRecipe(recipeId: string, changedProperties: {[key: s
     if(!changedProperties || typeof changedProperties !== 'object') return 'No changes provided';
     
     const params = []
-    if(changedProperties["name"]) params.push(changedProperties["name"]);
-    if(changedProperties["description"]) params.push(changedProperties["description"]);
-    if(changedProperties["instructions"]) params.push(changedProperties["instructions"]);
-    if(changedProperties["cookingTime"]) params.push(changedProperties["cookingTime"]);
-    if(changedProperties["waitingTime"]) params.push(changedProperties["waitingTime"]);
-    if(changedProperties["servings"]) params.push(changedProperties["servings"]);
-    if(changedProperties["public"]) params.push(changedProperties["public"]);
-    if(changedProperties["typeId"]) params.push(changedProperties["typeId"]);
-    if(changedProperties["imageUrl"]) params.push(changedProperties["imageUrl"]);
+    if(changedProperties["name"] !== undefined) params.push(changedProperties["name"]);
+    if(changedProperties["description"] !== undefined) params.push(changedProperties["description"]);
+    if(changedProperties["instructions"] !== undefined) params.push(changedProperties["instructions"]);
+    if(changedProperties["cookingTime"] !== undefined) params.push(changedProperties["cookingTime"]);
+    if(changedProperties["waitingTime"] !== undefined) params.push(changedProperties["waitingTime"]);
+    if(changedProperties["servings"] !== undefined) params.push(changedProperties["servings"]);
+    if(changedProperties["public"] !== undefined) params.push(changedProperties["public"]);
+    if(changedProperties["typeId"] !== undefined) params.push(changedProperties["typeId"]);
+    if(changedProperties["imageUrl"] !== undefined) params.push(changedProperties["imageUrl"]);
 
     params.push(recipeId);
 
@@ -23,15 +23,15 @@ export async function updateRecipe(recipeId: string, changedProperties: {[key: s
     + 'UPDATE '
     + 'cooking_recipe_suggester.recipes '
     + 'SET '
-    + (changedProperties["name"] ? 'name = ?, ' : '')
-    + (changedProperties["description"] ? 'description = ?, ' : '')
-    + (changedProperties["instructions"] ? 'instructions = ?, ' : '')
-    + (changedProperties["cookingTime"] ? 'cooking_time = ?, ' : '')
-    + (changedProperties["waitingTime"] ? 'waiting_time = ?, ' : '')
-    + (changedProperties["servings"] ? 'servings = ?, ' : '')
-    + (changedProperties["public"] ? 'public = ?, ' : '')
-    + (changedProperties["typeId"] ? 'type_id = ?, ' : '')
-    + (changedProperties["imageUrl"] ? 'image_url = ?, ' : '');
+    + (changedProperties["name"] !== undefined ? 'name = ?, ' : '')
+    + (changedProperties["description"] !== undefined ? 'description = ?, ' : '')
+    + (changedProperties["instructions"] !== undefined ? 'instructions = ?, ' : '')
+    + (changedProperties["cookingTime"] !== undefined ? 'cooking_time = ?, ' : '')
+    + (changedProperties["waitingTime"] !== undefined ? 'waiting_time = ?, ' : '')
+    + (changedProperties["servings"] !== undefined ? 'servings = ?, ' : '')
+    + (changedProperties["public"] !== undefined ? 'public = ?, ' : '')
+    + (changedProperties["typeId"] !== undefined ? 'type_id = ?, ' : '')
+    + (changedProperties["imageUrl"] !== undefined ? 'image_url = ?, ' : '');
 
     q = q.slice(0, -2);
     q = q + ' WHERE id = ?';
