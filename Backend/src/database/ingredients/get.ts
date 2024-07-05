@@ -42,8 +42,8 @@ export async function getIngredientById(id: string) {
 }
 
 export async function getAllIngredients() {
-    if(Date.now() - lastFullCache < 1000 * 60 * 10) return Object.values(ingredientCache);
-    
+    if(Date.now() - lastFullCache < 1000 * 60 * 25) return Object.values(ingredientCache);
+
     const q = ''
     + 'SELECT * FROM '
     + 'cooking_recipe_suggester.ingredients';

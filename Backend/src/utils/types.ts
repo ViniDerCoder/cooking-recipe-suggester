@@ -83,7 +83,7 @@ export const validRecipeUnits = [undefined, null, 'cup', 'tablespoon', 'teaspoon
 export type RecipeIngredientUnit = typeof validRecipeUnits[number]
 
 export const editabelRecipeProperties = ["name", "description", "instructions", "cookingTime", "waitingTime", "servings", "public", "typeId", "imageUrl"] as const
-export type EditableRecipeProperties = typeof editabelRecipeProperties[number]
+export type EditableRecipePropertie = typeof editabelRecipeProperties[number]
 
 export type RecipeIngredientUpdateAcions = {
     type: "ADD" | "UPDATE",
@@ -94,3 +94,6 @@ export type RecipeIngredientUpdateAcions = {
     type: "REMOVE",
     ingredientId: string
 }
+
+export const ingredientPropertyFilters = ["vegan", "vegetarian", "glutenFree", "dairyFree", "nutFree", "eggFree", "fishFree", "shellfishFree", "soyFree"] as const
+export type IngredientPropertyFilter = typeof ingredientPropertyFilters[number]
