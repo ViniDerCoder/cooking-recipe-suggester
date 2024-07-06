@@ -11,7 +11,7 @@ export default async function getSettingsOfUser(userId: string) {
     + 'WHERE user_id = ?';
 
     const result = await query(q, params)
-    if(typeof result === "string") return 'Error initializing settings';
+    if(typeof result === "string") return 'Error getting settings';
     else return rowToSettings(userId, result.rows[0])
 }
 
