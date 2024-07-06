@@ -25,6 +25,7 @@ export function isRecipe(any: any): any is Recipe {
     if(typeof any.description !== "string") return false;
     if(!Array.isArray(any.instructions)) return false;
     if(!any.instructions.every((instr: any) => typeof instr === "string")) return false;
+    if(any.instructions.length < 1) return false;
     if(!(any.createdAt instanceof Date)) return false;
     if(!isUuid(any.createdById)) return false;
     if(typeof any.cookingTime !== "number") return false;

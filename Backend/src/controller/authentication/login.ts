@@ -12,7 +12,7 @@ onCleanup("emailLoginVerificationSessions", "MEMORY", async () => {
     return true;
 });
 
-export async function login(email: string, emailVerificationCode: string) {
+export async function login(email: unknown, emailVerificationCode: unknown) {
     if(typeof email !== 'string' || typeof emailVerificationCode !== "string") return "Invalid input";
 
     if(!emailVerificationSessions.find(session => session.email === email && session.verificationCode === emailVerificationCode && session.expirationDate > Date.now())) return "Invalid or expired email verification code";
@@ -28,7 +28,7 @@ export async function login(email: string, emailVerificationCode: string) {
     else return { token: newToken, user: user };
 }
 
-export async function sendLoginEmail(email: string) {
+export async function sendLoginEmail(email: unknown) {
     if(typeof email !== 'string') return "Invalid input";
 
     if(!email.match(emailRegex)) return "Invalid email";

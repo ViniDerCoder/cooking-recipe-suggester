@@ -47,6 +47,17 @@ export function isIngredient(any: any): any is Ingredient {
 }
 
 
+export type IngredientList = Array<Ingredient>
+
+export function isIngredientList(any: any): any is IngredientList {
+    if(!Array.isArray(any)) return false;
+
+    if(!any.every((ingredient) => isIngredient(ingredient))) return false;
+
+    return true;
+}
+
+
 export type IngredientRecipeData = {
     id: Uuid,
     amount: number,
@@ -64,6 +75,17 @@ export function isIngredientRecipeData(any: any): any is IngredientRecipeData {
 }
 
 
+export type IngredientRecipeList = Array<IngredientRecipeData>
+
+export function isIngredientRecipeList(any: any): any is IngredientRecipeList {
+    if(!Array.isArray(any)) return false;
+
+    if(!any.every((ingredient) => isIngredientRecipeData(ingredient))) return false;
+
+    return true;
+}
+
+
 export const validRecipeUnits = [undefined, null, 'cup', 'tablespoon', 'teaspoon', 'gram', 'kilogram', 'milliliter', 'liter', 'some', 'big', 'small', 'shot', 'pinch', 'drop', 'packet'] as const
 export type RecipeIngredientUnit = typeof validRecipeUnits[number]
 
@@ -74,7 +96,7 @@ export function isRecipeIngredientUnit(any: any): any is RecipeIngredientUnit {
 }
 
 
-export type RecipeIngredientUpdateAcions = {
+export type RecipeIngredientUpdateActions = {
     type: "ADD" | "UPDATE",
     ingredientId: Uuid,
     amount: number,
@@ -84,7 +106,7 @@ export type RecipeIngredientUpdateAcions = {
     ingredientId: Uuid
 }
 
-export function isRecipeIngredientUpdateAcions(any: any): any is RecipeIngredientUpdateAcions {
+export function isRecipeIngredientUpdateActions(any: any): any is RecipeIngredientUpdateActions {
     if(typeof any !== "object" || !any) return false;
 
     if(any.type === "ADD" || any.type === "UPDATE") {
@@ -108,4 +130,62 @@ export function isIngredientPropertyFilter(any: any): any is IngredientPropertyF
     if(!ingredientPropertyFilters.includes(any)) return false;
 
     return true;
+}
+
+
+export type IngredientActionRequest = {
+    type: "DELETE", 
+    id: Uuid
+} | {
+    type: "CREATE", 
+    ingredient: {
+        name: string, 
+        props: IngredientProperties
+    }
+} | {
+    type: "UPDATE", 
+    id: Uuid, 
+    ingredient: {
+        name: string, 
+        props: IngredientProperties
+    }
+}
+
+export function isIngredientActionRequest(any: any): any is IngredientActionRequest {
+    if(typeof any !== "object" || !any) return false;
+
+    if(any.type === "DELETE") {
+        if(!isUuid(any.id)) return false;
+    } else if(any.type === "CREATE") {
+        if(typeof any.ingredient !== "object" || !any.ingredient) return false;
+        if(typeof any.ingredient.name !== "string") return false;
+        if(!isIngredientProperties(any.ingredient.props)) return false;
+    } else if(any.type === "UPDATE") {
+        if(!isUuid(any.id)) return false;
+        if(typeof any.ingredient !== "object" || !any.ingredient) return false;
+        if(typeof any.ingredient.name !== "string") return false;
+        if(!isIngredientProperties(any.ingredient.props)) return false;
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
+
+export type IngredientFilters = Array<{
+    name: IngredientPropertyFilter,
+    value: boolean
+}>
+
+export function isIngredientFilters(any: any): any is IngredientFilters {
+    if(!Array.isArray(any)) return false;
+
+    return any.every((filter) => {
+        if(typeof filter !== "object" || !filter) return false;
+        if(!isIngredientPropertyFilter(filter.key)) return false;
+        if(typeof filter.value !== "boolean") return false;
+
+        return true;
+    });
 }

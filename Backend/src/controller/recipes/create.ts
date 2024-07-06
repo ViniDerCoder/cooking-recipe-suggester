@@ -1,44 +1,16 @@
-import * as uuid from "uuid";
-
 import { getIngredientById } from "../../database/ingredients/get.js";
 import { linkIngredientToRecipe } from "../../database/ingredients/link_ingredient_to_recipe.js";
 import { createRecipe } from "../../database/recipes/create_recipe.js";
 import { linkUserToRecipe } from "../../database/recipes/link_user_to_recipe.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
-import { Recipe, RecipeCreationData } from "../../utils/types/recipe.js";
-import { IngredientRecipeData, validRecipeUnits } from "../../utils/types/ingredient.js";
+import { isRecipeCreationData, Recipe } from "../../utils/types/recipe.js";
+import { isIngredientRecipeList, validRecipeUnits } from "../../utils/types/ingredient.js";
+import { isUuid } from "../../utils/types/other.js";
 
-export async function createCustomRecipe(userId: string, recipe: RecipeCreationData, ingredients: Array<IngredientRecipeData>) {
-    console.log(userId, recipe, ingredients);
-    if(typeof userId !== "string" || typeof recipe !== "object" || !Array.isArray(ingredients)) return 'Invalid input';
-    if(!recipe) return 'Invalid recipe data provided';
-    if(!uuid.validate(userId)) return "Invalid User ID";
+export async function createCustomRecipe(userId: unknown, recipe: unknown, ingredients: unknown) {
+    if(!isUuid(userId) || !isRecipeCreationData(recipe) || !isIngredientRecipeList(ingredients)) return 'Invalid input';
 
-    //check ingredients validity
-    const invalidIngredients = ingredients.filter((ingredient) => {
-        if(typeof ingredient !== "object") return true;
-        if(!ingredient) return true;
-        if(typeof ingredient.id !== "string") return true;
-        if(!uuid.validate(ingredient.id)) return true;
-        if(typeof ingredient.amount !== "number") return true;
-        if(ingredient.unit) {
-            if(typeof ingredient.unit !== "string") return true;
-            if(!validRecipeUnits.includes(ingredient.unit)) return true;
-        }
-        return false;
-    });
-    console.log(invalidIngredients);
-    if(invalidIngredients.length >= 1) return 'Invalid ingredient list provided';
-
-    //check recipe validity
-    if(typeof recipe.name !== "string") return 'Invalid recipe name';
-    if(typeof recipe.description !== "string") return 'Invalid recipe description';
-    if(!Array.isArray(recipe.instructions) || recipe.instructions.filter((instr) => typeof instr !== "string").length > 0 || recipe.instructions.length < 1) return 'Invalid recipe instructions';
-    if(typeof recipe.cookingTime !== "number") return 'Invalid recipe cooking time';
-    if(typeof recipe.waitingTime !== "number") return 'Invalid recipe waiting time';
-    if(typeof recipe.servings !== "number") return 'Invalid recipe servings';
-    if(recipe.imageUrl && typeof recipe.imageUrl !== "string") return 'Invalid recipe image url';
-    if(typeof recipe.typeId !== "string" || !getRecipeTypeById(recipe.typeId) || !uuid.validate(recipe.typeId)) return 'Invalid recipe type';
+    if(!getRecipeTypeById(recipe.typeId)) return 'Invalid recipe type';
 
     const unexistingIngredients = (await Promise.all(ingredients.map(async (ingredient) => typeof await getIngredientById(ingredient.id) === "string"))).filter((result) => result);
     if(unexistingIngredients.length >= 1) return 'Invalid ingredients provided';

@@ -2,8 +2,9 @@ import * as uuid from "uuid";
 
 import { getUser } from "../../database/authentication/get_user.js";
 import { getAuthUserFromToken } from "../../database/authentication/user_token.js";
+import { isUuid } from "../../utils/types/other.js";
 
-export async function isTokenValid(token: string) {
+export async function isTokenValid(token: unknown) {
     if(typeof token !== "string") return "Invalid Input";
     const result = await getAuthUserFromToken(token);
 
@@ -12,9 +13,9 @@ export async function isTokenValid(token: string) {
     else return result;
 }
 
-export async function getUserInformation(userid: string) {
-    if(typeof userid !== "string") return "Invalid Input";
-    if(!uuid.validate(userid)) return "Invalid User ID";
+export async function getUserInformation(userid: unknown) {
+    if(!isUuid(userid)) return "Invalid Input";
+
     const result = await getUser(userid);
 
     if(typeof result === "string") return "Failed to get user information";

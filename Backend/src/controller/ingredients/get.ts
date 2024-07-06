@@ -1,7 +1,8 @@
 import * as uuid from "uuid";
 
 import { getAllIngredients as dbGetAllIngredients, getIngredientById as dbGetIngredientById } from "../../database/ingredients/get.js";
-import { IngredientPropertyFilter, ingredientPropertyFilters } from "../../utils/types/ingredient.js";
+import { IngredientFilters, ingredientPropertyFilters, isIngredientFilters } from "../../utils/types/ingredient.js";
+import { isUuid } from "../../utils/types/other.js";
 
 export async function getAllIngredientIds() {
     const result = await dbGetAllIngredients();
@@ -9,20 +10,16 @@ export async function getAllIngredientIds() {
     else return result.map((ingredient) => { return { id: ingredient.id, name: ingredient.name } });
 }
 
-export async function getIngredientById(ingredientId: string) {
-    if(typeof ingredientId !== "string") return 'Invalid input';
-    if(!uuid.validate(ingredientId)) return 'Invalid Ingredient ID';
+export async function getIngredientById(ingredientId: unknown) {
+    if(!isUuid(ingredientId)) return 'Invalid input';
 
     const result = await dbGetIngredientById(ingredientId);
     return result;
 }
 
-export async function getIngredientIdsMatchingFilter(filters: {name: string, value: boolean}[]) {
-    if(!Array.isArray(filters)) return 'Invalid input';
+export async function getIngredientIdsMatchingFilter(filters: IngredientFilters) {
+    if(!isIngredientFilters(filters)) return 'Invalid input';
     if(filters.length < 1) return await getAllIngredientIds();
-
-    const validFilters = filters.every((filter) => ingredientPropertyFilters.includes(filter.name as any) && typeof filter.value === "boolean");
-    if(!validFilters) return 'Invalid filters provided';
 
     const result = await dbGetAllIngredients();
     if(typeof result === "string") return result;

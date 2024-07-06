@@ -21,7 +21,7 @@ onCleanup("emailRegisterVerificationSessions", "MEMORY", async () => {
  * @param emailVerificationCode must be valid and not expired (verify email)
  * @returns undefined if the input is valid, otherwise a string with the error
  */
-export async function register(email: string, username: string, fistName: string, lastName: string, emailVerificationCode: string) {
+export async function register(email: unknown, username: unknown, fistName: unknown, lastName: unknown, emailVerificationCode: unknown) {
     if(typeof email !== 'string' || typeof username !== 'string' || typeof fistName !== 'string' || typeof lastName !== 'string' || typeof emailVerificationCode !== "string") return "Invalid input";
 
     if(!emailVerificationSessions.find(session => session.email === email && session.verificationCode === emailVerificationCode && session.expirationDate > Date.now())) return "Invalid or expired email verification code";
@@ -51,7 +51,7 @@ export async function register(email: string, username: string, fistName: string
  * @param email
  * @returns the verification code
  */
-export async function sendRegistrationEmail(email: string) {
+export async function sendRegistrationEmail(email: unknown) {
     if(typeof email !== 'string') return "Invalid input";
 
     if(!email.match(emailRegex)) return "Invalid email";
