@@ -3,6 +3,7 @@ import express from 'express';
 import verifyRequest from '../utils/defaultVerification.js';
 import limit from '../utils/rate-limiter.js';
 import { getAllIngredientIds, getIngredientById, getIngredientIdsMatchingFilter } from '../controller/ingredients/get.js';
+import { doActionRequest } from '../controller/ingredients/actionRequest.js';
 
 const router = express.Router();
 
@@ -39,15 +40,31 @@ router.get('/:id', limit(), async (req, res) => {
 });
 
 router.post('/', limit(1000 * 60 * 2, 5), async (req, res) => {
-    res.send('Create ingredient creation request');
+    const user = req.body.user;
+    const { name, properties } = req.body;
+
+    const result = await doActionRequest(user.id, {type: "CREATE", ingredient: {name: name, props: properties}});
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Create ingredient request was created successfull", error: undefined, data: { request: result }});
 });
 
 router.put('/:id', limit(1000 * 60, 2), async (req, res) => {
-    res.send('Create ingredient update request');
+    const user = req.body.user;
+    const id = req.params.id;
+
+    const result = await doActionRequest(user.id, {type: "UPDATE", id: id});
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Update ingredient request was created successfull", error: undefined, data: { request: result }});
+
 });
 
 router.delete('/:id', limit(1000 * 60 * 2, 3), async (req, res) => {
-    res.send('Create ingredient deletion request');
+    const user = req.body.user;
+    const id = req.params.id;
+
+    const result = await doActionRequest(user.id, {type: "DELETE", id: id});
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Delete ingredient request was created successfull", error: undefined, data: { request: result }});
 });
 
 export default router;
