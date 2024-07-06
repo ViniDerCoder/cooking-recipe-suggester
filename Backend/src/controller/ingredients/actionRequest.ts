@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 
-import { IngredientProperties } from "../../utils/types.js";
+import { IngredientProperties } from "../../utils/types/ingredient.js";
 import createRequest from "../../database/ingredients/actionRequests/createRequest.js";
 import editRequest from "../../database/ingredients/actionRequests/editRequest.js";
 import deleteRequest from "../../database/ingredients/actionRequests/deleteRequest.js";

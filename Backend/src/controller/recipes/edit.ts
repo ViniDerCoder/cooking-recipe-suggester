@@ -2,7 +2,8 @@ import * as uuid from "uuid";
 
 import { getIngredientsOfRecipe } from "../../database/ingredients/get_ingredients_of_recipe.js";
 import { getRecipeById } from "../../database/recipes/get_recipe.js";
-import { editabelRecipeProperties, validRecipeUnits } from "../../utils/types.js";
+import { editabelRecipeProperties } from "../../utils/types/recipe.js";
+import { validRecipeUnits } from "../../utils/types/ingredient.js";
 import { updateRecipe } from "../../database/recipes/update_recipe.js";
 import { linkIngredientToRecipe } from "../../database/ingredients/link_ingredient_to_recipe.js";
 import { updateIngredientInRecipe } from "../../database/ingredients/update_recipe_ingredients.js";

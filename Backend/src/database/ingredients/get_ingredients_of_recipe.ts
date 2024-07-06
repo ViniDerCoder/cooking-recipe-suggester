@@ -1,5 +1,5 @@
 import query from "../../utils/query.js";
-import { IngredientRecipeData } from "../../utils/types.js";
+import { IngredientRecipeData } from "../../utils/types/ingredient.js";
 
 export async function getIngredientsOfRecipe(recipeId: string) {
     const params = [recipeId];

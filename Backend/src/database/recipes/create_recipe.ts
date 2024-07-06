@@ -1,6 +1,6 @@
 import { v4 as uuidV4 } from 'uuid';
 import query from "../../utils/query.js";
-import { Recipe } from "../../utils/types.js";
+import { Recipe } from "../../utils/types/recipe.js";
 
 export async function createRecipe(options:
     {

@@ -1,7 +1,5 @@
-import * as uuid from 'uuid';
-
 import query from '../../utils/query.js';
-import { User } from '../../utils/types.js';
+import { User } from '../../utils/types/authentication.js';
 
 export async function getUser(userId: string) {
     const params = [userId];

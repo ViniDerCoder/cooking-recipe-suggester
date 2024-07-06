@@ -1,5 +1,5 @@
 import query from "../../../utils/query.js";
-import { MealSuggestionsSettings, SuggestionsSettings } from "../../../utils/types.js";
+import { MealSuggestionsSettings, SuggestionsSettings } from "../../../utils/types/suggestion.js";
 
 export default async function getSettingsOfUser(userId: string) {
 

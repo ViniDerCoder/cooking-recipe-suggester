@@ -2,7 +2,7 @@ import * as uuid from "uuid";
 
 import { getRecipeById as dbRecipeById, getRecipesByIds } from "../../database/recipes/get_recipe.js";
 import { listUserRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
-import { Recipe } from "../../utils/types.js";
+import { Recipe } from "../../utils/types/recipe.js";
 
 export async function getRecipeById(id: string, userId: string) {
     if(typeof id !== "string" || typeof userId !== "string") return 'Invalid input';

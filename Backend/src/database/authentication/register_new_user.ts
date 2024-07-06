@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from 'uuid';
 
 import query from '../../utils/query.js';
-import { User } from '../../utils/types.js';
+import { User } from '../../utils/types/authentication.js';
 
 export async function registerNewUser(username: string, email: string, firstName: string, lastName: string) {
     const userId = uuidV4();

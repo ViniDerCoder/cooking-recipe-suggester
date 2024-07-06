@@ -1,5 +1,5 @@
 import query from "../../utils/query.js";
-import { editabelRecipeProperties } from "../../utils/types.js";
+import { editabelRecipeProperties } from "../../utils/types/recipe.js";
 
 export async function updateRecipe(recipeId: string, changedProperties: {[key: string]: any}) {
     if(!Object.keys(changedProperties).every((key) => editabelRecipeProperties.includes(key as any))) return 'Invalid changes provided';

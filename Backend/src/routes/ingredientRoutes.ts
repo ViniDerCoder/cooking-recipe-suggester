@@ -4,7 +4,7 @@ import verifyRequest from '../utils/defaultVerification.js';
 import limit from '../utils/rate-limiter.js';
 import { getAllIngredientIds, getIngredientById, getIngredientIdsMatchingFilter } from '../controller/ingredients/get.js';
 import { doActionRequest } from '../controller/ingredients/actionRequest.js';
-import { AuthenticationUser } from '../utils/types.js';
+import { AuthenticationUser } from '../utils/types/authentication.js';
 
 const router = express.Router();
 

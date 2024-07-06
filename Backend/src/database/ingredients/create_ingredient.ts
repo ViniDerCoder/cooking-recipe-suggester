@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from 'uuid';
 
 import query from '../../utils/query.js';
-import { Ingredient, IngredientProperties } from '../../utils/types.js';
+import { Ingredient, IngredientProperties } from '../../utils/types/ingredient.js';
 
 export async function createNewIngredient(name: string, properties: IngredientProperties) {
     const ingredientId = uuidV4()

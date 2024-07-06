@@ -1,9 +1,8 @@
 import express from 'express';
 
-import { AuthenticationUser } from '../utils/types.js';
+import { AuthenticationUser } from '../utils/types/authentication.js';
 import { getRecipeById, getUserRecipes, getUsersAdddedRecipes } from '../controller/recipes/get.js';
 import { createCustomRecipe } from '../controller/recipes/create.js';
-import { isTokenValid } from '../controller/authentication/validate.js';
 import { deleteRecipe } from '../controller/recipes/delete.js';
 import { editRecipeById } from '../controller/recipes/edit.js';
 import verifyRequest from '../utils/defaultVerification.js';

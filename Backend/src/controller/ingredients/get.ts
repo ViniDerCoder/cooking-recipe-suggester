@@ -1,7 +1,7 @@
 import * as uuid from "uuid";
 
 import { getAllIngredients as dbGetAllIngredients, getIngredientById as dbGetIngredientById } from "../../database/ingredients/get.js";
-import { IngredientPropertyFilter, ingredientPropertyFilters } from "../../utils/types.js";
+import { IngredientPropertyFilter, ingredientPropertyFilters } from "../../utils/types/ingredient.js";
 
 export async function getAllIngredientIds() {
     const result = await dbGetAllIngredients();

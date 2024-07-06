@@ -1,4 +1,4 @@
-import { CleanupType } from "../types.js";
+import { CleanupType } from "../types/other.js";
 
 let cleanupFunctions: {id: string, type: CleanupType, f: (() => Promise<boolean>)}[] = [];
 

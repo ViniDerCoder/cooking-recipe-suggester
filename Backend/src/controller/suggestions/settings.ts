@@ -2,7 +2,7 @@ import * as uuid from "uuid";
 
 import editSettingsOfUser from "../../database/suggestions/suggestionSettings/edit.js";
 import getSettingsOfUser from "../../database/suggestions/suggestionSettings/get.js";
-import { MealSuggestionsSettings, SuggestionsSettings } from "../../utils/types.js";
+import { MealSuggestionsSettings, SuggestionsSettings } from "../../utils/types/suggestion.js";
 
 
 export async function getSuggestionsSettings(userId: string) {
@@ -50,7 +50,7 @@ function isValidMealSetting(mealSetting: MealSuggestionsSettings): boolean {
     if(typeof mealSetting.shellfishFree            !== "boolean" && mealSetting.shellfishFree !== null) return false;
     if(typeof mealSetting.soyFree                  !== "boolean" && mealSetting.soyFree !== null)       return false;
     if(typeof mealSetting.maxPreparationTime       !== "number")    return false;
-    
+
     if(!Array.isArray(mealSetting.recipeTypesWhitelist) || !mealSetting.recipeTypesWhitelist.every((type) => typeof type === "string")) return false;
     if(!Array.isArray(mealSetting.recipeTypesBlacklist) || !mealSetting.recipeTypesBlacklist.every((type) => typeof type === "string")) return false;
     

@@ -1,5 +1,5 @@
 import query from '../../utils/query.js';
-import { User } from '../../utils/types.js';
+import { User } from '../../utils/types/authentication.js';
 
 export async function getUserFromEmail(email: string) {
     const params = [email];

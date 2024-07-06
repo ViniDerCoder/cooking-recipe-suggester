@@ -5,7 +5,8 @@ import { linkIngredientToRecipe } from "../../database/ingredients/link_ingredie
 import { createRecipe } from "../../database/recipes/create_recipe.js";
 import { linkUserToRecipe } from "../../database/recipes/link_user_to_recipe.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
-import { IngredientRecipeData, Recipe, RecipeCreationData, validRecipeUnits } from "../../utils/types.js";
+import { Recipe, RecipeCreationData } from "../../utils/types/recipe.js";
+import { IngredientRecipeData, validRecipeUnits } from "../../utils/types/ingredient.js";
 
 export async function createCustomRecipe(userId: string, recipe: RecipeCreationData, ingredients: Array<IngredientRecipeData>) {
     console.log(userId, recipe, ingredients);

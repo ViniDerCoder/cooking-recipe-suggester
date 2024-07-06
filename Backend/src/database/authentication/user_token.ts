@@ -1,6 +1,6 @@
 import onCleanup from '../../utils/listener/cleanup.js';
 import query from '../../utils/query.js';
-import { AuthenticationUser } from '../../utils/types.js';
+import { AuthenticationUser } from '../../utils/types/authentication.js';
 
 onCleanup("userAuthenticationTokesCleanup", "DATABASE", async () => {
     const q = ''

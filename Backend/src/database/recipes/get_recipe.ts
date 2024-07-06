@@ -1,7 +1,7 @@
 import * as uuid from "uuid";
 
 import query from "../../utils/query.js";
-import { Recipe } from "../../utils/types.js";
+import { Recipe } from "../../utils/types/recipe.js";
 
 export async function getRecipeById(id: string) {
     const params = [id];

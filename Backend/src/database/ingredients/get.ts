@@ -1,6 +1,6 @@
 import onCleanup from "../../utils/listener/cleanup.js";
 import query from "../../utils/query.js";
-import { Ingredient, IngredientProperties } from "../../utils/types.js";
+import { Ingredient, IngredientProperties } from "../../utils/types/ingredient.js";
 
 let ingredientCache: {[id: string]: Ingredient} = {};
 let lastFullCache = 0;

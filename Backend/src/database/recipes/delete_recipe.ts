@@ -1,5 +1,5 @@
 import query from "../../utils/query.js";
-import { Recipe } from "../../utils/types.js";
+import { Recipe } from "../../utils/types/recipe.js";
 
 
 export async function deleteRecipe(recipe: Recipe) {

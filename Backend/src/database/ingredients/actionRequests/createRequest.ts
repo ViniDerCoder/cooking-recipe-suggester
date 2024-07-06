@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 
 import query from "../../../utils/query.js";
-import { IngredientProperties } from "../../../utils/types.js";
+import { IngredientProperties } from "../../../utils/types/ingredient.js";
 
 export default async function createRequest(userId: string, ingredient: {name: string, props: IngredientProperties}) {
     const actionId = v4();
