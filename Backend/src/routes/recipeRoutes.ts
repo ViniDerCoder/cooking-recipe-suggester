@@ -60,7 +60,7 @@ router.post('/cooked/:id', limit(1000 * 20, 1), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipeId = req.params.id;
 
-    const result = await cookedRecipe(user.userId, recipeId);
+    const result = await cookedRecipe(recipeId, user.userId);
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Recipe was marked as cooked successfull", error: undefined});
 });
@@ -75,8 +75,7 @@ router.get('/:id', limit(1000 * 20, 2), async (req, res) => {
     const recipe = await getRecipeById(req.params.id, user.userId);
 
     if(typeof recipe === "string") return res.status(400).send({error: recipe});
-    if("createdById" in recipe && recipe.createdById === user.userId) return res.status(200).send({message: "Fetching recipe was successfull", error: undefined, data: { recipe: recipe }});
-    else return res.status(403).send({error: 'You are not authorized to view this recipe'})
+    else return res.status(200).send({message: "Fetching recipe was successfull", error: undefined, data: { recipe: recipe }});
 });
 
 router.post('/', limit(1000 * 60 * 20, 5), async (req, res) => {

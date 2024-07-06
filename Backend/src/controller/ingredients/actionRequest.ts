@@ -5,7 +5,12 @@ import createRequest from "../../database/ingredients/actionRequests/createReque
 import editRequest from "../../database/ingredients/actionRequests/editRequest.js";
 import deleteRequest from "../../database/ingredients/actionRequests/deleteRequest.js";
 import { getIngredientById } from "../../database/ingredients/get.js";
+import onCleanup from "../../utils/listener/cleanup.js";
 
+onCleanup('clearIngredientCache', 'DATABASE', async () => {
+    //db cleanup all requests older than 30 days
+    return true;
+});
 
 export async function doActionRequest(userId: string, rq: {type: "DELETE", id: string} | {type: "CREATE", ingredient: {name: string, props: IngredientProperties}} | {type: "UPDATE", id: string, ingredient: {name: string, props: IngredientProperties}}) {
     if(typeof rq !== "object" || !rq) return "Invalid request";

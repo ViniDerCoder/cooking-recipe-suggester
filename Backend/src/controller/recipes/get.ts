@@ -2,8 +2,7 @@ import * as uuid from "uuid";
 
 import { getRecipeById as dbRecipeById, getRecipesByIds } from "../../database/recipes/get_recipe.js";
 import { listUserRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
-import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
-import { Recipe, RecipeUserData } from "../../utils/types.js";
+import { Recipe } from "../../utils/types.js";
 
 export async function getRecipeById(id: string, userId: string) {
     if(typeof id !== "string" || typeof userId !== "string") return 'Invalid input';
@@ -12,21 +11,8 @@ export async function getRecipeById(id: string, userId: string) {
     const dbResult = await dbRecipeById(id);
 
     if(typeof dbResult === "string") return dbResult;
-    else {
-        if("typeId" in dbResult) {
-            const recipe = dbResult as any;
-            const type = getRecipeTypeById(dbResult.typeId);
-            if(!type) return 'Error getting recipe type';
-            else {
-                delete recipe.typeId;
-                return {
-                    ...recipe,
-                    type: type
-                } as Recipe
-            }
-        } 
-        else return dbResult;
-    }
+    if(dbResult.createdById !== userId && !dbResult.public) return 'User does not have permission to view this recipe';
+    else return dbResult;
 }
 
 export async function getUserRecipes(id: string) {
