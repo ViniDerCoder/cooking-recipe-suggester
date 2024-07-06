@@ -2,14 +2,25 @@ CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.suggestions_user_settings (
     user_id UUID PRIMARY KEY,
 
 
-    suggest_minimum_rating INT,
-    suggest_unrated BOOLEAN,
-    suggest_minimum_times_cooked INT,
-    suggest_timeout_hours_since_cooked INT,
-
     suggest_morning_meal BOOLEAN,
     suggest_midday_meal BOOLEAN,
     suggest_evening_meal BOOLEAN,
+    
+
+    morning_meal_suggest_minimum_rating INT,
+    morning_meal_suggest_unrated BOOLEAN,
+    morning_meal_suggest_minimum_times_cooked INT,
+    morning_meal_suggest_timeout_hours_since_cooked INT,
+
+    midday_meal_suggest_minimum_rating INT,
+    midday_meal_suggest_unrated BOOLEAN,
+    midday_meal_suggest_minimum_times_cooked INT,
+    midday_meal_suggest_timeout_hours_since_cooked INT,
+
+    evening_meal_suggest_minimum_rating INT,
+    evening_meal_suggest_unrated BOOLEAN,
+    evening_meal_suggest_minimum_times_cooked INT,
+    evening_meal_suggest_timeout_hours_since_cooked INT,
 
 
     morning_meal_filter_vegan BOOLEAN,

@@ -97,3 +97,50 @@ export type RecipeIngredientUpdateAcions = {
 
 export const ingredientPropertyFilters = ["vegan", "vegetarian", "glutenFree", "dairyFree", "nutFree", "eggFree", "fishFree", "shellfishFree", "soyFree"] as const
 export type IngredientPropertyFilter = typeof ingredientPropertyFilters[number]
+
+
+export type SuggestionsSettings = {
+    userId: string,
+
+    meals: {
+        morning: {
+            enabled: boolean,
+
+            settings: MealSuggestionsSettings
+        },
+        midday: {
+            enabled: boolean,
+
+            settings: MealSuggestionsSettings
+        },
+        evening: {
+            enabled: boolean,
+
+            settings: MealSuggestionsSettings
+        },
+    }
+    
+}
+
+export type MealSuggestionsSettings = {
+    minRating: number,
+    unratedAllowed: boolean,
+
+    minTimesCooked: number,
+    timeoutAfterLastCooked: number
+
+    vegan: boolean,
+    vegetarian: boolean,
+    glutenFree: boolean,
+    dairyFree: boolean,
+    nutFree: boolean,
+    eggFree: boolean,
+    fishFree: boolean,
+    shellfishFree: boolean,
+    soyFree: boolean,
+
+    maxPreparationTime: number,
+
+    recipeTypesWhitelist: Array<string>,
+    recipeTypesBlacklist: Array<string>
+}
