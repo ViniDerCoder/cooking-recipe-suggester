@@ -129,15 +129,15 @@ export type MealSuggestionsSettings = {
     minTimesCooked: number,
     timeoutAfterLastCooked: number
 
-    vegan: boolean,
-    vegetarian: boolean,
-    glutenFree: boolean,
-    dairyFree: boolean,
-    nutFree: boolean,
-    eggFree: boolean,
-    fishFree: boolean,
-    shellfishFree: boolean,
-    soyFree: boolean,
+    vegan: boolean | null,
+    vegetarian: boolean | null,
+    glutenFree: boolean | null,
+    dairyFree: boolean | null,
+    nutFree: boolean | null,
+    eggFree: boolean | null,
+    fishFree: boolean | null,
+    shellfishFree: boolean | null,
+    soyFree: boolean | null,
 
     maxPreparationTime: number,
 
