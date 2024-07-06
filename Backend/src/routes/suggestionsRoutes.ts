@@ -17,4 +17,8 @@ router.post('/', limit(1000 * 60 * 2, 3), async (req, res) => {
     res.send('Remake suggestions for current day');
 });
 
+router.post('/settings/', limit(1000 * 60 * 5, 3), async (req, res) => {
+    res.send('Change suggestion settings');
+});
+
 export default router;
