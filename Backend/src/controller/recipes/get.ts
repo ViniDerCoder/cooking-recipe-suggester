@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 
-import { getRecipeById as dbRecipeById, getRecipesById } from "../../database/recipes/get_recipe.js";
+import { getRecipeById as dbRecipeById, getRecipesByIds } from "../../database/recipes/get_recipe.js";
 import { listUserRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
 import { Recipe, RecipeUserData } from "../../utils/types.js";
@@ -43,7 +43,7 @@ export async function getUsersAdddedRecipes(id: string) {
 
     if(typeof recipesUserData === "string") return recipesUserData;
     
-    const recipes = await getRecipesById(recipesUserData.filter((recipe) => !recipe.recipeDeletedName).map((recipe) => recipe.recipeId));
+    const recipes = await getRecipesByIds(recipesUserData.filter((recipe) => !recipe.recipeDeletedName).map((recipe) => recipe.recipeId));
 
     if(typeof recipes === "string") return recipes;
     else {

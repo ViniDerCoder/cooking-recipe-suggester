@@ -9,7 +9,7 @@ export default async function deleteRequest(userId: string, ingredientId: string
     const params = [actionId, "DELETE", createdAt, userId, ingredientId];
     const q = ''
     + 'INSERT INTO '
-    + 'ingredient_action_requests '
+    + 'cooking_recipe_suggester.ingredient_action_requests '
     + '(id, action, created_at, created_by, ingredient_id) '
     + 'VALUES (?, ?, ?, ?, ?)';
 

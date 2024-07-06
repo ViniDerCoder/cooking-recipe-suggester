@@ -8,6 +8,7 @@ import { deleteRecipe } from '../controller/recipes/delete.js';
 import { editRecipeById } from '../controller/recipes/edit.js';
 import verifyRequest from '../utils/defaultVerification.js';
 import limit from '../utils/rate-limiter.js';
+import { cookedRecipe, markRecipe, unmarkRecipe } from '../controller/recipes/mark.js';
 const router = express.Router();
 
 
@@ -23,12 +24,45 @@ router.get('/', limit(1000 * 20, 2), async (req, res) => {
     else return res.status(200).send({message: "Fetching of all created recipes was successfull", error: undefined, data: { recipes: recipes }});
 });
 
-router.get('/marked', limit(1000 * 20, 2), async (req, res) => {
+router.get('/mark', limit(1000 * 20, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipes = await getUsersAdddedRecipes(user.userId)
 
     if(typeof recipes === "string") return res.status(400).send({error: recipes});
     else return res.status(200).send({message: "Fetching of all marked recipe was successfull", error: undefined, data: { userRecipes: recipes }});
+});
+
+router.post('/mark/:id', limit(1000 * 20, 5), async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id;
+
+    const result = await markRecipe(user.userId, recipeId);
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Recipe was marked successfull", error: undefined});
+});
+
+router.delete('/mark/:id', limit(1000 * 20, 5), async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id;
+
+    const result = await unmarkRecipe(user.userId, recipeId);
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Recipe was unmarked successfull", error: undefined});
+})
+
+router.get('/cooked/:id', limit(1000 * 20, 2), async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id;
+
+});
+
+router.post('/cooked/:id', limit(1000 * 20, 1), async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id;
+
+    const result = await cookedRecipe(user.userId, recipeId);
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Recipe was marked as cooked successfull", error: undefined});
 });
 
 //late feature

@@ -33,7 +33,7 @@ export async function getRecipeById(id: string) {
     else return 'Recipe not found';
 }
 
-export async function getRecipesById(ids: Array<string>) {
+export async function getRecipesByIds(ids: Array<string>) {
     if(ids.length === 0) return [];
 
     const params = [...ids];

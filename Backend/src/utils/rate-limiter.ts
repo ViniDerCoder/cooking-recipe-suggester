@@ -9,6 +9,6 @@ export default function limit(t: number = 1000 * 60 * 30, m: number = 5) {
     return rateLimit({
         windowMs: t,
         max: m,
-        message: { error: 'Too many requests, to this route. Please try again later' }
+        message: { error: 'Too many requests to this route. Please try again later' }
     });
 }

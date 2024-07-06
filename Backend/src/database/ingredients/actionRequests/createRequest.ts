@@ -25,7 +25,7 @@ export default async function createRequest(userId: string, ingredient: {name: s
     const params = [actionId, "CREATE", createdAt, userId, data];
     const q = ''
     + 'INSERT INTO '
-    + 'ingredient_action_requests '
+    + 'cooking_recipe_suggester.ingredient_action_requests '
     + '(id, action, created_at, created_by, data) '
     + 'VALUES (?, ?, ?, ?, ?)';
 
