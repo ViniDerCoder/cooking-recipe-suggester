@@ -1,7 +1,8 @@
 import query from "../../utils/query.js";
+import { Uuid } from "../../utils/types/other.js";
 import { editabelRecipeProperties } from "../../utils/types/recipe.js";
 
-export async function updateRecipe(recipeId: string, changedProperties: {[key: string]: any}) {
+export async function updateRecipe(recipeId: Uuid, changedProperties: {[key: string]: any}) {
     if(!Object.keys(changedProperties).every((key) => editabelRecipeProperties.includes(key as any))) return 'Invalid changes provided';
     if(!changedProperties || typeof changedProperties !== 'object') return 'No changes provided';
     

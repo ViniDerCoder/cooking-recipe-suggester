@@ -1,6 +1,7 @@
 import query from "../../utils/query.js";
+import { Uuid } from "../../utils/types/other.js";
 
-export async function unlinkIngredientFromRecipe(ingredientId: string, recipeId: TemplateStringsArray) {
+export async function unlinkIngredientFromRecipe(ingredientId: Uuid, recipeId: Uuid) {
     const params = [recipeId, ingredientId];
     const q = ''
     + 'DELETE FROM '

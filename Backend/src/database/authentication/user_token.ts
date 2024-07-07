@@ -1,6 +1,7 @@
 import onCleanup from '../../utils/listener/cleanup.js';
 import query from '../../utils/query.js';
 import { AuthenticationUser } from '../../utils/types/authentication.js';
+import { Uuid } from '../../utils/types/other.js';
 
 onCleanup("userAuthenticationTokesCleanup", "DATABASE", async () => {
     const q = ''
@@ -46,7 +47,7 @@ export async function getAuthUserFromToken(token: string) {
 
 const tokenExpiresIn = 1000 * 60 * 60 * 24 * 30; // 30 days
 
-export async function insertToken(token: string, userId: string) {
+export async function insertToken(token: string, userId: Uuid) {
     const params = [token, userId, new Date(Date.now() + tokenExpiresIn)];
     const q = ''
     + 'INSERT INTO '

@@ -1,7 +1,5 @@
-import * as uuid from "uuid";
-
 import { getAllIngredients as dbGetAllIngredients, getIngredientById as dbGetIngredientById } from "../../database/ingredients/get.js";
-import { IngredientFilters, ingredientPropertyFilters, isIngredientFilters } from "../../utils/types/ingredient.js";
+import { IngredientFilters, isIngredientFilters } from "../../utils/types/ingredient.js";
 import { isUuid } from "../../utils/types/other.js";
 
 export async function getAllIngredientIds() {

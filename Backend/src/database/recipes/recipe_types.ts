@@ -1,7 +1,8 @@
 import onReady from "../../utils/listener/ready.js";
 import query from "../../utils/query.js";
+import { Uuid } from "../../utils/types/other.js";
 
-let recipeTypes: {[id: string]: string} = {};
+let recipeTypes: {[id: Uuid]: string} = {};
 
 onReady('cacheAllRecipeTypes', async () => { await cacheAllRecipeTypes() });
 
@@ -19,7 +20,7 @@ export async function cacheAllRecipeTypes() {
     }
 }
 
-export function getRecipeTypeById(id: string) {
+export function getRecipeTypeById(id: Uuid) {
     return recipeTypes[id];
 }
 

@@ -1,7 +1,8 @@
 import query from "../../../utils/query.js";
+import { Uuid } from "../../../utils/types/other.js";
 import { MealSuggestionsSettings, SuggestionsSettings } from "../../../utils/types/suggestion.js";
 
-export default async function getSettingsOfUser(userId: string) {
+export default async function getSettingsOfUser(userId: Uuid) {
 
     const params = [userId];
 
@@ -15,7 +16,7 @@ export default async function getSettingsOfUser(userId: string) {
     else return rowToSettings(userId, result.rows[0])
 }
 
-function rowToSettings(userId: string, row: any) {
+function rowToSettings(userId: Uuid, row: any) {
     return {
         userId: userId,
         meals: {

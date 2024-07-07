@@ -1,7 +1,8 @@
 import query from "../../utils/query.js";
+import { Uuid } from "../../utils/types/other.js";
 import { Recipe, RecipeUserData } from "../../utils/types/recipe.js";
 
-export async function listUserRecipes(userId: string) {
+export async function listUserRecipes(userId: Uuid) {
     const params = [userId];
     const q = ''
     + 'SELECT * FROM '
@@ -30,7 +31,7 @@ export async function listUserRecipes(userId: string) {
     });
 }
 
-export async function listUsersAddedRecipeData(userId: string) {
+export async function listUsersAddedRecipeData(userId: Uuid) {
     const params = [userId];
     const q = ''
     + 'SELECT * FROM '

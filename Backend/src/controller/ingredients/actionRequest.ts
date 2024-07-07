@@ -1,6 +1,4 @@
-import * as uuid from "uuid";
-
-import { IngredientProperties, isIngredientActionRequest } from "../../utils/types/ingredient.js";
+import { isIngredientActionRequest } from "../../utils/types/ingredient.js";
 import createRequest from "../../database/ingredients/actionRequests/createRequest.js";
 import editRequest from "../../database/ingredients/actionRequests/editRequest.js";
 import deleteRequest from "../../database/ingredients/actionRequests/deleteRequest.js";
@@ -15,8 +13,6 @@ onCleanup('clearIngredientCache', 'DATABASE', async () => {
 
 export async function doActionRequest(userId: unknown, rq: unknown) {
     if(!isUuid(userId) || !isIngredientActionRequest(rq)) return "Invalid request";
-    if(!rq.type) return "Invalid request type";
-    if(typeof userId !== "string" || !uuid.validate(userId)) return "Invalid user id";
     
     if(rq.type === "CREATE") {
         return await createRequest(userId, rq.ingredient);

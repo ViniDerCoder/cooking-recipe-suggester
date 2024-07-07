@@ -1,6 +1,8 @@
 import query from "../../utils/query.js";
+import { Uuid } from "../../utils/types/other.js";
+import { UserRecipeEditData } from "../../utils/types/recipe.js";
 
-export async function editUserRecipe(recipeId: string, userId: string, recipeData: {key: "notes", value: string} | {key: "rating", value: number}) {
+export async function editUserRecipe(recipeId: Uuid, userId: Uuid, recipeData: UserRecipeEditData) {
 
     const params = [recipeData.value, recipeId, userId];
     const q = ''
@@ -15,7 +17,7 @@ export async function editUserRecipe(recipeId: string, userId: string, recipeDat
     return undefined;
 }   
 
-export async function addCookedTimeToUserRecipe(recipeId: string, userId: string) {
+export async function addCookedTimeToUserRecipe(recipeId: Uuid, userId: Uuid) {
     const time = new Date()
 
     const params = [[time], recipeId, userId];

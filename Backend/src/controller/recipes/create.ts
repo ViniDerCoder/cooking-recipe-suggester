@@ -4,7 +4,7 @@ import { createRecipe } from "../../database/recipes/create_recipe.js";
 import { linkUserToRecipe } from "../../database/recipes/link_user_to_recipe.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
 import { isRecipeCreationData, Recipe } from "../../utils/types/recipe.js";
-import { isIngredientRecipeList, validRecipeUnits } from "../../utils/types/ingredient.js";
+import { isIngredientRecipeList } from "../../utils/types/ingredient.js";
 import { isUuid } from "../../utils/types/other.js";
 
 export async function createCustomRecipe(userId: unknown, recipe: unknown, ingredients: unknown) {

@@ -2,8 +2,9 @@ import * as uuid from "uuid";
 
 import query from "../../utils/query.js";
 import { Recipe } from "../../utils/types/recipe.js";
+import { Uuid } from "../../utils/types/other.js";
 
-export async function getRecipeById(id: string) {
+export async function getRecipeById(id: Uuid) {
     const params = [id];
     const q = ''
     + 'SELECT * '
@@ -33,7 +34,7 @@ export async function getRecipeById(id: string) {
     else return 'Recipe not found';
 }
 
-export async function getRecipesByIds(ids: Array<string>) {
+export async function getRecipesByIds(ids: Array<Uuid>) {
     if(ids.length === 0) return [];
 
     const params = [...ids];

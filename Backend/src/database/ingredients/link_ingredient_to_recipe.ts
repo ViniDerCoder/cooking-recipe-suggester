@@ -1,6 +1,7 @@
 import query from "../../utils/query.js";
+import { Uuid } from "../../utils/types/other.js";
 
-export async function linkIngredientToRecipe(ingredientId: string, recipeId: string, amount: number, unit: string | null) {
+export async function linkIngredientToRecipe(ingredientId: Uuid, recipeId: Uuid, amount: number, unit: string | null) {
     const params = [recipeId, ingredientId, amount, unit];
     const q = ''
     + 'INSERT INTO '

@@ -1,5 +1,3 @@
-import * as uuid from "uuid";
-
 import { getUser } from "../../database/authentication/get_user.js";
 import { getAuthUserFromToken } from "../../database/authentication/user_token.js";
 import { isUuid } from "../../utils/types/other.js";

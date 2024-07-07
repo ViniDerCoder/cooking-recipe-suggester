@@ -2,8 +2,9 @@ import { v4 } from "uuid";
 
 import query from "../../../utils/query.js";
 import { IngredientProperties } from "../../../utils/types/ingredient.js";
+import { Uuid } from "../../../utils/types/other.js";
 
-export default async function createRequest(userId: string, ingredient: {name: string, props: IngredientProperties}) {
+export default async function createRequest(userId: Uuid, ingredient: {name: string, props: IngredientProperties}) {
     const actionId = v4();
     const createdAt = new Date();
 

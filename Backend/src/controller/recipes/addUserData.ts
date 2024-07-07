@@ -1,8 +1,7 @@
-import * as uuid from 'uuid';
-
 import { isUserLinkedToRecipe } from '../../database/recipes/link_user_to_recipe.js';
 import { editUserRecipe } from '../../database/recipes/edit_user_recipe.js';
 import { isUuid } from '../../utils/types/other.js';
+import { UserRecipeEditData } from '../../utils/types/recipe.js';
 
 
 export async function setRatingForRecipe(recipeId: unknown, userId: unknown, rating: unknown) {
@@ -13,7 +12,7 @@ export async function setRatingForRecipe(recipeId: unknown, userId: unknown, rat
     if(typeof userLinked === "string") return 'Error checking if user is linked to recipe';
     if(!userLinked) return 'User is not linked to recipe';
 
-    return await editUserRecipe(recipeId, userId, { key: "rating", value: rating });
+    return await editUserRecipe(recipeId, userId, { key: "rating", value: rating } as UserRecipeEditData);
 }
 
 export async function setNotesForRecipe(recipeId: unknown, userId: unknown, notes: unknown) {
@@ -25,5 +24,5 @@ export async function setNotesForRecipe(recipeId: unknown, userId: unknown, note
     if(typeof userLinked === "string") return 'Error checking if user is linked to recipe';
     if(!userLinked) return 'User is not linked to recipe';
 
-    return await editUserRecipe(recipeId, userId, { key: "notes", value: notes });
+    return await editUserRecipe(recipeId, userId, { key: "notes", value: notes } as UserRecipeEditData);
 }

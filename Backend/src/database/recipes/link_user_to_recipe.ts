@@ -1,6 +1,7 @@
 import query from "../../utils/query.js";
+import { Uuid } from "../../utils/types/other.js";
 
-export async function linkUserToRecipe(userId: string, recipeId: string) {
+export async function linkUserToRecipe(userId: Uuid, recipeId: Uuid) {
     const params = [userId, recipeId];
     const q = ''
     + 'INSERT INTO '
@@ -16,7 +17,7 @@ export async function linkUserToRecipe(userId: string, recipeId: string) {
     };
 }
 
-export async function unlinkUserFromRecipe(userId: string, recipeId: string) {
+export async function unlinkUserFromRecipe(userId: Uuid, recipeId: Uuid) {
     const params = [userId, recipeId];
     const q = ''
     + 'DELETE FROM '
@@ -31,7 +32,7 @@ export async function unlinkUserFromRecipe(userId: string, recipeId: string) {
     };
 }
 
-export async function isUserLinkedToRecipe(userId: string, recipeId: string) {
+export async function isUserLinkedToRecipe(userId: Uuid, recipeId: Uuid) {
     const params = [userId, recipeId];
     const q = ''
     + 'SELECT * FROM '

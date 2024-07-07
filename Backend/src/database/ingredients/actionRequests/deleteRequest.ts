@@ -1,8 +1,9 @@
 import { v4 } from "uuid";
 
 import query from "../../../utils/query.js";
+import { Uuid } from "../../../utils/types/other.js";
 
-export default async function deleteRequest(userId: string, ingredientId: string) {
+export default async function deleteRequest(userId: Uuid, ingredientId: Uuid) {
     const actionId = v4();
     const createdAt = new Date();
 

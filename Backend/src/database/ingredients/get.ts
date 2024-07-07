@@ -1,8 +1,9 @@
 import onCleanup from "../../utils/listener/cleanup.js";
 import query from "../../utils/query.js";
 import { Ingredient, IngredientProperties } from "../../utils/types/ingredient.js";
+import { Uuid } from "../../utils/types/other.js";
 
-let ingredientCache: {[id: string]: Ingredient} = {};
+let ingredientCache: {[id: Uuid]: Ingredient} = {};
 let lastFullCache = 0;
 
 onCleanup('clearIngredientCache', 'MEMORY', async () => {
@@ -10,7 +11,7 @@ onCleanup('clearIngredientCache', 'MEMORY', async () => {
     return true;
 });
 
-export async function getIngredientById(id: string) {
+export async function getIngredientById(id: Uuid) {
     if(ingredientCache[id]) return ingredientCache[id];
     const params = [id];
 

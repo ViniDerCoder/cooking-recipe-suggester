@@ -1,22 +1,8 @@
 import { v4 as uuidV4 } from 'uuid';
 import query from "../../utils/query.js";
-import { Recipe } from "../../utils/types/recipe.js";
+import { DatabaseRecipeCreationData, Recipe } from "../../utils/types/recipe.js";
 
-export async function createRecipe(options:
-    {
-        name: string,
-        description: string,
-        instructions: Array<string>,
-        createdById: string,
-        cookingTime: number,
-        waitingTime: number,
-        servings: number,
-        public: boolean,
-        typeId: string,
-        sourceUrl: string | null | undefined,
-        imageUrl: string | null | undefined
-    }
-) {
+export async function createRecipe(options: DatabaseRecipeCreationData) {
     const recipeId = uuidV4();
     const createdAt = new Date()
 

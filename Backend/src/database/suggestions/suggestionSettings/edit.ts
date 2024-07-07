@@ -1,6 +1,7 @@
 import query from "../../../utils/query.js";
+import { Uuid } from "../../../utils/types/other.js";
 
-export default async function editSettingsOfUser(userId: string, changes: {key: string, value: any}[]) {
+export default async function editSettingsOfUser(userId: Uuid, changes: {key: string, value: any}[]) {
 
     const params = changes.map((change) => change.value);
 

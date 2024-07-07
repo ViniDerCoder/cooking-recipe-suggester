@@ -1,6 +1,7 @@
 import query from "../../../utils/query.js";
+import { Uuid } from "../../../utils/types/other.js";
 
-export default async function initializeSettingsForUser(userId: string) {
+export default async function initializeSettingsForUser(userId: Uuid) {
 
     const params = [userId];
 

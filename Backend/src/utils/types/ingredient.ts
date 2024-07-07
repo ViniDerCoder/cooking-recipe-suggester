@@ -123,6 +123,17 @@ export function isRecipeIngredientUpdateActions(any: any): any is RecipeIngredie
 }
 
 
+export type IngredientUpdateActionList = Array<RecipeIngredientUpdateActions>
+
+export function isIngredientUpdateActionList(any: any): any is IngredientUpdateActionList {
+    if(!Array.isArray(any)) return false;
+
+    if(!any.every((action) => isRecipeIngredientUpdateActions(action))) return false;
+
+    return true;
+}
+
+
 export const ingredientPropertyFilters = ["vegan", "vegetarian", "glutenFree", "dairyFree", "nutFree", "eggFree", "fishFree", "shellfishFree", "soyFree"] as const
 export type IngredientPropertyFilter = typeof ingredientPropertyFilters[number]
 

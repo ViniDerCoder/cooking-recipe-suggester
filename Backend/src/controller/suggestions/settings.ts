@@ -1,27 +1,20 @@
-import * as uuid from "uuid";
-
 import editSettingsOfUser from "../../database/suggestions/suggestionSettings/edit.js";
 import getSettingsOfUser from "../../database/suggestions/suggestionSettings/get.js";
-import { MealSuggestionsSettings, SuggestionsSettings } from "../../utils/types/suggestion.js";
+import { isSuggestionsSettings, MealSuggestionsSettings, SuggestionsSettings } from "../../utils/types/suggestion.js";
+import { isUuid } from "../../utils/types/other.js";
 
 
-export async function getSuggestionsSettings(userId: string) {
-    if(typeof userId !== "string" || !uuid.validate(userId)) return 'Invalid user id';
+export async function getSuggestionsSettings(userId: unknown) {
+    if(!isUuid(userId)) return 'Invalid input';
 
     const settings = await getSettingsOfUser(userId);
     return settings
 }
 
-export async function editSuggestionsSettings(userId: string, settings: SuggestionsSettings) {
-    if(typeof userId !== "string" || !uuid.validate(userId)) return 'Invalid user id';
+export async function editSuggestionsSettings(userId: unknown, settings: unknown) {
+    if(!isUuid(userId)) return 'Invalid input';
 
-    if(typeof settings !== "object" || !settings) return 'Invalid settings';
-
-    if(!settings.meals) return 'Invalid settings';
-    if(!settings.meals.morning || !settings.meals.midday || !settings.meals.evening) return 'Invalid settings, missing meals';
-    if(!settings.meals.morning.settings || !settings.meals.midday.settings || !settings.meals.evening.settings) return 'Invalid settings, missing meal settings';
-    if(typeof settings.meals.morning.enabled !== "boolean" || typeof settings.meals.midday.enabled !== "boolean" || typeof settings.meals.evening.enabled !== "boolean") return 'Invalid settings, missing meal enabled';
-    if(!isValidMealSetting(settings.meals.morning.settings) || !isValidMealSetting(settings.meals.midday.settings) || !isValidMealSetting(settings.meals.evening.settings)) return 'Invalid settings, invalid meal settings';
+    if(!isSuggestionsSettings(settings)) return 'Invalid settings';
 
     const oldSettings = await getSettingsOfUser(userId);
     if(typeof oldSettings === "string") return oldSettings;
@@ -33,28 +26,6 @@ export async function editSuggestionsSettings(userId: string, settings: Suggesti
     const result = await editSettingsOfUser(userId, changes)
     if(typeof result === "string") return result;
     else return settings
-}
-
-function isValidMealSetting(mealSetting: MealSuggestionsSettings): boolean {
-    if(typeof mealSetting.minRating                !== "number")    return false;
-    if(typeof mealSetting.unratedAllowed           !== "boolean")   return false;
-    if(typeof mealSetting.minTimesCooked           !== "number")    return false;
-    if(typeof mealSetting.timeoutAfterLastCooked   !== "number")    return false;
-    if(typeof mealSetting.vegan                    !== "boolean" && mealSetting.vegan !== null)         return false;
-    if(typeof mealSetting.vegetarian               !== "boolean" && mealSetting.vegetarian !== null)    return false;
-    if(typeof mealSetting.glutenFree               !== "boolean" && mealSetting.glutenFree !== null)    return false;
-    if(typeof mealSetting.dairyFree                !== "boolean" && mealSetting.dairyFree !== null)     return false;
-    if(typeof mealSetting.nutFree                  !== "boolean" && mealSetting.nutFree !== null)       return false;
-    if(typeof mealSetting.eggFree                  !== "boolean" && mealSetting.eggFree !== null)       return false;
-    if(typeof mealSetting.fishFree                 !== "boolean" && mealSetting.fishFree !== null)      return false;
-    if(typeof mealSetting.shellfishFree            !== "boolean" && mealSetting.shellfishFree !== null) return false;
-    if(typeof mealSetting.soyFree                  !== "boolean" && mealSetting.soyFree !== null)       return false;
-    if(typeof mealSetting.maxPreparationTime       !== "number")    return false;
-
-    if(!Array.isArray(mealSetting.recipeTypesWhitelist) || !mealSetting.recipeTypesWhitelist.every((type) => typeof type === "string")) return false;
-    if(!Array.isArray(mealSetting.recipeTypesBlacklist) || !mealSetting.recipeTypesBlacklist.every((type) => typeof type === "string")) return false;
-    
-    return true
 }
 
 

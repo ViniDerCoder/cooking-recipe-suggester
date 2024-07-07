@@ -1,7 +1,8 @@
 import query from "../../utils/query.js";
 import { IngredientRecipeData } from "../../utils/types/ingredient.js";
+import { Uuid } from "../../utils/types/other.js";
 
-export async function getIngredientsOfRecipe(recipeId: string) {
+export async function getIngredientsOfRecipe(recipeId: Uuid) {
     const params = [recipeId];
     const q = ''
     + 'SELECT * FROM '
