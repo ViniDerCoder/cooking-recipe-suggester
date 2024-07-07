@@ -32,7 +32,7 @@ export async function unlinkUserFromRecipe(userId: Uuid, recipeId: Uuid) {
     };
 }
 
-export async function isUserLinkedToRecipe(userId: Uuid, recipeId: Uuid) {
+export async function isUserLinkedToRecipe(userId: Uuid, recipeId: Uuid, includeDeleted = false) {
     const params = [userId, recipeId];
     const q = ''
     + 'SELECT * FROM '
@@ -41,5 +41,5 @@ export async function isUserLinkedToRecipe(userId: Uuid, recipeId: Uuid) {
 
     const result = await query(q, params)
     if(typeof result === "string") return 'Error checking if user is linked to recipe';
-    else return result.rows.length > 0;
+    else return result.rows.length > 0 && !(includeDeleted && typeof result.rows[0].recipe_deleted_name !== "string");
 }

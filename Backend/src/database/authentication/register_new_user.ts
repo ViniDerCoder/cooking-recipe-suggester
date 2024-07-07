@@ -2,6 +2,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import query from '../../utils/query.js';
 import { User } from '../../utils/types/authentication.js';
+import initializeSettingsForUser from '../suggestions/suggestionSettings/initialize.js';
 
 export async function registerNewUser(username: string, email: string, firstName: string, lastName: string) {
     const userId = uuidV4();
@@ -17,7 +18,12 @@ export async function registerNewUser(username: string, email: string, firstName
     const result = await query(q, params)
 
     if(typeof result === "string") return 'Error registering user';
-    else return {
+
+    const initializingSuggestionsSettings = await initializeSettingsForUser(userId);
+
+    if(typeof initializingSuggestionsSettings === "string") return 'Error initializing settings';
+
+    return {
         user: {
             id: userId,
             firstName: firstName,

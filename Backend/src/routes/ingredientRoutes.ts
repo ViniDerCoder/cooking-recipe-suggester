@@ -32,7 +32,7 @@ router.get('/filter', limit(1000 * 60), async (req, res) => {
     else return res.status(200).send({message: "Fetching of filtered ingredients was successfull", error: undefined, data: { ingredients: result }});
 });
 
-router.get('/:id', limit(), async (req, res) => {
+router.get('/:id', limit(1000 * 60), async (req, res) => {
     const id = req.params.id;
 
     const result = await getIngredientById(id);

@@ -13,7 +13,7 @@ export async function getSuggestionsSettings(userId: unknown) {
 
 export async function editSuggestionsSettings(userId: unknown, settings: unknown) {
     if(!isUuid(userId)) return 'Invalid input';
-
+    
     if(!isSuggestionsSettings(settings)) return 'Invalid settings';
 
     const oldSettings = await getSettingsOfUser(userId);

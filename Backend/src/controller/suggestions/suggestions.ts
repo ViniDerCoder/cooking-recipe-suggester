@@ -83,7 +83,7 @@ async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings): 
 
     const filteredRecipes = preFilteredRecipes.filter((recipe) => {
         if(recipe.public === false && userId !== recipe.createdById) return false;
-        if(recipe.waitingTime + recipe.cookingTime > meal.maxPreparationTime) return false;
+        if(recipe.waitingTime + recipe.cookingTime > (meal.maxPreparationTime ? meal.maxPreparationTime : Infinity)) return false;
         if(meal.recipeTypesBlacklist.includes(recipe.typeId)) return false;
 
         return true;

@@ -13,6 +13,7 @@ export default async function getSettingsOfUser(userId: Uuid) {
 
     const result = await query(q, params)
     if(typeof result === "string") return 'Error getting settings';
+    else if(result.rows.length < 1) return 'No settings found';
     else return rowToSettings(userId, result.rows[0])
 }
 
@@ -39,7 +40,7 @@ function rowToSettings(userId: Uuid, row: any) {
                     shellfishFree: defaults(row.morning_meal_filter_shellfish_free, null),
                     soyFree: defaults(row.morning_meal_filter_soy_free, null),
 
-                    maxPreparationTime: defaults(row.morning_meal_filter_max_prep_time, Infinity),
+                    maxPreparationTime: defaults(row.morning_meal_filter_max_prep_time, null),
 
                     recipeTypesWhitelist: defaults(row.morning_meal_filter_recipe_types_whitelist, []),
                     recipeTypesBlacklist: defaults(row.morning_meal_filter_recipe_types_blacklist, []),
@@ -64,7 +65,7 @@ function rowToSettings(userId: Uuid, row: any) {
                     shellfishFree: defaults(row.midday_meal_filter_shellfish_free, null),
                     soyFree: defaults(row.midday_meal_filter_soy_free, null),
 
-                    maxPreparationTime: defaults(row.midday_meal_filter_max_prep_time, Infinity),
+                    maxPreparationTime: defaults(row.midday_meal_filter_max_prep_time, null),
 
                     recipeTypesWhitelist: defaults(row.midday_meal_filter_recipe_types_whitelist, []),
                     recipeTypesBlacklist: defaults(row.midday_meal_filter_recipe_types_blacklist, []),
@@ -89,7 +90,7 @@ function rowToSettings(userId: Uuid, row: any) {
                     shellfishFree: defaults(row.evening_meal_filter_shellfish_free, null),
                     soyFree: defaults(row.evening_meal_filter_soy_free, null),
 
-                    maxPreparationTime: defaults(row.evening_meal_filter_max_prep_time, Infinity),
+                    maxPreparationTime: defaults(row.evening_meal_filter_max_prep_time, null),
 
                     recipeTypesWhitelist: defaults(row.evening_meal_filter_recipe_types_whitelist, []),
                     recipeTypesBlacklist: defaults(row.evening_meal_filter_recipe_types_blacklist, []),

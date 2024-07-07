@@ -1,5 +1,5 @@
 import { getRecipeById as dbRecipeById, getRecipesByIds } from "../../database/recipes/get_recipe.js";
-import { listUserRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
+import { getUserDataFromRecipe, listUserRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
 import { Recipe } from "../../utils/types/recipe.js";
 import { isUuid } from "../../utils/types/other.js";
 
@@ -37,5 +37,16 @@ export async function getUsersAdddedRecipes(id: unknown) {
                 recipe: recipes.find((recipe) => recipe.id === recipeUserData.recipeId) as Recipe
             }
         })
+    }
+}
+
+export async function getCookedOfRecipe(userId: unknown, recipeId: unknown) {
+    if(!isUuid(userId) || !isUuid(recipeId)) return 'Invalid input';
+
+    const recipesUserData = await getUserDataFromRecipe(recipeId, userId);
+
+    if(typeof recipesUserData === "string") return recipesUserData;
+    else {
+        return recipesUserData.cooked;
     }
 }

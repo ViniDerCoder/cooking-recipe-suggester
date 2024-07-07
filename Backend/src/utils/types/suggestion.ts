@@ -58,7 +58,7 @@ export type MealSuggestionsSettings = {
     shellfishFree: boolean | null,
     soyFree: boolean | null,
 
-    maxPreparationTime: number,
+    maxPreparationTime: number | null,
 
     recipeTypesWhitelist: Array<Uuid>,
     recipeTypesBlacklist: Array<Uuid>
@@ -83,7 +83,7 @@ export function isMealSuggestionsSettings(any: any): any is MealSuggestionsSetti
     if(typeof any.shellfishFree !== "boolean" && any.shellfishFree !== null) return false;
     if(typeof any.soyFree !== "boolean" && any.soyFree !== null) return false;
 
-    if(typeof any.maxPreparationTime !== "number") return false;
+    if(typeof any.maxPreparationTime !== "number" && any.maxPreparationTime !== null) return false;
 
     if(!Array.isArray(any.recipeTypesWhitelist)) return false;
     if(!any.recipeTypesWhitelist.every((typeId: any) => isUuid(typeId))) return false;

@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { AuthenticationUser } from '../utils/types/authentication.js';
-import { getRecipeById, getUserRecipes, getUsersAdddedRecipes } from '../controller/recipes/get.js';
+import { getCookedOfRecipe, getRecipeById, getUserRecipes, getUsersAdddedRecipes } from '../controller/recipes/get.js';
 import { createCustomRecipe } from '../controller/recipes/create.js';
 import { deleteRecipe } from '../controller/recipes/delete.js';
 import { editRecipeById } from '../controller/recipes/edit.js';
@@ -53,6 +53,10 @@ router.get('/cooked/:id', limit(1000 * 20, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipeId = req.params.id;
 
+    const result = await getCookedOfRecipe(user.userId, recipeId);
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Fetching of cooked times was successfull", error: undefined, data: { cooked: result }});
 });
 
 router.post('/cooked/:id', limit(1000 * 20, 1), async (req, res) => {

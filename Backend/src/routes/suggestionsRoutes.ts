@@ -33,19 +33,18 @@ router.post('/', limit(1000 * 60 * 2, 3), async (req, res) => {
 });
 
 router.post('/settings/', limit(1000 * 60 * 5, 3), async (req, res) => {
-    const user = req.body.user;
-    const settings = req.body.settings;
+    const user = req.body.user as AuthenticationUser;
+    const { settings } = req.body;
 
-    const result = await editSuggestionsSettings(user.id, settings);
+    const result = await editSuggestionsSettings(user.userId, settings);
 
     if(typeof result === "string") res.status(400).send({error: result});
     else res.send({error: undefined, message: "Editing of suggestions settings was successfull", data: { settings: result }});
 });
 
 router.get('/settings/', limit(1000 * 60 * 5, 3), async (req, res) => {
-    const user = req.body.user;
-
-    const settings = await getSuggestionsSettings(user.id);
+    const user = req.body.user as AuthenticationUser;
+    const settings = await getSuggestionsSettings(user.userId);
 
     if(typeof settings === "string") res.status(400).send({error: settings});
     else res.send({error: undefined, message: "Fetching of suggestions settings was successfull", data: { settings: settings }});

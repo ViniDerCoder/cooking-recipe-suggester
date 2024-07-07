@@ -54,6 +54,30 @@ export async function listUsersAddedRecipeData(userId: Uuid) {
     return userRecipeData;
 }
 
+export async function getUserDataFromRecipe(recipeId: Uuid, userId: Uuid) {
+    const params = [userId, recipeId];
+    const q = ''
+    + 'SELECT * FROM '
+    + 'cooking_recipe_suggester.user_recipes '
+    + 'WHERE user_id = ? AND recipe_id = ?';
+
+    const result = await query(q, params);
+    if(typeof result === "string") return 'Error getting user data from recipe';
+    else {
+        const row = result.rows[0];
+        if(!row) return "User has not added this recipe";
+        return {
+            recipeId: row.recipe_id.toString('hex'),
+            userId: row.user_id.toString('hex'),
+            rating: row.rating,
+            notes: row.notes,
+            cooked: row.cooked ? row.cooked : [],
+            recipeDeletedName: row.recipe_deleted_name,
+        } as RecipeUserData;
+    }
+
+}
+
 export async function listFilteredUserAddedRecipes(userId: Uuid, filter: MealSuggestionUserDataFilter) {
     const params: Array<number | boolean | string> = [userId];
 

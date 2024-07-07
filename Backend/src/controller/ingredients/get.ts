@@ -15,7 +15,7 @@ export async function getIngredientById(ingredientId: unknown) {
     return result;
 }
 
-export async function getIngredientIdsMatchingFilter(filters: IngredientFilters) {
+export async function getIngredientIdsMatchingFilter(filters: unknown) {
     if(!isIngredientFilters(filters)) return 'Invalid input';
     if(filters.length < 1) return await getAllIngredientIds();
 
