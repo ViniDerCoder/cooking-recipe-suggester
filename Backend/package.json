@@ -1,5 +1,5 @@
 {
-  "name": "cooking-recipe-suggester",
+  "name": "cooking-recipe-suggester-backend",
   "version": "1.0.0",
   "description": "The backend for the cooking recipe suggester",
   "main": "./out/index.js",
