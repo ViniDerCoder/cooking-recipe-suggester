@@ -1,6 +1,7 @@
 import query from "../../utils/query.js";
 import { Uuid } from "../../utils/types/other.js";
 import { Recipe, RecipeUserData } from "../../utils/types/recipe.js";
+import { MealSuggestionUserDataFilter } from "../../utils/types/suggestion.js";
 
 export async function listUserRecipes(userId: Uuid) {
     const params = [userId];
@@ -40,6 +41,35 @@ export async function listUsersAddedRecipeData(userId: Uuid) {
 
     const result = await query(q, params);
     if(typeof result === "string") return 'Error listing user added recipes';
+    const userRecipeData = result.rows.map((row) => {
+        return {
+            recipeId: row.recipe_id.toString('hex'),
+            userId: row.user_id.toString('hex'),
+            rating: row.rating,
+            notes: row.notes,
+            cooked: row.cooked ? row.cooked : [],
+            recipeDeletedName: row.recipe_deleted_name,
+        } as RecipeUserData;
+    });
+    return userRecipeData;
+}
+
+export async function listFilteredUserAddedRecipes(userId: Uuid, filter: MealSuggestionUserDataFilter) {
+    const params: Array<number | boolean | string> = [userId];
+
+    if(filter.minRating !== undefined && filter.minRating !== null) params.push(filter.minRating);
+    if(filter.unratedAllowed !== undefined && filter.unratedAllowed !== null) params.push(filter.unratedAllowed);
+
+    const q = ''
+    + 'SELECT * FROM '
+    + 'cooking_recipe_suggester.user_recipes '
+    + 'WHERE user_id = ? '
+    + (filter.minRating !== undefined && filter.minRating !== null ? '(AND rating >= ? ' + (filter.unratedAllowed !== undefined && filter.unratedAllowed !== null && filter.unratedAllowed === true ? 'OR rating IS NULL ' : '') +')' : '')
+    + (filter.minRating === undefined || filter.minRating === null ? (filter.unratedAllowed !== undefined && filter.unratedAllowed !== null && filter.unratedAllowed === false ? 'AND rating >= 0 ' : '') : '')
+
+    const result = await query(q, params);
+    if(typeof result === "string") return 'Error listing filtered user added recipes';
+    
     const userRecipeData = result.rows.map((row) => {
         return {
             recipeId: row.recipe_id.toString('hex'),

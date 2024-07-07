@@ -93,3 +93,49 @@ export function isMealSuggestionsSettings(any: any): any is MealSuggestionsSetti
 
     return true;
 }
+
+
+export type Suggestion = {
+    morning: MealSuggestion | null,
+    midday: MealSuggestion | null,
+    evening: MealSuggestion | null
+}
+
+export function isSuggestion(any: any): any is Suggestion {
+    if(typeof any !== "object" || !any) return false;
+
+    if(any.morning !== null && !isMealSuggestion(any.morning)) return false;
+    if(any.midday !== null && !isMealSuggestion(any.midday)) return false;
+    if(any.evening !== null && !isMealSuggestion(any.evening)) return false;
+
+    return true;
+}
+
+
+export type MealSuggestion = {
+    recipes: Array<Uuid>,
+}
+
+export function isMealSuggestion(any: any): any is MealSuggestion {
+    if(typeof any !== "object" || !any) return false;
+
+    if(!Array.isArray(any.recipes)) return false;
+    if(!any.recipes.every((recipeId: any) => isUuid(recipeId))) return false;
+
+    return true;
+}
+
+
+export type MealSuggestionUserDataFilter = {
+    minRating: number | undefined | null,
+    unratedAllowed: boolean | undefined | null,
+}
+
+export function isMealSuggestionUserDataFilter(any: any): any is MealSuggestionUserDataFilter {
+    if(typeof any !== "object" || !any) return false;
+
+    if(any.minRating !== undefined && typeof any.minRating !== "number") return false;
+    if(any.unratedAllowed !== undefined && typeof any.unratedAllowed !== "boolean") return false;
+
+    return true;
+}
