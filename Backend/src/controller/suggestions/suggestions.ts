@@ -1,7 +1,9 @@
+import { getRecipesByFilters } from "../../database/recipes/get_recipe.js";
+import { listFilteredUserAddedRecipes } from "../../database/recipes/list_recipes.js";
 import getSettingsOfUser from "../../database/suggestions/suggestionSettings/get.js";
 import onInterval from "../../utils/listener/interval.js";
 import { isUuid, Uuid } from "../../utils/types/other.js";
-import { Suggestion, MealSuggestion } from "../../utils/types/suggestion.js";
+import { Suggestion, MealSuggestion, MealSuggestionsSettings, MealSuggestionUserDataFilter, MealSuggestionRecipeFilter } from "../../utils/types/suggestion.js";
 
 let suggestions: { [key: Uuid]: Suggestion } = {}
 
@@ -17,11 +19,72 @@ export async function getSuggestionsForUser(userId: unknown) {
     const suggestionSettings = await getSettingsOfUser(userId);
     if(typeof suggestionSettings === "string") return suggestionSettings;
     
-    suggestions[userId] = {
-        morning: suggestionSettings.meals.morning.enabled ? { recipes: [] } : null,
-        midday: suggestionSettings.meals.midday.enabled ? { recipes: [] } : null,
-        evening: suggestionSettings.meals.evening.enabled ? { recipes: [] } : null
-    }
+    suggestions[userId] = { morning: null, midday: null, evening: null} 
 
+    const morningSuggestions = suggestionSettings.meals.morning.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.morning.settings) : null;
+    if(typeof morningSuggestions === "string") return morningSuggestions;
+    else suggestions[userId].morning = morningSuggestions;
+
+    const middaySuggestions = suggestionSettings.meals.midday.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.midday.settings) : null;
+    if(typeof middaySuggestions === "string") return middaySuggestions;
+    else suggestions[userId].midday = middaySuggestions;
+
+    const eveningSuggestions = suggestionSettings.meals.evening.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.evening.settings) : null;
+    if(typeof eveningSuggestions === "string") return eveningSuggestions;
+    else suggestions[userId].evening = eveningSuggestions;
+
+    return suggestions[userId];
+}
+
+async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings): Promise<MealSuggestion | string | null> {
+
+    const preFilteredUserRecipes = await listFilteredUserAddedRecipes(userId, {
+        minRating: meal.minRating,
+        unratedAllowed: meal.unratedAllowed
+    } as MealSuggestionUserDataFilter);
+
+    if(typeof preFilteredUserRecipes === "string") return "Error getting user recipes";
+    if(preFilteredUserRecipes.length === 0) return null;
+
+    const filteredUserRecipes = preFilteredUserRecipes.filter((recipe) => {
+        if(recipe.cooked.length < meal.minTimesCooked) return false;
+        if(meal.timeoutAfterLastCooked !== 0) {
+            recipe.cooked.sort((a, b) => b.getTime() - a.getTime());
+            if((Date.now() - recipe.cooked[0].getTime()) < meal.timeoutAfterLastCooked * 60 * 60 * 1000) return false;
+        }
+        if(typeof recipe.recipeDeletedName === "string") return false;
+
+        return true;
+    });
+
+    if(filteredUserRecipes.length === 0) return null;
+
+    const preFilteredRecipes = await getRecipesByFilters(filteredUserRecipes.map((recipe) => recipe.recipeId), {
+        vegan: meal.vegan,
+        vegetarian: meal.vegetarian,
+        glutenFree: meal.glutenFree,
+        dairyFree: meal.dairyFree,
+        nutFree: meal.nutFree,
+        eggFree: meal.eggFree,
+        fishFree: meal.fishFree,
+        shellfishFree: meal.shellfishFree,
+        soyFree: meal.soyFree,
+
+        recipeTypesWhitelist: meal.recipeTypesWhitelist
+    } as MealSuggestionRecipeFilter);
     
+    if(typeof preFilteredRecipes === "string") return "Error getting recipes";
+    if(preFilteredRecipes.length === 0) return null;
+
+    const filteredRecipes = preFilteredRecipes.filter((recipe) => {
+        if(recipe.public === false && userId !== recipe.createdById) return false;
+        if(recipe.waitingTime + recipe.cookingTime > meal.maxPreparationTime) return false;
+        if(meal.recipeTypesBlacklist.includes(recipe.typeId)) return false;
+
+        return true;
+    });
+
+    if(filteredRecipes.length === 0) return null;
+    
+    return null;
 }
