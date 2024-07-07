@@ -1,5 +1,5 @@
 import { getRecipesByFilters } from "../../database/recipes/get_recipe.js";
-import { listFilteredUserAddedRecipes } from "../../database/recipes/list_recipes.js";
+import { listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
 import getSettingsOfUser from "../../database/suggestions/suggestionSettings/get.js";
 import onInterval from "../../utils/listener/interval.js";
 import { isUuid, Uuid } from "../../utils/types/other.js";
@@ -23,35 +23,42 @@ export async function getSuggestionsForUser(userId: unknown) {
     
     const suggestionSettings = await getSettingsOfUser(userId);
     if(typeof suggestionSettings === "string") return suggestionSettings;
+
+    const unFilteredUserRecipes = await listUsersAddedRecipeData(userId);
+    if(typeof unFilteredUserRecipes === "string") return unFilteredUserRecipes;
     
     suggestions[userId] = { morning: null, midday: null, evening: null} 
 
-    const morningSuggestions = suggestionSettings.meals.morning.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.morning.settings) : null;
+    let usedRecipes: Array<Uuid> = []
+
+    const morningSuggestions = suggestionSettings.meals.morning.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.morning.settings, unFilteredUserRecipes, usedRecipes) : null;
     if(typeof morningSuggestions === "string") return morningSuggestions;
     else suggestions[userId].morning = morningSuggestions;
 
-    const middaySuggestions = suggestionSettings.meals.midday.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.midday.settings) : null;
+    if(suggestions[userId].morning) usedRecipes = usedRecipes.concat(suggestions[userId].morning.recipes);
+
+    const middaySuggestions = suggestionSettings.meals.midday.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.midday.settings, unFilteredUserRecipes, usedRecipes) : null;
     if(typeof middaySuggestions === "string") return middaySuggestions;
     else suggestions[userId].midday = middaySuggestions;
 
-    const eveningSuggestions = suggestionSettings.meals.evening.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.evening.settings) : null;
+    if(suggestions[userId].midday) usedRecipes = usedRecipes.concat(suggestions[userId].midday.recipes);
+
+    const eveningSuggestions = suggestionSettings.meals.evening.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.evening.settings, unFilteredUserRecipes, usedRecipes) : null;
     if(typeof eveningSuggestions === "string") return eveningSuggestions;
     else suggestions[userId].evening = eveningSuggestions;
 
     return suggestions[userId];
 }
 
-async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings): Promise<MealSuggestion | string | null> {
+async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings, userRecipes: RecipeUserData[], blackListed: Array<Uuid> = []): Promise<MealSuggestion | string | null> {
 
-    const preFilteredUserRecipes = await listFilteredUserAddedRecipes(userId, {
-        minRating: meal.minRating,
-        unratedAllowed: meal.unratedAllowed
-    } as MealSuggestionUserDataFilter);
+    if(typeof userRecipes === "string") return "Error getting user recipes";
+    if(userRecipes.length === 0) return null;
 
-    if(typeof preFilteredUserRecipes === "string") return "Error getting user recipes";
-    if(preFilteredUserRecipes.length === 0) return null;
-
-    const filteredUserRecipes = preFilteredUserRecipes.filter((recipe) => {
+    const filteredUserRecipes = userRecipes.filter((recipe) => {
+        if(blackListed.includes(recipe.recipeId)) return false;
+        if(!meal.unratedAllowed && !recipe.rating) return false;
+        if(meal.unratedAllowed && (!recipe.rating ? Infinity : recipe.rating) < meal.minRating) return false;
         if(recipe.cooked.length < meal.minTimesCooked) return false;
         if(meal.timeoutAfterLastCooked !== 0) {
             recipe.cooked.sort((a, b) => b.getTime() - a.getTime());
@@ -61,7 +68,6 @@ async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings): 
 
         return true;
     });
-
     if(filteredUserRecipes.length === 0) return null;
 
     const preFilteredRecipes = await getRecipesByFilters(filteredUserRecipes.map((recipe) => recipe.recipeId), {

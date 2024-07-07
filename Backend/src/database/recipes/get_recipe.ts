@@ -90,7 +90,7 @@ export async function getRecipesByFilters(recipeIds: Array<Uuid>, filters: MealS
     + 'SELECT * '
     + 'FROM '
     + 'cooking_recipe_suggester.recipes '
-    + `WHERE id IN (?) `
+    + `WHERE id IN ? `
     + (filters.vegan !== null ? 'AND vegan = ? ' : '')
     + (filters.vegetarian !== null ? 'AND vegetarian = ? ' : '')
     + (filters.glutenFree !== null ? 'AND gluten_free = ? ' : '')
