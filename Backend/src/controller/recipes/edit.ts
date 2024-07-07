@@ -34,13 +34,13 @@ export async function editRecipeById(recipeId: unknown, userId: unknown, newReci
     if(newIngredients !== undefined && newIngredients !== null) {
         for(const ingredientAction of newIngredients) {
             if(ingredientAction.type === "ADD") {
-                const dbResult = await linkIngredientToRecipe(recipeId, ingredientAction.id, ingredientAction.amount, ingredientAction.unit);
+                const dbResult = await linkIngredientToRecipe(ingredientAction.ingredientId, recipeId, ingredientAction.amount, ingredientAction.unit);
                 if(typeof dbResult === "string") return dbResult;
             } else if(ingredientAction.type === "UPDATE") {
-                const dbResult = await updateIngredientInRecipe(recipeId, ingredientAction.id, ingredientAction.amount, ingredientAction.unit);
+                const dbResult = await updateIngredientInRecipe(ingredientAction.ingredientId, recipeId, ingredientAction.amount, ingredientAction.unit);
                 if(typeof dbResult === "string") return dbResult;
             } else if(ingredientAction.type === "REMOVE") {
-                const dbResult = await unlinkIngredientFromRecipe(recipeId, ingredientAction.id);
+                const dbResult = await unlinkIngredientFromRecipe(ingredientAction.ingredientId, recipeId);
                 if(typeof dbResult === "string") return dbResult;
             }
         }

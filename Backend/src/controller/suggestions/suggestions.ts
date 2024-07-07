@@ -3,6 +3,7 @@ import { listFilteredUserAddedRecipes } from "../../database/recipes/list_recipe
 import getSettingsOfUser from "../../database/suggestions/suggestionSettings/get.js";
 import onInterval from "../../utils/listener/interval.js";
 import { isUuid, Uuid } from "../../utils/types/other.js";
+import { Recipe, RecipeUserData } from "../../utils/types/recipe.js";
 import { Suggestion, MealSuggestion, MealSuggestionsSettings, MealSuggestionUserDataFilter, MealSuggestionRecipeFilter } from "../../utils/types/suggestion.js";
 
 let suggestions: { [key: Uuid]: Suggestion } = {}
@@ -10,6 +11,10 @@ let suggestions: { [key: Uuid]: Suggestion } = {}
 onInterval('redoSuggestions', 60 * 24, async () => {
     suggestions = {}
 }, new Date().setHours(0, 0, 0, 0));
+
+export function removeUserSuggestions(userId: Uuid) {
+    delete suggestions[userId];
+}
 
 export async function getSuggestionsForUser(userId: unknown) {
     if(!isUuid(userId)) return "Invalid userId";
@@ -85,6 +90,52 @@ async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings): 
     });
 
     if(filteredRecipes.length === 0) return null;
+
+    const linkedRecipes = filteredRecipes.map((recipe) => {
+        return {
+            recipe: recipe,
+            userData: filteredUserRecipes.find((userRecipe) => userRecipe.recipeId === recipe.id) as RecipeUserData
+        }
+    });
+
+    return generateSuggestionsFromRecipes(linkedRecipes, 3);
+}
+
+function generateSuggestionsFromRecipes(recipes: Array<{recipe: Recipe, userData: RecipeUserData}>, suggestions: number) {
     
-    return null;
+    const sortedRecipes = recipes.sort((a, b) => {
+        const rating = compareRecipes(a, b);
+        return rating;
+    });
+
+    return {
+        recipes: sortedRecipes.map((recipe) => recipe.recipe.id).slice(0, suggestions),
+    } as MealSuggestion;
+}
+
+function compareRecipes(recipe1: {recipe: Recipe, userData: RecipeUserData}, recipe2: {recipe: Recipe, userData: RecipeUserData}) {
+    let rating = 0;
+
+    /**
+     * Rating system:
+     * 
+     * + high timesCooked
+     * + high rating
+     * 
+     * - high preparation time
+     * - low time since last cooked
+     */
+
+
+    rating += recipe1.userData.cooked.length === recipe2.userData.cooked.length ? rnd(-1, 1) : recipe1.userData.cooked.length > recipe2.userData.cooked.length ? 2 : -3;
+    rating += recipe1.userData.rating === recipe2.userData.rating && recipe1.userData.rating ? rnd(-1, 1) : (recipe1.userData.rating ? recipe1.userData.rating : rnd(3, 4)) > (recipe2.userData.rating ? recipe2.userData.rating : rnd(3, 4)) ? 2 : -2;
+
+    rating += recipe1.recipe.waitingTime + recipe1.recipe.cookingTime < recipe2.recipe.waitingTime + recipe2.recipe.cookingTime ? 2 : -2;
+    rating += recipe1.userData.cooked.length > 0 && recipe2.userData.cooked.length > 0 ? (Date.now() - recipe1.userData.cooked.sort((a, b) => b.getTime() - a.getTime())[0].getTime()) < (Date.now() - recipe2.userData.cooked.sort((a, b) => b.getTime() - a.getTime())[0].getTime()) ? 2 : -2 : 0;
+
+    return rating;
+}
+
+function rnd(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min) + min);
 }

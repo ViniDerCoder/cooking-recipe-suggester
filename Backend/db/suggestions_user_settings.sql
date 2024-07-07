@@ -51,14 +51,14 @@ CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.suggestions_user_settings (
     evening_meal_filter_egg_free BOOLEAN,
     evening_meal_filter_fish_free BOOLEAN,
     evening_meal_filter_shellfish_free BOOLEAN,
-    evening_meal_filter_soy_free BOOLEAN
+    evening_meal_filter_soy_free BOOLEAN,
 
 
     morning_meal_filter_max_prep_time INT,
 
     midday_meal_filter_max_prep_time INT,
 
-    evening_meal_filter_max_prep_time INT
+    evening_meal_filter_max_prep_time INT,
 
 
     morning_meal_filter_recipe_types_whitelist LIST<TEXT>,
@@ -67,6 +67,6 @@ CREATE TABLE IF NOT EXISTS cooking_recipe_suggester.suggestions_user_settings (
     midday_meal_filter_recipe_types_whitelist LIST<TEXT>,
     midday_meal_filter_recipe_types_blacklist LIST<TEXT>,
 
-    evening_meal_filter_recipe_types_whitelist LIST<TEXT>
+    evening_meal_filter_recipe_types_whitelist LIST<TEXT>,
     evening_meal_filter_recipe_types_blacklist LIST<TEXT>
 );
