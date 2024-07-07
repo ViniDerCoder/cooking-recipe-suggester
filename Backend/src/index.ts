@@ -6,6 +6,8 @@ import app from './app.js';
 import client from './db.js';
 import onReady, { ready } from './utils/listener/ready.js';
 import { insertAll } from './utils/default_db_vals/insertAll.js';
+import onInterval from './utils/listener/interval.js';
+import { cleanup } from './utils/listener/cleanup.js';
 
 console.log("Setting up the Express server");
 
@@ -34,6 +36,14 @@ const readyCheckInterval = setInterval(() => {
         clearInterval(readyCheckInterval);
     }
 }, 50)
+
+onInterval('cleanup', 60 * 24, async () => {
+    cleanup("ALL");
+}, new Date().setHours(0, 0, 0, 0));
+
+onInterval('memoryCleanup', 60 * 24, async () => {
+    cleanup("MEMORY");
+}, new Date().setHours(12, 0, 0, 0));
 
 onReady("defaultDatabaseValues", async () => {
     await insertAll();
