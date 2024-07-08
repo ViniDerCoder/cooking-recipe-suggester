@@ -1,0 +1,22 @@
+.form-input {
+    text-align: center;
+    align-self: center;
+    width: 15rem;
+    height: 2rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0rem;
+    border-radius: 0.25rem;
+    border: none;
+}
+
+.form-input:focus {
+    outline: none;
+}
+
+.form-input[data-valid='true'] {
+    border: 0.14rem solid var(--success-color);
+}
+
+.form-input[data-valid='false'] {
+    border: 0.14rem solid var(--danger-color);
+}

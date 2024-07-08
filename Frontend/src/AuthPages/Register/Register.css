@@ -1,11 +1,11 @@
-.login {
+.register {
     display: flex;
     justify-content: center;
     height: 100vh;
     background-color: var(--primary-color)
 }
 
-.login-title {
+.register-title {
     color: var(--tertiary-color);
     font-size: 2rem;
     margin-top: 4rem;
@@ -24,7 +24,7 @@
     background-color: var(--secondary-color);
 }
 
-.register-text {
+.login-text {
     color: var(--tertiary-color);
     font-size: 1rem;
     margin-top: 1rem;
@@ -32,7 +32,7 @@
     text-align: center;
 }
 
-.register-link {
+.login-link {
     color: var(--link-color);
     font-size: 1rem;
     text-align: center;
