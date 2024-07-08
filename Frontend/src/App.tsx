@@ -5,9 +5,11 @@ import Register from './AuthPages/Register/Register';
 import Homepage from './Homepage/Homepage';
 import ProtectedRoute from './Defaults/ProtectedRoute/ProtectedRoute';
 
+export const basename = '/cooking-recipe-suggester';
+
 function App() {
   return (
-    <Router basename='/cooking-recipe-suggester'>
+    <Router basename={basename}>
       <Routes>
         <Route path='/' element={
           <ProtectedRoute><Homepage /></ProtectedRoute>}></Route>

@@ -38,3 +38,33 @@
     text-align: center;
     text-decoration: none;
 }
+
+.register-input-temporary-information {
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.4rem;
+    text-align: center;
+}
+
+.register-input-temporary-information[data-style="normal"] {
+    color: var(--tertiary-color);
+}
+
+.register-input-temporary-information[data-style="danger"] {
+    color: var(--danger-color);
+}
+
+.register-input-temporary-information[data-style="success"] {
+    color: var(--success-color);
+}
+
+.verification-register-back-button {
+    color: var(--tertiary-color);
+    font-size: 1rem;
+    width: max-content;
+    margin-left: 0.75rem;
+    margin-top: 0.5rem;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}

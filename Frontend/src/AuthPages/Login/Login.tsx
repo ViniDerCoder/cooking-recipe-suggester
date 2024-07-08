@@ -8,6 +8,7 @@ import { login, sendLoginValidationEmail } from './loginLogic';
 import { useRef, useState } from 'react';
 
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { basename } from '../../App';
 
 
 export default function Login() {
@@ -110,6 +111,7 @@ function EnterVerificationCode(p: {goBack: () => void, email: string}) {
                         if (info) {
                             info.innerHTML = success[0] ? 'Logged in' : success[1]
                             info.setAttribute('data-style', success[0] ? 'success' : 'danger')
+                            if(success[0]) setTimeout(() => window.location.href = basename + '/', 1000)
                         }
                     }
                     else {
