@@ -9,12 +9,12 @@ export abstract class BackendConnection {
     }
 
     static async post(url: string, param: string | undefined, body: any | undefined, authorization: string | undefined) {
-        const response = await axios.post(`${baseUrl}/${url}` + (param ? `/${param}` : ``), body, { headers: { Authorization: authorization } });
+        const response = await axios.post(`${baseUrl}/${url}` + (param ? `/${param}` : ``), {...body}, { headers: { Authorization: authorization } });
         return BackendConnection.returnResponse(response);
     }
 
     static async put(url: string, param: string | undefined, body: any | undefined, authorization: string | undefined) {
-        const response = await axios.put(`${baseUrl}/${url}` + (param ? `/${param}` : ``), body, { headers: { Authorization: authorization } });
+        const response = await axios.put(`${baseUrl}/${url}` + (param ? `/${param}` : ``), {...body}, { headers: { Authorization: authorization } });
         return BackendConnection.returnResponse(response);
     }
 

@@ -15,6 +15,11 @@
 }
 
 .hover-button:hover {
-    border-bottom: none;
-    border-right: none;
+    border-bottom: 0.13rem solid var(--primary-color);
+    border-right: 0.13rem solid var(--primary-color);
+}
+
+.hover-button:active {
+    border-bottom: 0;
+    border-right: 0;
 }

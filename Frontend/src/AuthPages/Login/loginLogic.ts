@@ -1,6 +1,7 @@
 import { Backend } from "../../utils/backendConnection/routes"
 import { isEmail } from "../../utils/emails"
 import { errorFromError } from "../../utils/backendConnection/utils";
+import { setToken } from "../../utils/cookies";
 
 
 export async function login(email: unknown, verificationCode: unknown): Promise<[boolean, string]> {
@@ -13,6 +14,7 @@ export async function login(email: unknown, verificationCode: unknown): Promise<
     } else {
         try {
             const result = await Backend.Auth.login(email, verificationCode);
+            setToken(result.data.token)
             return [true, result.message]
         } catch (error) {
             return [false, 'Error: ' + errorFromError(error)]
