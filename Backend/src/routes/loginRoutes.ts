@@ -29,7 +29,7 @@ router.get('/', limit(1000 * 60 * 2), async (req, res) => {
 });
 
 router.get('/login', limit(), async (req, res) => {
-    const { email, emailVerificationCode } = req.body;
+    const { email, emailVerificationCode } = req.body.data ? req.body.data : "null";
 
     const loginResult = await login(email, emailVerificationCode);
 
@@ -46,7 +46,7 @@ router.get('/login', limit(), async (req, res) => {
 });
 
 router.post('/login/validate-email', limit(), async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.body.data ? req.body.data : "null";
 
     const emailSendResult = await sendLoginEmail(email);
 
@@ -55,7 +55,7 @@ router.post('/login/validate-email', limit(), async (req, res) => {
 });
 
 router.post('/register', limit(), async (req, res) => {
-    const { email, username, firstName, lastName, emailVerificationCode } = req.body;
+    const { email, username, firstName, lastName, emailVerificationCode } = req.body.data ? req.body.data : "null";
 
     const registrationResult = await register(email, username, firstName, lastName, emailVerificationCode);
 
@@ -73,7 +73,7 @@ router.post('/register', limit(), async (req, res) => {
 });
 
 router.post('/register/validate-email', limit(), async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.body.data ? req.body.data : "null";
 
     const emailSendResult = await sendRegistrationEmail(email);
 
