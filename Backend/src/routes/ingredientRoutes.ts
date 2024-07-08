@@ -24,8 +24,8 @@ router.get('/search', limit(), async (req, res) => {
     res.send('Search for ingredients by name, type, etc.');
 });
 
-router.get('/filter', limit(1000 * 60), async (req, res) => {
-    const { filters } = req.body.data ? req.body.data : "null";
+router.post('/filter', limit(1000 * 60), async (req, res) => {
+    const { filters } = req.body
 
     const result = await getIngredientIdsMatchingFilter(filters);
     if(typeof result === "string") return res.status(400).send({error: result});
@@ -42,7 +42,7 @@ router.get('/:id', limit(1000 * 60), async (req, res) => {
 
 router.post('/', limit(1000 * 60 * 2, 5), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
-    const { name, properties } = req.body.data ? req.body.data : "null";
+    const { name, properties } = req.body
 
     const result = await doActionRequest(user.userId, {type: "CREATE", ingredient: {name: name, props: properties}});
     if(typeof result === "string") return res.status(400).send({error: result});
@@ -52,7 +52,7 @@ router.post('/', limit(1000 * 60 * 2, 5), async (req, res) => {
 router.put('/:id', limit(1000 * 60, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const id = req.params.id;
-    const { name, properties } = req.body.data ? req.body.data : "null";
+    const { name, properties } = req.body
 
     const result = await doActionRequest(user.userId, {type: "UPDATE", id: id, ingredient: {name: name, props: properties}});
     if(typeof result === "string") return res.status(400).send({error: result});

@@ -83,7 +83,7 @@ router.get('/:id', limit(1000 * 20, 2), async (req, res) => {
 
 router.post('/', limit(1000 * 60 * 20, 5), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
-    const { recipe, ingredients } = req.body.data ? req.body.data : "null";
+    const { recipe, ingredients } = req.body
 
     const result = await createCustomRecipe(user.userId, recipe, ingredients);
     if(typeof result === "string") return res.status(400).send({error: result});
@@ -93,7 +93,7 @@ router.post('/', limit(1000 * 60 * 20, 5), async (req, res) => {
 router.put('/:id', limit(1000 * 60 * 20, 5), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipeId = req.params.id;
-    const { recipe, ingredients } = req.body.data ? req.body.data : "null";
+    const { recipe, ingredients } = req.body
 
     const result = await editRecipeById(recipeId, user.userId, recipe, ingredients);
     if(typeof result === "string") return res.status(400).send({error: result});

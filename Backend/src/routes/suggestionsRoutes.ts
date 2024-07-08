@@ -34,7 +34,7 @@ router.post('/', limit(1000 * 60 * 2, 3), async (req, res) => {
 
 router.post('/settings/', limit(1000 * 60 * 5, 3), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
-    const { settings } = req.body.data ? req.body.data : "null";
+    const { settings } = req.body
 
     const result = await editSuggestionsSettings(user.userId, settings);
 
