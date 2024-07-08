@@ -6,7 +6,7 @@ abstract class Auth {
     }
 
     static async login(email: string, emailVerificationCode: string) {
-        return await BackendConnection.get('auth/login', undefined, { email, emailVerificationCode }, undefined);
+        return await BackendConnection.post('auth/login', undefined, { email, emailVerificationCode }, undefined);
     }
 
     static async sendLoginValidationEmail(email: string) {

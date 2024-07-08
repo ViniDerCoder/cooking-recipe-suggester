@@ -3,17 +3,19 @@ import { isEmail } from "../../utils/emails"
 import { errorFromError } from "../../utils/backendConnection/utils";
 
 
-export async function login(email: unknown, verificationCode: unknown): Promise<boolean> {
+export async function login(email: unknown, verificationCode: unknown): Promise<[boolean, string]> {
     if (typeof email !== 'string' || typeof verificationCode !== 'string') {
-        return false
+        return [false, 'email or verification code is not a string']
     } else if(!isEmail(email)) {
-        return false
+        return [false, 'email is not an email']
+    } else if(verificationCode.length !== 6) {
+        return [false, 'verification code is not 6 characters long']
     } else {
         try {
-            await Backend.Auth.login(email, verificationCode);
-            return true
+            const result = await Backend.Auth.login(email, verificationCode);
+            return [true, result.message]
         } catch (error) {
-            return false
+            return [false, 'Error: ' + errorFromError(error)]
         }
     }
 }
