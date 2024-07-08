@@ -38,3 +38,22 @@
     text-align: center;
     text-decoration: none;
 }
+
+.login-input-temporary-information {
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.login-input-temporary-information[data-style="normal"] {
+    color: var(--tertiary-color);
+}
+
+.login-input-temporary-information[data-style="danger"] {
+    color: var(--danger-color);
+}
+
+.login-input-temporary-information[data-style="success"] {
+    color: var(--success-color);
+}
