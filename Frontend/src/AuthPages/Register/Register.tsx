@@ -26,7 +26,7 @@ export default function Register() {
                     2: <EnterUserInformation goBack={() => setStep(1)} verificationCode={verificationCode} email={email} userDataState={[userData, setUserData]}/>
                 }[step]
                 }
-                <div className='login-text'>Schon einen Account? <a className='login-link' href='./login'>Anmelden</a></div>
+                <div className='login-text'>Schon einen Account? <a className='login-link' href='./#/login'>Anmelden</a></div>
             </header>
         </div>
     );

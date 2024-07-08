@@ -50,5 +50,5 @@
     "@types/js-cookie": "^3.0.6",
     "gh-pages": "^6.1.1"
   },
-  "homepage": "https://vinidercode.github.io/cooking-recipe-suggester"
+  "homepage": "https://vinidercode.github.io/cooking-recipe-suggester/#"
 }

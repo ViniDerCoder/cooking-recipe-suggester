@@ -1,15 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Login from './AuthPages/Login/Login';
 import Register from './AuthPages/Register/Register';
 import Homepage from './Homepage/Homepage';
 import ProtectedRoute from './Defaults/ProtectedRoute/ProtectedRoute';
 
-export const basename = '/cooking-recipe-suggester';
+export const basename = '/cooking-recipe-suggester/#';
 
 function App() {
   return (
-    <Router basename={basename}>
+    <Router>
       <Routes>
         <Route path='/' element={
           <ProtectedRoute><Homepage /></ProtectedRoute>}></Route>
