@@ -23,7 +23,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps)  {
     if (isLoading) {
       return <div>Loading...</div>; // Or any other loading indicator
     }
-    console.log(token)
+    
     if (!token) {
       return <Navigate to="/login" replace />;
     }
