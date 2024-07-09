@@ -8,6 +8,8 @@ import suggestionRoute from './routes/suggestionsRoutes.js';
 
 const app = express();
 
+app.set('trust proxy', true);
+
 const allowedOrigins: string[] = ['http://localhost:3000', 'https://vinidercoder.github.io', 'https://cooking-recipe-suggester.loca.lt'];
 
 const corsOptions: CorsOptions = {
