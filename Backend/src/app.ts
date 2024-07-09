@@ -8,7 +8,7 @@ import suggestionRoute from './routes/suggestionsRoutes.js';
 
 const app = express();
 
-const allowedOrigins: string[] = ['http://localhost:3000', 'https://vinidercoder.github.io'];
+const allowedOrigins: string[] = ['http://localhost:3000', 'https://vinidercoder.github.io', 'https://cooking-recipe-suggester.loca.lt'];
 
 const corsOptions: CorsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {

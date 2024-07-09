@@ -1,6 +1,7 @@
 #!/bin/bash
 
 while true; do
+    git pull
     npm install
     npx tsc
     node .

@@ -23,8 +23,8 @@ const sslOptions = {
 };
 
 let appConnected = false;
-https.createServer(sslOptions, app).listen(port, () => {
-    console.log(`Express Server running on port ${port}`);
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
     appConnected = true;
 });
 
