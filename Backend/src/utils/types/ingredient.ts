@@ -200,3 +200,24 @@ export function isIngredientFilters(any: any): any is IngredientFilters {
         return true;
     });
 }
+
+
+export type FullRecipeIngredient = {
+    id: Uuid,
+    name: string,
+    properties: IngredientProperties,
+    amount: number,
+    unit: RecipeIngredientUnit
+}
+
+export function isFullRecipeIngredient(any: any): any is FullRecipeIngredient {
+    if(typeof any !== "object" || !any) return false;
+
+    if(!isUuid(any.id)) return false;
+    if(typeof any.name !== "string") return false;
+    if(!isIngredientProperties(any.properties)) return false;
+    if(typeof any.amount !== "number") return false;
+    if(!isRecipeIngredientUnit(any.unit)) return false;
+
+    return true;
+}
