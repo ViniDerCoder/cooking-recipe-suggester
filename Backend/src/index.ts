@@ -1,3 +1,5 @@
+import https from 'https';
+import fs from 'fs';
 import { config } from 'dotenv'
 
 config();
@@ -15,8 +17,13 @@ if (!process.env['EXPRESS_PORT']) throw new Error('Please provide the port for t
 
 const port = process.env['EXPRESS_PORT'];
 
+const sslOptions = {
+    key: fs.readFileSync('./server.key'),
+    cert: fs.readFileSync('./server.cert')
+};
+
 let appConnected = false;
-app.listen(port, () => {
+https.createServer(sslOptions, app).listen(port, () => {
     console.log(`Express Server running on port ${port}`);
     appConnected = true;
 });

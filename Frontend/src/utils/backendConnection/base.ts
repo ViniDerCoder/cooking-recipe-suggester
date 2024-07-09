@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { basename } from '../../App';
 
-const baseUrl = 'http://at-doc.gl.at.ply.gg:4168/api';
+const baseUrl = 'https://at-doc.gl.at.ply.gg:4168/api';
 
 export abstract class BackendConnection {
     static async get(url: string, param: string | undefined, body: any | undefined, authorization: string | undefined) {
