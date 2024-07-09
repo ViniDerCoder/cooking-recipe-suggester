@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getIngredientsOfRecipe } from "./recipeLogic";
 import { Recipe } from '../../../../Backend/src/utils/types/recipe'
 import { IngredientRecipeData } from '../../../../Backend/src/utils/types/ingredient'
+import { FaRegClock } from "react-icons/fa";
 
 
 export default function RecipePage(p: { recipeId: string }) {
@@ -32,7 +33,7 @@ export default function RecipePage(p: { recipeId: string }) {
             if (recipe[0]) {
                 const ingredients = await getIngredientsOfRecipe(recipe[1].id);
                 if (ingredients[0]) setIngredients(ingredients[1]);
-                else setIngredients([{ id: "sdwass", amount: 0, unit: 'some' }]);
+                else setIngredients([{ id: "sdwass", amount: 1, unit: 'milliliter' }, { id: "sugar", amount: 2, unit: 'gram' }, { id: "flour", amount: 3, unit: 'gram' }, { id: "eggs", amount: 4, unit: undefined }]);
 
                 setRecipe(recipe[1]);
             }
@@ -63,17 +64,28 @@ export default function RecipePage(p: { recipeId: string }) {
                 <h1 className="recipe-page-name">{recipe.name}</h1>
                 <p className="recipe-page-description">{recipe.description}</p>
                 <div className="recipe-page-ingredients">
-                    <h2 className="recipe-page-ingredients-title">Ingredients</h2>
-                    <ul className="recipe-page-ingredients-list">
+                    <div className="recipe-page-ingredients-title">Ingredients</div>
+                    <div className="recipe-page-ingredients-list">
                         {ingredients.map((ingredient) => {
-                            return <li className="recipe-page-ingredients-list-item">{ingredient.amount} {ingredient.unit ? ingredient.unit : ''} of {ingredient.id}</li>
+                            return <div className="recipe-page-ingredients-list-item">
+                                <div className='recipe-page-ingredients-list-item-amount'>{ingredient.amount === 1 ? "" : ingredient.amount + " "}{ingredient.unit}</div>
+                                <div className='recipe-page-ingredients-list-item-name'>{ingredient.id}</div>
+                            </div>
                         })}
-                    </ul>
+                    </div>
                 </div>
             </div>
-            <div className='recipe-page-instructions'>{recipe.instructions.map((instr, index) => {
-                return <p>{index + 1}. {instr}</p>
-            })}</div>
+            <div className="recipe-page-general-info-bar">
+                <FaRegClock style={{
+                    alignSelf: "center"
+                }} />
+                <div className="recipe-page-general-ifno-bar-cookingtime">{recipe.cookingTime}min</div>
+            </div>
+            <div className="recipe-page-right">
+                <div className='recipe-page-instructions'>{recipe.instructions.map((instr, index) => {
+                    return <div className='recipe-page-instructions-item'>{index + 1}. {instr}</div>
+                })}</div>
+            </div>
         </div>
     )
 }
