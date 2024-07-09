@@ -1,6 +1,6 @@
-import { getIngredientsOfRecipe } from "../../../database/ingredients/get_ingredients_of_recipe";
-import { getRecipeById } from "../../../database/recipes/get_recipe";
-import { isUuid } from "../../../utils/types/other";
+import { getIngredientsOfRecipe } from "../../../database/ingredients/get_ingredients_of_recipe.js";
+import { getRecipeById } from "../../../database/recipes/get_recipe.js";
+import { isUuid } from "../../../utils/types/other.js";
 
 
 export async function getRecipesIngredients(userId: unknown, recipeId: unknown) {
