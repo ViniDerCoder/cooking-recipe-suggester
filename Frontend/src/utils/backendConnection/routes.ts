@@ -1,3 +1,6 @@
+import { RecipeCreationData, RecipeEditData } from "../../../../Backend/src/utils/types/recipe";
+import { IngredientProperties, IngredientRecipeList, IngredientUpdateActionList } from "../../../../Backend/src/utils/types/ingredient";
+import { SuggestionsSettings } from "../../../../Backend/src/utils/types/suggestion";
 import { BackendConnection } from "./base";
 
 abstract class Auth {
@@ -55,11 +58,11 @@ abstract class Recipes {
         return await BackendConnection.get('recipes', recipeId, { }, token);
     }
 
-    static async createRecipe(token: string, recipe: any, ingredients: any) {
+    static async createRecipe(token: string, recipe: RecipeCreationData, ingredients: IngredientRecipeList) {
         return await BackendConnection.post('recipes', undefined, { recipe, ingredients }, token);
     }
 
-    static async updateRecipe(token: string, recipeId: string, recipe: any, ingredients: any) {
+    static async updateRecipe(token: string, recipeId: string, recipe: RecipeEditData, ingredients: IngredientUpdateActionList) {
         return await BackendConnection.put('recipes', recipeId, { recipe, ingredients }, token);
     }
 
@@ -85,16 +88,20 @@ abstract class Ingredients {
         return await BackendConnection.get('ingredients', ingredientId, { }, token);
     }
 
-    static async createIngredientCreationRequest(token: string, name: string, properties: any) {
+    static async createIngredientCreationRequest(token: string, name: string, properties: IngredientProperties) {
         return await BackendConnection.post('ingredients', undefined, { name, properties }, token);
     }
 
-    static async createIngredientUpdateRequest(token: string, ingredientId: string, name: string, properties: any) {
+    static async createIngredientUpdateRequest(token: string, ingredientId: string, name: string, properties: IngredientProperties) {
         return await BackendConnection.put('ingredients', ingredientId, { name, properties }, token);
     }
 
     static async createIngredientDeleteRequest(token: string, ingredientId: string) {
         return await BackendConnection.delete('ingredients', ingredientId, { }, token);
+    }
+
+    static async getIngredientsOfRecipe(token: string, recipeId: string) {
+        return await BackendConnection.get('ingredients/recipe', recipeId, { }, token);
     }
 }
 
@@ -107,7 +114,7 @@ abstract class Suggestions {
         return await BackendConnection.post('suggestions', undefined, { }, token);
     }
 
-    static async updateSuggestionsSettings(token: string, settings: any) {
+    static async updateSuggestionsSettings(token: string, settings: SuggestionsSettings) {
         return await BackendConnection.post('suggestions/settings', undefined, { settings }, token);
     }
 
