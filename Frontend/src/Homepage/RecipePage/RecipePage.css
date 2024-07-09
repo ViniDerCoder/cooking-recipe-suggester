@@ -1,0 +1,83 @@
+.recipe-page {
+    display: flex;
+    flex-direction: left;
+    background-color: var(--primary-color);
+    height: 100%;
+    min-height: 100vh;
+}
+
+.recipe-page-left {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding: 1rem;
+    background-color: var(--secondary-color);
+    height: 100%;
+    min-height: 100vh;
+    width: 20rem;
+}
+
+.recipe-page-name {
+    text-align: center;
+    color: var(--tertiary-color);
+    font-size: 2rem;
+    font-weight: bold;
+    background-color: red;
+}
+
+.recipe-page-description {
+    color: var(--tertiary-color);
+    margin-top: 0;
+    font-size: 1.2rem;
+    text-overflow: clip;
+    background-color: green;
+}
+
+.recipe-page-image {
+    color: var(--tertiary-color);
+    width: 20rem;
+    height: 20rem;
+    background-color: yellow;
+    border-radius: 1.2rem;
+    overflow: hidden;
+}
+
+.recipe-page-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.recipe-page-instructions {
+    color: var(--tertiary-color);
+    font-size: 20px;
+    margin-bottom: 20px;
+    background-color: yellow;
+
+}
+
+.recipe-page-ingredients {
+    color: var(--tertiary-color);
+    font-size: 20px;
+    margin-bottom: 20px;
+    background-color: pink;
+}
+
+.recipe-page-ingredients-title {
+    color: var(--tertiary-color);
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.recipe-page-ingredients-list {
+    color: var(--tertiary-color);
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.recipe-page-ingredients-list-item {
+    color: var(--tertiary-color);
+    font-size: 20px;
+    margin-bottom: 20px;
+}
