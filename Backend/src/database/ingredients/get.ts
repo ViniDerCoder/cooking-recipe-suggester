@@ -24,7 +24,7 @@ export async function getIngredientById(id: Uuid) {
     if(typeof result === "string") return 'Error getting ingredient by id';
     if(result.rows.length === 0) return 'Ingredient not found';
     const ingredient = {
-        id: result.rows[0].id,
+        id: result.rows[0].id.toString('hex'),
         name: result.rows[0].name,
         properties: {
             vegan: result.rows[0].vegan,
@@ -57,18 +57,18 @@ export async function getIngredientsByIds(ids: Uuid[]) {
     if(result.rows.length === 0) return 'Ingredient not found';
     const ingredients = result.rows.map((row) => {
         return {
-            id: result.rows[0].id,
-            name: result.rows[0].name,
+            id: row.id.toString('hex'),
+            name: row.name,
             properties: {
-                vegan: result.rows[0].vegan,
-                vegetarian: result.rows[0].vegetarian,
-                glutenFree: result.rows[0].gluten_free,
-                dairyFree: result.rows[0].dairy_free,
-                nutFree: result.rows[0].nut_free,
-                eggFree: result.rows[0].egg_free,
-                fishFree: result.rows[0].fish_free,
-                shellfishFree: result.rows[0].shellfish_free,
-                soyFree: result.rows[0].soy_free
+                vegan: row.vegan,
+                vegetarian: row.vegetarian,
+                glutenFree: row.gluten_free,
+                dairyFree: row.dairy_free,
+                nutFree: row.nut_free,
+                eggFree: row.egg_free,
+                fishFree: row.fish_free,
+                shellfishFree: row.shellfish_free,
+                soyFree: row.soy_free
             } as IngredientProperties
         } as Ingredient;
     })
@@ -89,7 +89,7 @@ export async function getAllIngredients() {
     const ingredients: Ingredient[] = [];
     result.rows.forEach((row) => {
         const ingredient = {
-            id: row.id,
+            id: row.id.toString('hex'),
             name: row.name,
             properties: {
                 vegan: row.vegan,
