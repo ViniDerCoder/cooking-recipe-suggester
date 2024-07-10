@@ -26,7 +26,8 @@ export async function getRecipesIngredients(userId: unknown, recipeId: unknown) 
             id: data.id,
             name: ingredient.name,
             amount: data.amount,
-            unit: data.unit
+            unit: data.unit,
+            properties: ingredient.properties
         } as FullRecipeIngredient;
     });
 }   
