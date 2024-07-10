@@ -129,7 +129,7 @@ router.delete('/:id', limit(1000 * 60 * 20, 5), async (req, res) => {
     else return res.status(200).send({message: "Deletion was successfull", error: undefined});
 });
 
-router.get('/ingredients/', limit(1000 * 60), async (req, res) => {
+router.post('/ingredients/', limit(1000 * 60), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const { id } = req.body;
 

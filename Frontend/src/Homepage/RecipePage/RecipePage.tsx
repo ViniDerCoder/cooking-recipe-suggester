@@ -2,7 +2,7 @@ import './../../ColorScheme.css';
 import './RecipePage.css';
 
 import { useEffect, useState } from "react";
-import { getIngredientsOfRecipe } from "./recipeLogic";
+import { getIngredientsOfRecipe, getRecipeById } from "./recipeLogic";
 import { Recipe } from '../../../../Backend/src/utils/types/recipe'
 import { FullRecipeIngredient } from '../../../../Backend/src/utils/types/ingredient'
 
@@ -25,21 +25,9 @@ export default function RecipePage(p: { recipeId: string }) {
     useEffect(() => {
         const loadRecipe = async () => {
             console.log(p.recipeId)
-            const recipe: [boolean, Recipe] = [true, {
-                name: "Pfannkuchen",
-                description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et e.",
-                instructions: ["Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"],
-                imageUrl: "https://img.chefkoch-cdn.de/rezepte/2529831396465550/bilder/1509532/crop-960x540/pfannkuchen-crepe-und-pancake.jpg",
-                id: p.recipeId,
-                createdAt: new Date(),
-                createdById: "someId",
-                waitingTime: 111,
-                servings: 2,
-                cookingTime: 22,
-                public: true,
-                typeId: "someId"
-            } as Recipe];
-            if (recipe[0]) {
+            const recipe: [boolean, Recipe | string] = await getRecipeById(p.recipeId);
+            
+            if (recipe[0] && typeof recipe[1] !== "string") {
                 const ingredients = await getIngredientsOfRecipe(recipe[1].id);
                 if (ingredients[0]) setIngredients(ingredients[1]);
                 else setIngredients([{ id: "2704362r7n073cr20d9jr20ds3", amount: 1, unit: 'milliliter', name: "milk", properties: {

@@ -81,7 +81,7 @@ abstract class Ingredients {
     }
 
     static async filterIngredients(token: string, filters: any) {
-        return await BackendConnection.get('ingredients/filter', undefined, { filters }, token);
+        return await BackendConnection.post('ingredients/filter', undefined, { filters }, token);
     }
 
     static async getIngredient(token: string, ingredientId: string) {
@@ -101,7 +101,7 @@ abstract class Ingredients {
     }
 
     static async getIngredientsOfRecipe(token: string, recipeId: string) {
-        return await BackendConnection.get('ingredients/recipe', recipeId, { }, token);
+        return await BackendConnection.post('recipes/ingredients/', undefined, { id: recipeId }, token);
     }
 }
 
