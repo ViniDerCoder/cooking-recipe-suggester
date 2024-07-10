@@ -133,6 +133,33 @@ body {
 
 .recipe-page-general-ifno-bar-cookingtime{
     margin-left: 0.5rem;
+    margin-right: 3rem;
+}
+
+.recipe-page-allergies {
+    color: var(--tertiary-color);
+    font-size: 2rem;
+    display: flex;
+}
+
+.recipe-page-allergies > *{
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+}
+
+.strikethrough {
+    position: relative;
+    display: inline-block;
+}
+
+.strikethrough::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 40%;
+    border-top: 2px solid #3f4345;
+    transform: rotate(45deg);
 }
 
 
