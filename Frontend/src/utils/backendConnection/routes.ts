@@ -34,6 +34,10 @@ abstract class Recipes {
         return await BackendConnection.get('recipes/mark', undefined, { }, token);
     }
 
+    static async getUserDataOfRecipe(token: string, recipeId: string) {
+        return await BackendConnection.get('recipes/mark', recipeId, { }, token);
+    }
+
     static async markRecipe(token: string, recipeId: string) {
         return await BackendConnection.post('recipes/mark', recipeId, { }, token);
     }
@@ -101,7 +105,7 @@ abstract class Ingredients {
     }
 
     static async getIngredientsOfRecipe(token: string, recipeId: string) {
-        return await BackendConnection.post('recipes/ingredients/', undefined, { id: recipeId }, token);
+        return await BackendConnection.get('ingredients/recipe', recipeId, {  }, token);
     }
 }
 

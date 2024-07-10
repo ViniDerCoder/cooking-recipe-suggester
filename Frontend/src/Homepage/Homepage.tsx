@@ -4,7 +4,6 @@ import RecipePage from "./RecipePage/RecipePage";
 
 
 export default function Homepage() {
-    console.log(getAuthToken())
     return (
         <div className="homepage">
             <header className="homepage-header">

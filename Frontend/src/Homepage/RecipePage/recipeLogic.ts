@@ -25,8 +25,37 @@ export async function getIngredientsOfRecipe(recipeId: unknown) {
 
     try {
         const result = await Backend.Ingredients.getIngredientsOfRecipe(token ? token : "", recipeId)
-        if(result.data.recipes) return [true, result.data.recipes]
+        if(result.data.ingredients) return [true, result.data.ingredients]
         else return [false, result.error]
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}
+
+export async function getUserDataOfRecipe(recipeId: unknown) {
+    if(typeof recipeId !== 'string') return [false, 'Invalid id']
+
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.getUserDataOfRecipe(token ? token : "", recipeId)
+        if(result.data.userRecipes) return [true, result.data.userRecipes]
+        else return [false, result.error]
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}
+
+export async function setMarkingOfRecipe(recipeId: unknown, mark: boolean | null) {
+    if(mark === null) return [false, 'Invalid mark']
+    if(typeof recipeId !== 'string') return [false, 'Invalid id']
+
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.markRecipe(token ? token : "", recipeId)
+        if(result.error) return [false, result.error]
+        else return [true, 'Recipe was marked successfully']
     } catch (error) {
         return [false, 'Error: ' + errorFromError(error)]
     }

@@ -2,8 +2,8 @@ import './../../ColorScheme.css';
 import './RecipePage.css';
 
 import { useEffect, useState } from "react";
-import { getIngredientsOfRecipe, getRecipeById } from "./recipeLogic";
-import { Recipe } from '../../../../Backend/src/utils/types/recipe'
+import { getIngredientsOfRecipe, getRecipeById, getUserDataOfRecipe, setMarkingOfRecipe } from "./recipeLogic";
+import { Recipe, RecipeUserData } from '../../../../Backend/src/utils/types/recipe'
 import { FullRecipeIngredient } from '../../../../Backend/src/utils/types/ingredient'
 
 import { FiMinus, FiPlus } from "react-icons/fi";
@@ -19,63 +19,35 @@ export default function RecipePage(p: { recipeId: string }) {
     const [ingredients, setIngredients] = useState<FullRecipeIngredient[] | null | false>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [servings, setServings] = useState<number | null>(null);
-    const [isRecipeMarked, setIsRecipeMarked] = useState(false);
+    const [userRecipeData, setUserRecipeData] = useState<RecipeUserData | null>(null);
+    const [isRecipeMarked, setIsRecipeMarked] = useState<null | boolean>(null);
     const [recipeCooked, setRecipeCooked] = useState(false);
+    const [markingButtonDisabled, setMarkingButtonDisabled] = useState(false);
 
     useEffect(() => {
         const loadRecipe = async () => {
-            console.log(p.recipeId)
-            const recipe: [boolean, Recipe | string] = await getRecipeById(p.recipeId);
+            const [recipe, ingredients, userData] = await Promise.all([
+                getRecipeById(p.recipeId),
+                getIngredientsOfRecipe(p.recipeId),
+                getUserDataOfRecipe(p.recipeId)
+            ])
             
             if (recipe[0] && typeof recipe[1] !== "string") {
-                const ingredients = await getIngredientsOfRecipe(recipe[1].id);
-                if (ingredients[0]) setIngredients(ingredients[1]);
-                else setIngredients([{ id: "2704362r7n073cr20d9jr20ds3", amount: 1, unit: 'milliliter', name: "milk", properties: {
-                    vegan: false,
-                    vegetarian: true,
-                    glutenFree: true,
-                    dairyFree: false,
-                    eggFree: true,
-                    nutFree: true,
-                    soyFree: true,
-                    fishFree: true,
-                    shellfishFree: true,
-                } }, { id: "2134718nfwe983mr1302xc76r0j4d2r02kd", amount: 2, unit: 'gram', name: "sugar", properties: {
-                    vegan: true,
-                    vegetarian: true,
-                    glutenFree: true,
-                    dairyFree: true,
-                    eggFree: true,
-                    nutFree: true,
-                    soyFree: true,
-                    fishFree: true,
-                    shellfishFree: true,
-                } }, { id: "239vr7n29vrm0c702cr234cr", amount: 3, unit: 'gram', name: "flour", properties: {
-                    vegan: true,
-                    vegetarian: true,
-                    glutenFree: false,
-                    dairyFree: true,
-                    eggFree: true,
-                    nutFree: true,
-                    soyFree: true,
-                    fishFree: true,
-                    shellfishFree: true,
-                }}, { id: "eggffz32cr7240rc972rßx2s", amount: 4, unit: undefined, name: "eggs", properties: {
-                    vegan: false,
-                    vegetarian: true,
-                    glutenFree: true,
-                    dairyFree: true,
-                    eggFree: false,
-                    nutFree: true,
-                    soyFree: true,
-                    fishFree: true,
-                    shellfishFree: true,
-                }}]);
-
                 setRecipe(recipe[1]);
                 setServings(recipe[1].servings);
             }
             else setRecipe(false);
+
+            if (ingredients[0] && typeof ingredients[1] !== "string") {
+                setIngredients(ingredients[1]);
+            }
+            else setIngredients(false);
+
+            if (userData[0] && typeof userData[1] !== "string") {
+                setUserRecipeData(userData[1]);
+                setIsRecipeMarked(true);
+            }
+            else setIsRecipeMarked(false);
 
             setIsLoading(false);
         };
@@ -131,8 +103,15 @@ export default function RecipePage(p: { recipeId: string }) {
                 {recipe.imageUrl ? <img src={recipe.imageUrl} alt={recipe.name} className="recipe-page-image" /> : null}
                 <div className="recipe-page-title-bar">
                     <div className="recipe-page-mark"
-                        onClick={() => setIsRecipeMarked(!isRecipeMarked)}
-                    >{isRecipeMarked ? <GoBookmarkFill /> : <GoBookmark />}</div>
+                        onClick={async () => {
+                            if(markingButtonDisabled) return
+                            setMarkingButtonDisabled(true)
+                            const markResult = await setMarkingOfRecipe(p.recipeId, !isRecipeMarked)
+                            if(markResult[0]) setIsRecipeMarked(!isRecipeMarked)
+                            else console.log(markResult[1])
+                            setTimeout(() => setMarkingButtonDisabled(false), 1000)
+                        }}
+                    >{isRecipeMarked !== null ? (isRecipeMarked ? <GoBookmarkFill opacity={markingButtonDisabled ? 0.5 : 1}/> : <GoBookmark opacity={markingButtonDisabled ? 0.5 : 1}/>) : null}</div>
                     <div className="recipe-page-name">{recipe.name}</div>
                     <div className="recipe-page-cooked">{recipeCooked ? <BiSolidDish /> : <BiDish />}</div>
                 </div>
