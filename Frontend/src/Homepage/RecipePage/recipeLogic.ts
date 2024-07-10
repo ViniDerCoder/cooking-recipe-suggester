@@ -60,3 +60,39 @@ export async function setMarkingOfRecipe(recipeId: unknown, mark: boolean | null
         return [false, 'Error: ' + errorFromError(error)]
     }
 }
+
+export async function setRatingForRecipe(recipeId: unknown, rating: unknown) {
+    if(typeof rating !== 'number') return [false, 'Invalid rating']
+    if(rating < 0 || rating > 10) return [false, 'Invalid rating. Rating must be between 0 and 10']
+    if(typeof recipeId !== 'string') return [false, 'Invalid id']
+
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.setRating(token ? token : "", recipeId, rating)
+        if(result.error) return [false, result.error]
+        else return [true, 'Rating was set successfully']
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}
+
+let timeout = setTimeout(() => {})
+export async function setNotesForRecipe(recipeId: unknown, notes: unknown) {
+    if(typeof notes !== 'string') return [false, 'Invalid notes']
+    if(notes.length > 500) return [false, 'Notes must be less than 500 characters long']
+    if(typeof recipeId !== 'string') return [false, 'Invalid id']
+    clearTimeout(timeout)
+    timeout = setTimeout(async () => {
+
+        const token = getAuthToken()
+    
+        try {
+            const result = await Backend.Recipes.setNotes(token ? token : "", recipeId, notes)
+            if(result.error) return [false, result.error]
+            else return [true, 'Notes were set successfully']
+        } catch (error) {
+            return [false, 'Error: ' + errorFromError(error)]
+        }
+    }, 1500)
+}

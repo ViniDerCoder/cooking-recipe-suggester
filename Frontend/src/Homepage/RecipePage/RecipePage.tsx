@@ -2,7 +2,7 @@ import './../../ColorScheme.css';
 import './RecipePage.css';
 
 import { useEffect, useState } from "react";
-import { getIngredientsOfRecipe, getRecipeById, getUserDataOfRecipe, setMarkingOfRecipe } from "./recipeLogic";
+import { getIngredientsOfRecipe, getRecipeById, getUserDataOfRecipe, setMarkingOfRecipe, setNotesForRecipe, setRatingForRecipe } from "./recipeLogic";
 import { Recipe, RecipeUserData } from '../../../../Backend/src/utils/types/recipe'
 import { FullRecipeIngredient } from '../../../../Backend/src/utils/types/ingredient'
 
@@ -12,6 +12,8 @@ import { TbClockHour4, TbClockPause, TbEgg, TbEggOff, TbMeat, TbMeatOff, TbPlant
 import { GiNautilusShell } from "react-icons/gi";
 import { BiDish, BiSolidDish } from "react-icons/bi";
 import { GoBookmark, GoBookmarkFill } from "react-icons/go";
+import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
+import { formatDateToDDMMYYYY } from '../../utils/date';
 
 
 export default function RecipePage(p: { recipeId: string }) {
@@ -22,6 +24,7 @@ export default function RecipePage(p: { recipeId: string }) {
     const [userRecipeData, setUserRecipeData] = useState<RecipeUserData | null>(null);
     const [isRecipeMarked, setIsRecipeMarked] = useState<null | boolean>(null);
     const [recipeCooked, setRecipeCooked] = useState(false);
+    const [visibleCookedTooltip, setVisibleCookedTooltip] = useState(false);
     const [markingButtonDisabled, setMarkingButtonDisabled] = useState(false);
 
     useEffect(() => {
@@ -113,9 +116,34 @@ export default function RecipePage(p: { recipeId: string }) {
                         }}
                     >{isRecipeMarked !== null ? (isRecipeMarked ? <GoBookmarkFill opacity={markingButtonDisabled ? 0.5 : 1}/> : <GoBookmark opacity={markingButtonDisabled ? 0.5 : 1}/>) : null}</div>
                     <div className="recipe-page-name">{recipe.name}</div>
-                    <div className="recipe-page-cooked">{recipeCooked ? <BiSolidDish /> : <BiDish />}</div>
-                </div>
+                    <div className="recipe-page-cooked"
+                        onTouchStart={() => setVisibleCookedTooltip(true)}
+                        onTouchEnd={() => setVisibleCookedTooltip(false)}
+                        onMouseEnter={() => setVisibleCookedTooltip(true)}
+                        onMouseLeave={() => setVisibleCookedTooltip(false)}
+                        onTouchCancel={() => setVisibleCookedTooltip(false)}
+                    >{recipeCooked ? <BiSolidDish /> : <BiDish />}</div>
+                        {visibleCookedTooltip ? <div className='recipe-page-tooltip'>{userRecipeData ? userRecipeData.cooked.sort((a, b) => b.getTime() - a.getTime()).map((val, ind) => `${userRecipeData.cooked.length - ind}. ${formatDateToDDMMYYYY(val)}`) : "Noch nicht gekocht!"}</div> : null}
+                    </div>
+                {userRecipeData ? <div className="recipe-page-rating">
+                    {[...Array(5)].map((e, i) => {
+                        return <div className="recipe-page-rating-star" onClick={async () => {
+                            const rating = i * 2
+                            const ratingResult = await setRatingForRecipe(p.recipeId, rating)
+                            if(ratingResult[0]) setUserRecipeData({...userRecipeData, rating: rating})
+                            else console.log(ratingResult[1])
+                        }}>
+                            {userRecipeData.rating ? userRecipeData.rating >= i * 2 + 2 ? <FaStar color='gold'/> : userRecipeData.rating >= i * 2 + 1 ? <FaStarHalfAlt color='gold'/> : <FaRegStar /> : <FaRegStar />}
+                        </div>
+                    })}
+                </div>: null}
                 <div className="recipe-page-description">{recipe.description}</div>
+                {userRecipeData ? <div className="recipe-page-notes">
+                    <textarea className='recipe-page-notes-input' value={userRecipeData.notes ? userRecipeData.notes : ""} onChange={(e) => {
+                        setUserRecipeData({...userRecipeData, notes: e.target.value})
+                        setNotesForRecipe(p.recipeId, e.target.value)
+                    }}/>
+                </div>: null}
                 <div className="recipe-page-ingredients">
                     <div className="recipe-page-ingredients-title">Zutaten</div>
                     <div className="recipe-page-ingredients-servings">
@@ -258,7 +286,7 @@ function Allergene(p: {allergene: boolean, trueElement: JSX.Element, falseElemen
                 onMouseLeave={() => setVisibleTooltip(false)}
                 onTouchCancel={() => setVisibleTooltip(false)}
             >{p.allergene ? p.trueElement : p.falseElement}</div>
-            {visibleTooltip ? <div className='recipe-page-allergies-tooltip'>{p.allergene ? p.trueTitle : p.falseTitle}</div> : null}
+            {visibleTooltip ? <div className='recipe-page-tooltip'>{p.allergene ? p.trueTitle : p.falseTitle}</div> : null}
         </div>
     )
 }

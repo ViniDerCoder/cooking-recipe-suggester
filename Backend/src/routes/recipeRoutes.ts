@@ -9,6 +9,7 @@ import verifyRequest from '../utils/defaultVerification.js';
 import limit from '../utils/rate-limiter.js';
 import { cookedRecipe, markRecipe, unmarkRecipe } from '../controller/recipes/mark.js';
 import { getRecipesIngredients } from '../controller/recipes/ingredients/getRecipesIngredients.js';
+import { setNotesForRecipe, setRatingForRecipe } from '../controller/recipes/addUserData.js';
 const router = express.Router();
 
 
@@ -82,6 +83,28 @@ router.post('/cooked/:id', limit(1000 * 20, 1), async (req, res) => {
 
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Recipe was marked as cooked successfull", error: undefined});
+});
+
+router.post('/rating/:id', limit(1000 * 20, 1), async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id;
+    const { rating } = req.body;
+
+    const result = await setRatingForRecipe(recipeId, user.userId, rating);
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Rating was successfull", error: undefined});
+});
+
+router.post('/notes/:id', limit(1000 * 20, 1), async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const recipeId = req.params.id;
+    const { notes } = req.body;
+
+    const result = await setNotesForRecipe(recipeId, user.userId, notes);
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Setting notes was successfull", error: undefined});
 });
 
 //late feature

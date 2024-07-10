@@ -46,6 +46,14 @@ abstract class Recipes {
         return await BackendConnection.delete('recipes/mark', recipeId, { }, token);
     }
 
+    static async setRating(token: string, recipeId: string, rating: number) {
+        return await BackendConnection.post('recipes/rating', recipeId, { rating }, token);
+    }
+
+    static async setNotes(token: string, recipeId: string, notes: string) {
+        return await BackendConnection.post('recipes/notes', recipeId, { notes }, token);
+    }
+
     static async getCookedTimes(token: string, recipeId: string) {
         return await BackendConnection.get('recipes/cooked', recipeId, { }, token);
     }
