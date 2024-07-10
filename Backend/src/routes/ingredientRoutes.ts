@@ -30,6 +30,7 @@ router.post('/filter', limit(1000 * 60), async (req, res) => {
     const { filters } = req.body
 
     const result = await getIngredientIdsMatchingFilter(filters);
+    
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Fetching of filtered ingredients was successfull", error: undefined, data: { ingredients: result }});
 });
@@ -38,6 +39,7 @@ router.get('/:id', limit(1000 * 60), async (req, res) => {
     const id = req.params.id;
 
     const result = await getIngredientById(id);
+
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Fetching ingredient was successfull", error: undefined, data: { ingredient: result }});
 });
@@ -47,6 +49,7 @@ router.post('/', limit(1000 * 60 * 2, 5), async (req, res) => {
     const { name, properties } = req.body
 
     const result = await doActionRequest(user.userId, {type: "CREATE", ingredient: {name: name, props: properties}});
+
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Create ingredient request was created successfull", error: undefined, data: { request: result }});
 });
@@ -57,6 +60,7 @@ router.put('/:id', limit(1000 * 60, 2), async (req, res) => {
     const { name, properties } = req.body
 
     const result = await doActionRequest(user.userId, {type: "UPDATE", id: id, ingredient: {name: name, props: properties}});
+
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Update ingredient request was created successfull", error: undefined, data: { request: result }});
 
@@ -67,6 +71,7 @@ router.delete('/:id', limit(1000 * 60 * 2, 3), async (req, res) => {
     const id = req.params.id;
 
     const result = await doActionRequest(user.userId, {type: "DELETE", id: id});
+
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Delete ingredient request was created successfull", error: undefined, data: { request: result }});
 });
@@ -76,6 +81,7 @@ router.get('/recipe/:id', limit(1000 * 60), async (req, res) => {
     const id = req.params.id;
 
     const result = await getRecipesIngredients(user.userId, id);
+
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Fetching ingredients of recipe was successfull", error: undefined, data: { ingredients: result }});
 })

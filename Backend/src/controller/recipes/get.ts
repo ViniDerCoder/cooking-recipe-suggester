@@ -40,6 +40,17 @@ export async function getUsersAdddedRecipes(id: unknown) {
     }
 }
 
+export async function getUserDataOfRecipe(userId: unknown, recipeId: unknown) {
+    if(!isUuid(userId) || !isUuid(recipeId)) return 'Invalid input';
+
+    const recipesUserData = await getUserDataFromRecipe(recipeId, userId);
+
+    if(typeof recipesUserData === "string") return recipesUserData;
+    else {
+        return recipesUserData;
+    }
+}
+
 export async function getCookedOfRecipe(userId: unknown, recipeId: unknown) {
     if(!isUuid(userId) || !isUuid(recipeId)) return 'Invalid input';
 

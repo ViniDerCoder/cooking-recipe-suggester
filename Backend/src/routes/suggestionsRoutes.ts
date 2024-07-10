@@ -44,6 +44,7 @@ router.post('/settings/', limit(1000 * 60 * 5, 3), async (req, res) => {
 
 router.get('/settings/', limit(1000 * 60 * 5, 3), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
+    
     const settings = await getSuggestionsSettings(user.userId);
 
     if(typeof settings === "string") res.status(400).send({error: settings});

@@ -6,13 +6,12 @@ import { getIngredientsOfRecipe } from "./recipeLogic";
 import { Recipe } from '../../../../Backend/src/utils/types/recipe'
 import { FullRecipeIngredient } from '../../../../Backend/src/utils/types/ingredient'
 
-import { FaRegClock } from "react-icons/fa";
 import { FiMinus, FiPlus } from "react-icons/fi";
-import { LuBean, LuBeanOff, LuFish, LuFishOff, LuMilk, LuMilkOff, LuNut, LuNutOff, LuVegan, LuWheat, LuWheatOff } from "react-icons/lu";
+import { LuBean, LuBeanOff, LuFish, LuFishOff, LuMilk, LuMilkOff, LuNut, LuNutOff, LuWheat, LuWheatOff } from "react-icons/lu";
 import { TbClockHour4, TbClockPause, TbEgg, TbEggOff, TbMeat, TbMeatOff, TbPlant2, TbPlant2Off } from "react-icons/tb";
 import { GiNautilusShell } from "react-icons/gi";
-import { BiDish } from "react-icons/bi";
-import { GoBookmarkFill } from "react-icons/go";
+import { BiDish, BiSolidDish } from "react-icons/bi";
+import { GoBookmark, GoBookmarkFill } from "react-icons/go";
 
 
 export default function RecipePage(p: { recipeId: string }) {
@@ -20,6 +19,8 @@ export default function RecipePage(p: { recipeId: string }) {
     const [ingredients, setIngredients] = useState<FullRecipeIngredient[] | null | false>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [servings, setServings] = useState<number | null>(null);
+    const [isRecipeMarked, setIsRecipeMarked] = useState(false);
+    const [recipeCooked, setRecipeCooked] = useState(false);
 
     useEffect(() => {
         const loadRecipe = async () => {
@@ -95,7 +96,35 @@ export default function RecipePage(p: { recipeId: string }) {
     }, [p.recipeId]);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="recipe-page">
+            <div className="recipe-page-left">
+                <div className="recipe-page-title-bar">
+                </div>
+                <div className="recipe-page-ingredients">
+                    <div className="recipe-page-ingredients-servings">
+                        <div className="recipe-page-ingredients-servings-change">
+                        </div>
+                    </div>
+                    <div className="recipe-page-ingredients-list">
+                    </div>
+                </div>
+            </div>
+            <div className="recipe-page-right">
+                <div className="recipe-page-general-info-bar">
+                    <TbClockHour4 style={{
+                        alignSelf: "center"
+                    }} />
+                    <div className="recipe-page-general-info-bar-time">~min</div>
+                    <TbClockPause style={{
+                        alignSelf: "center"
+                    }} />
+                    <div className="recipe-page-general-info-bar-time">~min</div>
+                </div>
+                <div className='recipe-page-instructions'></div>
+            </div>
+        </div>
+        )
     }
 
     if (recipe === false || recipe === null) {
@@ -113,9 +142,11 @@ export default function RecipePage(p: { recipeId: string }) {
             <div className="recipe-page-left">
                 {recipe.imageUrl ? <img src={recipe.imageUrl} alt={recipe.name} className="recipe-page-image" /> : null}
                 <div className="recipe-page-title-bar">
-                    <div className="recipe-page-mark"><GoBookmarkFill /></div>
+                    <div className="recipe-page-mark"
+                        onClick={() => setIsRecipeMarked(!isRecipeMarked)}
+                    >{isRecipeMarked ? <GoBookmarkFill /> : <GoBookmark />}</div>
                     <div className="recipe-page-name">{recipe.name}</div>
-                    <div className="recipe-page-cooked"><BiDish /></div>
+                    <div className="recipe-page-cooked">{recipeCooked ? <BiSolidDish /> : <BiDish />}</div>
                 </div>
                 <div className="recipe-page-description">{recipe.description}</div>
                 <div className="recipe-page-ingredients">
@@ -142,11 +173,11 @@ export default function RecipePage(p: { recipeId: string }) {
                     <TbClockHour4 style={{
                         alignSelf: "center"
                     }} />
-                    <div className="recipe-page-general-ifno-bar-time">{recipe.cookingTime}min</div>
+                    <div className="recipe-page-general-info-bar-time">{recipe.cookingTime}min</div>
                     <TbClockPause style={{
                         alignSelf: "center"
                     }} />
-                    <div className="recipe-page-general-ifno-bar-time">{recipe.waitingTime}min</div>
+                    <div className="recipe-page-general-info-bar-time">{recipe.waitingTime}min</div>
                     <Allergenes ingredients={ingredients}/>
                 </div>
                 <div className='recipe-page-instructions'>{recipe.instructions.map((instr, index) => {
