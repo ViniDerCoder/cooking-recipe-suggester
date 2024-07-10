@@ -5,11 +5,14 @@ import { useEffect, useState } from "react";
 import { getIngredientsOfRecipe } from "./recipeLogic";
 import { Recipe } from '../../../../Backend/src/utils/types/recipe'
 import { FullRecipeIngredient } from '../../../../Backend/src/utils/types/ingredient'
+
 import { FaRegClock } from "react-icons/fa";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { LuBean, LuBeanOff, LuFish, LuFishOff, LuMilk, LuMilkOff, LuNut, LuNutOff, LuVegan, LuWheat, LuWheatOff } from "react-icons/lu";
-import { TbEgg, TbEggOff, TbMeat, TbMeatOff, TbPlant2, TbPlant2Off } from "react-icons/tb";
+import { TbClockHour4, TbClockPause, TbEgg, TbEggOff, TbMeat, TbMeatOff, TbPlant2, TbPlant2Off } from "react-icons/tb";
 import { GiNautilusShell } from "react-icons/gi";
+import { BiDish } from "react-icons/bi";
+import { GoBookmarkFill } from "react-icons/go";
 
 
 export default function RecipePage(p: { recipeId: string }) {
@@ -24,7 +27,7 @@ export default function RecipePage(p: { recipeId: string }) {
             const recipe: [boolean, Recipe] = [true, {
                 name: "Pfannkuchen",
                 description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et e.",
-                instructions: ["Instruction 1", "Instruction 2"],
+                instructions: ["Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"],
                 imageUrl: "https://img.chefkoch-cdn.de/rezepte/2529831396465550/bilder/1509532/crop-960x540/pfannkuchen-crepe-und-pancake.jpg",
                 id: p.recipeId,
                 createdAt: new Date(),
@@ -109,7 +112,11 @@ export default function RecipePage(p: { recipeId: string }) {
         <div className="recipe-page">
             <div className="recipe-page-left">
                 {recipe.imageUrl ? <img src={recipe.imageUrl} alt={recipe.name} className="recipe-page-image" /> : null}
-                <div className="recipe-page-name">{recipe.name}</div>
+                <div className="recipe-page-title-bar">
+                    <div className="recipe-page-mark"><GoBookmarkFill /></div>
+                    <div className="recipe-page-name">{recipe.name}</div>
+                    <div className="recipe-page-cooked"><BiDish /></div>
+                </div>
                 <div className="recipe-page-description">{recipe.description}</div>
                 <div className="recipe-page-ingredients">
                     <div className="recipe-page-ingredients-title">Zutaten</div>
@@ -132,10 +139,14 @@ export default function RecipePage(p: { recipeId: string }) {
             </div>
             <div className="recipe-page-right">
                 <div className="recipe-page-general-info-bar">
-                    <FaRegClock style={{
+                    <TbClockHour4 style={{
                         alignSelf: "center"
                     }} />
-                    <div className="recipe-page-general-ifno-bar-cookingtime">{recipe.cookingTime}min</div>
+                    <div className="recipe-page-general-ifno-bar-time">{recipe.cookingTime}min</div>
+                    <TbClockPause style={{
+                        alignSelf: "center"
+                    }} />
+                    <div className="recipe-page-general-ifno-bar-time">{recipe.waitingTime}min</div>
                     <Allergenes ingredients={ingredients}/>
                 </div>
                 <div className='recipe-page-instructions'>{recipe.instructions.map((instr, index) => {
@@ -171,15 +182,85 @@ function Allergenes(p: {ingredients: FullRecipeIngredient[]}) {
     })
     return (
         <div className="recipe-page-allergies">
-            {allergenes.vegan ? <TbPlant2  color='#7da811' title='Die Zutaten dieses Rezeptes sind vegan'/> : <TbPlant2Off color='#7da811' title='Die Zutaten dieses Rezeptes sind nicht vegan'/>}
-            {allergenes.vegetarian ? <TbMeatOff color='#8c0b23' title='Die Zutaten dieses Rezeptes sind vegetarisch'/> : <TbMeat color='#8c0b23' title='Die Zutaten dieses Rezeptes sind nicht vegetarisch'/>}
-            {allergenes.glutenFree ? <LuWheatOff color='#cfa646' title='Die Zutaten dieses Rezeptes sind glutenfrei'/> : <LuWheat color='#cfa646' title='Die Zutaten dieses Rezeptes enthalten Gluten'/>}
-            {allergenes.dairyFree ? <LuMilkOff color='#f2f2f2' title='Die Zutaten dieses Rezeptes sind milchfrei'/> : <LuMilk color='#f2f2f2' title='Die Zutaten dieses Rezeptes enthalten Milchprodukte'/>}
-            {allergenes.eggFree ? <TbEggOff color='#d4d2d2' title='Die Zutaten dieses Rezeptes sind eifrei'/> : <TbEgg color='#d4d2d2' title='Die Zutaten dieses Rezeptes enthalten Eiprodukte'/>}
-            {allergenes.nutFree ? <LuNutOff color='#8a4704' title='Die Zutaten dieses Rezeptes sind nussfrei'/> : <LuNut color='#8a4704' title='Die Zutaten dieses Rezeptes enthalten Nüsse'/>}
-            {allergenes.fishFree ? <LuFishOff color='#1f85b8' title='Die Zutaten dieses Rezeptes sind fischfrei'/> : <LuFish color='#1f85b8' title='Die Zutaten dieses Rezeptes enthalten Fisch'/>}
-            {allergenes.shellfishFree ? <span border-color="#3f4345" className='strikethrough'><GiNautilusShell color='#3f4345' title='Die Zutaten dieses Rezeptes sind schalentierfrei'/></span> : <GiNautilusShell color='#3f4345' title='Die Zutaten dieses Rezeptes enthalten Schalentiere'/>}
-            {allergenes.soyFree ? <LuBeanOff color='#b38d12' title='Die Zutaten dieses Rezeptes sind sojafrei'/> : <LuBean color='#b38d12' title='Die Zutaten dieses Rezeptes enthalten Soja'/>}
+            <Allergene 
+                allergene={allergenes.vegan}
+                trueElement={<TbPlant2  color='#7da811' />}
+                falseElement={<TbPlant2Off color='#7da811'/>}
+                trueTitle='Die Zutaten dieses Rezeptes sind Vegan'
+                falseTitle='Die Zutaten dieses Rezeptes sind nicht Vegan'
+            />
+            <Allergene 
+                allergene={allergenes.vegetarian}
+                trueElement={<TbMeatOff color='#8c0b23'/>}
+                falseElement={<TbMeat color='#8c0b23'/>}
+                trueTitle='Die Zutaten dieses Rezeptes sind Vegetarisch'
+                falseTitle='Die Zutaten dieses Rezeptes sind nicht vegetarisch'
+            />
+            <Allergene
+                allergene={allergenes.glutenFree}
+                trueElement={<LuWheatOff color='#cfa646'/>}
+                falseElement={<LuWheat color='#cfa646'/>}
+                trueTitle='Die Zutaten dieses Rezeptes enthalten kein Gluten'
+                falseTitle='Die Zutaten dieses Rezeptes enthalten Gluten'
+            />
+            <Allergene
+                allergene={allergenes.dairyFree}
+                trueElement={<LuMilkOff color='#f2f2f2'/>}
+                falseElement={<LuMilk color='#f2f2f2'/>}
+                trueTitle='Die Zutaten dieses Rezeptes enthalten keine Milchprodukte'
+                falseTitle='Die Zutaten dieses Rezeptes enthalten Milchprodukte'
+            />
+            <Allergene
+                allergene={allergenes.eggFree}
+                trueElement={<TbEggOff color='#d4d2d2'/>}
+                falseElement={<TbEgg color='#d4d2d2'/>}
+                trueTitle='Die Zutaten dieses Rezeptes enthalten keine Eiprodukte'
+                falseTitle='Die Zutaten dieses Rezeptes enthalten Eiprodukte'
+            />
+            <Allergene
+                allergene={allergenes.nutFree}
+                trueElement={<LuNutOff color='#8a4704'/>}
+                falseElement={<LuNut color='#8a4704'/>}
+                trueTitle='Die Zutaten dieses Rezeptes enthalten keine Nüsse'
+                falseTitle='Die Zutaten dieses Rezeptes enthalten Nüsse'
+            />
+            <Allergene
+                allergene={allergenes.fishFree}
+                trueElement={<LuFishOff color='#1f85b8'/>}
+                falseElement={<LuFish color='#1f85b8'/>}
+                trueTitle='Die Zutaten dieses Rezeptes enthalten kein Fisch'
+                falseTitle='Die Zutaten dieses Rezeptes enthalten Fisch'
+            />
+            <Allergene
+                allergene={allergenes.shellfishFree}
+                trueElement={<span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345'/></span>}
+                falseElement={<GiNautilusShell color='#3f4345'/>}
+                trueTitle='Die Zutaten dieses Rezeptes enthalten keine Schalentiere'
+                falseTitle='Die Zutaten dieses Rezeptes enthalten Schalentiere'
+            />
+            <Allergene
+                allergene={allergenes.soyFree}
+                trueElement={<LuBeanOff color='#b38d12'/>}
+                falseElement={<LuBean color='#b38d12'/>}
+                trueTitle='Die Zutaten dieses Rezeptes enthalten kein Soja'
+                falseTitle='Die Zutaten dieses Rezeptes enthalten Soja'
+            />
+        </div>
+    )
+}
+
+function Allergene(p: {allergene: boolean, trueElement: JSX.Element, falseElement: JSX.Element, trueTitle: string, falseTitle: string}) {
+    const [visibleTooltip, setVisibleTooltip] = useState(false)
+    return (
+        <div>
+            <div
+                onTouchStart={() => setVisibleTooltip(true)}
+                onTouchEnd={() => setVisibleTooltip(false)}
+                onMouseEnter={() => setVisibleTooltip(true)}
+                onMouseLeave={() => setVisibleTooltip(false)}
+                onTouchCancel={() => setVisibleTooltip(false)}
+            >{p.allergene ? p.trueElement : p.falseElement}</div>
+            {visibleTooltip ? <div className='recipe-page-allergies-tooltip'>{p.allergene ? p.trueTitle : p.falseTitle}</div> : null}
         </div>
     )
 }

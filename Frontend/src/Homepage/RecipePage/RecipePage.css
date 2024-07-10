@@ -29,18 +29,39 @@ body {
     width: 100%;
 }
 
+.recipe-page-title-bar {
+    color: var(--tertiary-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.recipe-page-mark {
+    color: var(--tertiary-color);
+    font-size: 2rem;
+    margin-left: 0.75rem;
+    margin-top: 0.4rem;
+}
+
+.recipe-page-cooked {
+    color: var(--tertiary-color);
+    font-size: 2rem;
+    margin-right: 0.75rem;
+    margin-top: 0.4rem;
+}
+
 .recipe-page-name {
     text-align: center;
     color: var(--tertiary-color);
     font-size: 2rem;
-    margin-top: 1rem;
     font-weight: bold;
 }
 
 .recipe-page-description {
     color: var(--tertiary-color);
     margin-top: 0;
-    margin-top: 1rem;
+    margin-top: 0.8rem;
     font-size: 1.2rem;
     text-overflow: clip;
 }
@@ -131,7 +152,7 @@ body {
     font-size: 2rem;
 }
 
-.recipe-page-general-ifno-bar-cookingtime{
+.recipe-page-general-ifno-bar-time{
     margin-left: 0.5rem;
     margin-right: 3rem;
 }
@@ -147,12 +168,18 @@ body {
     margin-top: 0.5rem;
 }
 
-.strikethrough {
+.recipe-page-allergies > *:hover{
+    cursor: help;
+    font-size: 2.1rem;
+    margin-left: 0.9rem;
+}
+
+.recipe-page-allergies-strikethrough {
     position: relative;
     display: inline-block;
 }
 
-.strikethrough::after {
+.recipe-page-allergies-strikethrough::after {
     content: '';
     position: absolute;
     left: 0;
@@ -160,6 +187,17 @@ body {
     top: 40%;
     border-top: 2px solid #3f4345;
     transform: rotate(45deg);
+}
+
+.recipe-page-allergies-tooltip {
+    font-size: 1rem;
+    position: absolute;
+    background-color: var(--primary-color);
+    color: var(--tertiary-color);
+    border: var(--secondary-color) 0.2rem solid;
+    border-radius: 0.4rem;
+    z-index: 1000;
+    user-select: none;
 }
 
 
