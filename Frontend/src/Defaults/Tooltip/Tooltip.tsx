@@ -13,9 +13,8 @@ export default function Tooltip(p: { element: JSX.Element, message: string, sx?:
                 onMouseEnter={() => setVisibleTooltip(true)}
                 onMouseLeave={() => setVisibleTooltip(false)}
                 onTouchCancel={() => setVisibleTooltip(false)}
-                {...p.sx}
             >{p.element}</div>
-            {visibleTooltip ? <div className='tooltip'>{p.message}</div> : null}
+            {visibleTooltip ? <div className='tooltip' {...p.sx}>{p.message}</div> : null}
         </div>
     )
 }

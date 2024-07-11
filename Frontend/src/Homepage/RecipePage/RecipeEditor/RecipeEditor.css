@@ -37,3 +37,7 @@
     flex-grow: 1;
     text-align: center;
 }
+
+.recipe-editor-header-save {
+    margin-right: 2.3rem; 
+}

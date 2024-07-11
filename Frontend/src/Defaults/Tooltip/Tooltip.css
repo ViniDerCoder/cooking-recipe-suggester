@@ -10,4 +10,7 @@
     z-index: 1000;
     user-select: none;
     text-wrap: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    transform: translateX(-25%);
 }
