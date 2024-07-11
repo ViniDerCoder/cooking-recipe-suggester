@@ -9,8 +9,8 @@ export async function editUserRecipe(recipeId: Uuid, userId: Uuid, recipeData: U
     + 'UPDATE '
     + 'cooking_recipe_suggester.user_recipes '
     + 'SET '
-    + recipeData.key === "notes" ? "notes = ? " : 'rating = ? '
-    + 'WHERE id = ? AND user_id = ?';
+    + (recipeData.key === "notes" ? "notes = ? " : 'rating = ? ')
+    + 'WHERE recipe_id = ? AND user_id = ?';
 
     const result = await query(q, params);
     if(typeof result === "string") return 'Error editing user recipe';
