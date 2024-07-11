@@ -1,0 +1,34 @@
+.recipe-editor {
+    background-color: var(--primary-color);
+    color: var(--tertiary-color);
+    height: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.recipe-editor-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    background-color: var(--secondary-color);
+    border-bottom: 0.1rem solid var(--tertiary-color);
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.recipe-editor-header-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-left: 1rem;
+    justify-self: center;
+}
+
+.recipe-editor-header-type {
+    font-size: 1rem;
+    font-style: italic;
+    justify-self: end;
+    margin-top: 1rem;
+}

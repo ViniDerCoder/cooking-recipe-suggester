@@ -53,7 +53,7 @@ export async function setMarkingOfRecipe(recipeId: unknown, mark: boolean | null
     const token = getAuthToken()
 
     try {
-        const result = await Backend.Recipes.markRecipe(token ? token : "", recipeId)
+        const result = mark ? await Backend.Recipes.markRecipe(token ? token : "", recipeId) : await Backend.Recipes.unmarkRecipe(token ? token : "", recipeId)
         if(result.error) return [false, result.error]
         else return [true, 'Recipe was marked successfully']
     } catch (error) {

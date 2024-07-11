@@ -1,4 +1,5 @@
 import { getAuthToken } from "../utils/auth";
+import RecipeEditor from "./RecipePage/RecipeEditor/RecipeEditor";
 import RecipePage from "./RecipePage/RecipePage";
 
 
