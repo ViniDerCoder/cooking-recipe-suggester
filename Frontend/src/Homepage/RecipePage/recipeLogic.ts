@@ -6,12 +6,17 @@ import { errorFromError } from "../../utils/backendConnection/utils"
 
 export async function getRecipeById(id: unknown): Promise<[boolean, Recipe | string]> {
     if(typeof id !== 'string') return [false, 'Invalid id']
-
+    const cache = JSON.parse(sessionStorage.getItem("recipe-cache") || "{}")
+    if(cache[id] && new Date().getTime() - new Date(cache[id][0]).getTime() < 1000 * 60 * 5) return [true, cache[id][1]]
+    
     const token = getAuthToken()
 
     try {
         const result = await Backend.Recipes.getRecipe(token ? token : "",id)
-        if(result.data.recipe) return [true, result.data.recipe as Recipe]
+        if(result.data.recipe) {
+            sessionStorage.setItem("recipe-cache", JSON.stringify({...cache, [id]: [new Date(), result.data.recipe]}))
+            return [true, result.data.recipe as Recipe]
+        }
         else return [false, result.error]
     } catch (error) {
         return [false, 'Error: ' + errorFromError(error)]
@@ -20,12 +25,17 @@ export async function getRecipeById(id: unknown): Promise<[boolean, Recipe | str
 
 export async function getIngredientsOfRecipe(recipeId: unknown) {
     if(typeof recipeId !== 'string') return [false, 'Invalid id']
+    const cache = JSON.parse(sessionStorage.getItem("recipe-ingredients-cache") || "{}")
+    if(cache[recipeId] && new Date().getTime() - new Date(cache[recipeId][0]).getTime() < 1000 * 60 * 5) return [true, cache[recipeId][1]]
 
     const token = getAuthToken()
 
     try {
         const result = await Backend.Ingredients.getIngredientsOfRecipe(token ? token : "", recipeId)
-        if(result.data.ingredients) return [true, result.data.ingredients]
+        if(result.data.ingredients) {
+            sessionStorage.setItem("recipe-ingredients-cache", JSON.stringify({...cache, [recipeId]: [new Date(), result.data.ingredients]}))
+            return [true, result.data.ingredients]
+        }
         else return [false, result.error]
     } catch (error) {
         return [false, 'Error: ' + errorFromError(error)]

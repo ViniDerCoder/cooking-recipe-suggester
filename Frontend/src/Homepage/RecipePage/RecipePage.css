@@ -233,6 +233,8 @@ body {
     color: var(--tertiary-color);
     border: var(--secondary-color) 0.2rem solid;
     border-radius: 0.4rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
     z-index: 1000;
     user-select: none;
     text-wrap: normal;

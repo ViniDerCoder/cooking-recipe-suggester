@@ -18,10 +18,15 @@ const corsOptions: CorsOptions = {
             callback(new Error('Not allowed by CORS'), false);
         }
     },
-    optionsSuccessStatus: 200
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 200,
+    preflightContinue: false,
 };
 
 app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 

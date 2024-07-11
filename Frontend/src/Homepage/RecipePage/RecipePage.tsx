@@ -14,6 +14,7 @@ import { BiDish, BiSolidDish } from "react-icons/bi";
 import { GoBookmark, GoBookmarkFill } from "react-icons/go";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import { formatDateToDDMMYYYY } from '../../utils/date';
+import Tooltip from '../../Defaults/Tooltip/Tooltip';
 
 
 export default function RecipePage(p: { recipeId: string }) {
@@ -136,7 +137,7 @@ export default function RecipePage(p: { recipeId: string }) {
                         }}
                     >{recipeCooked ? <BiSolidDish opacity={buttonsDisabled.cooked ? 0.5 : 1}/> : <BiDish opacity={buttonsDisabled.cooked ? 0.5 : 1}/>}</div>
                     </div>
-                    {visibleCookedTooltip ? <div className='recipe-page-tooltip' style={{ marginLeft: "8rem", marginTop: "3.5rem"}}>{(userRecipeData && userRecipeData.cooked.length !== 0) ? (userRecipeData.cooked.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()).map((val, ind) => <div>{`${userRecipeData.cooked.length - ind}. - ${formatDateToDDMMYYYY(val)}`}</div>)) : "Noch nicht gekocht!"}</div> : null}
+                    {visibleCookedTooltip ? <div className='recipe-page-tooltip' style={{ marginLeft: recipe.imageUrl ? "13rem" : "8rem", marginTop: recipe.imageUrl ? "23.5rem" : "3.5rem"}}>{(userRecipeData && userRecipeData.cooked.length !== 0) ? (userRecipeData.cooked.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()).map((val, ind) => <div>{`${userRecipeData.cooked.length - ind}. - ${formatDateToDDMMYYYY(val)}`}</div>)) : "Noch nicht gekocht!"}</div> : null}
                 {userRecipeData ? <div className="recipe-page-rating">
                     {[...Array(5)].map((e, i) => {
                         return <div className="recipe-page-rating-star" onClick={async () => {
@@ -291,17 +292,10 @@ function Allergenes(p: {ingredients: FullRecipeIngredient[]}) {
 }
 
 function Allergene(p: {allergene: boolean, trueElement: JSX.Element, falseElement: JSX.Element, trueTitle: string, falseTitle: string}) {
-    const [visibleTooltip, setVisibleTooltip] = useState(false)
     return (
-        <div>
-            <div
-                onTouchStart={() => setVisibleTooltip(true)}
-                onTouchEnd={() => setVisibleTooltip(false)}
-                onMouseEnter={() => setVisibleTooltip(true)}
-                onMouseLeave={() => setVisibleTooltip(false)}
-                onTouchCancel={() => setVisibleTooltip(false)}
-            >{p.allergene ? p.trueElement : p.falseElement}</div>
-            {visibleTooltip ? <div className='recipe-page-tooltip'>{p.allergene ? p.trueTitle : p.falseTitle}</div> : null}
-        </div>
+        <Tooltip
+            element={p.allergene ? p.trueElement : p.falseElement}
+            message={p.allergene ? p.trueTitle : p.falseTitle}
+        />
     )
 }

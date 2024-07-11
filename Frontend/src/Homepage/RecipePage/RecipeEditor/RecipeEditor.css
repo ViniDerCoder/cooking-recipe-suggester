@@ -11,7 +11,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between; 
     padding: 0.75rem;
     background-color: var(--secondary-color);
     border-bottom: 0.1rem solid var(--tertiary-color);
@@ -19,16 +19,21 @@
     border-bottom-right-radius: 0.5rem;
 }
 
+.recipe-editor-header-public {
+    padding-left: 1rem;
+    margin-left: auto; 
+}
+
 .recipe-editor-header-title {
     font-size: 1.5rem;
     font-weight: bold;
     margin-left: 1rem;
-    justify-self: center;
+    flex-grow: 1;
+    text-align: center; 
 }
 
 .recipe-editor-header-type {
     font-size: 1rem;
-    font-style: italic;
-    justify-self: end;
-    margin-top: 1rem;
+    flex-grow: 1;
+    text-align: center;
 }
