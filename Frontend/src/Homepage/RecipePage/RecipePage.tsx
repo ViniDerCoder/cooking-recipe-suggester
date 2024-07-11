@@ -2,7 +2,7 @@ import './../../ColorScheme.css';
 import './RecipePage.css';
 
 import { useEffect, useState } from "react";
-import { getIngredientsOfRecipe, getRecipeById, getUserDataOfRecipe, setMarkingOfRecipe, setNotesForRecipe, setRatingForRecipe } from "./recipeLogic";
+import { addCookedData, getIngredientsOfRecipe, getRecipeById, getUserDataOfRecipe, setMarkingOfRecipe, setNotesForRecipe, setRatingForRecipe } from "./recipeLogic";
 import { Recipe, RecipeUserData } from '../../../../Backend/src/utils/types/recipe'
 import { FullRecipeIngredient } from '../../../../Backend/src/utils/types/ingredient'
 
@@ -25,7 +25,7 @@ export default function RecipePage(p: { recipeId: string }) {
     const [isRecipeMarked, setIsRecipeMarked] = useState<null | boolean>(null);
     const [recipeCooked, setRecipeCooked] = useState(false);
     const [visibleCookedTooltip, setVisibleCookedTooltip] = useState(false);
-    const [markingButtonDisabled, setMarkingButtonDisabled] = useState(false);
+    const [buttonsDisabled, setButtonsDisabled] = useState({rating: false, marking: false, cooked: false});
 
     useEffect(() => {
         const loadRecipe = async () => {
@@ -107,14 +107,14 @@ export default function RecipePage(p: { recipeId: string }) {
                 <div className="recipe-page-title-bar">
                     <div className="recipe-page-mark"
                         onClick={async () => {
-                            if(markingButtonDisabled) return
-                            setMarkingButtonDisabled(true)
+                            if(buttonsDisabled.marking) return
+                            setButtonsDisabled({ ...buttonsDisabled, marking: true})
                             const markResult = await setMarkingOfRecipe(p.recipeId, !isRecipeMarked)
                             if(markResult[0]) setIsRecipeMarked(!isRecipeMarked)
                             else console.log(markResult[1])
-                            setTimeout(() => setMarkingButtonDisabled(false), 1000)
+                            setTimeout(() => setButtonsDisabled({ ...buttonsDisabled, marking: false}), 1000)
                         }}
-                    >{isRecipeMarked !== null ? (isRecipeMarked ? <GoBookmarkFill opacity={markingButtonDisabled ? 0.5 : 1}/> : <GoBookmark opacity={markingButtonDisabled ? 0.5 : 1}/>) : null}</div>
+                    >{isRecipeMarked !== null ? (isRecipeMarked ? <GoBookmarkFill opacity={buttonsDisabled.marking ? 0.5 : 1}/> : <GoBookmark opacity={buttonsDisabled.marking ? 0.5 : 1}/>) : null}</div>
                     <div className="recipe-page-name">{recipe.name}</div>
                     <div className="recipe-page-cooked"
                         onTouchStart={() => setVisibleCookedTooltip(true)}
@@ -122,18 +122,33 @@ export default function RecipePage(p: { recipeId: string }) {
                         onMouseEnter={() => setVisibleCookedTooltip(true)}
                         onMouseLeave={() => setVisibleCookedTooltip(false)}
                         onTouchCancel={() => setVisibleCookedTooltip(false)}
-                    >{recipeCooked ? <BiSolidDish /> : <BiDish />}</div>
-                        {visibleCookedTooltip ? <div className='recipe-page-tooltip'>{userRecipeData ? userRecipeData.cooked.sort((a, b) => b.getTime() - a.getTime()).map((val, ind) => `${userRecipeData.cooked.length - ind}. ${formatDateToDDMMYYYY(val)}`) : "Noch nicht gekocht!"}</div> : null}
+
+                        onClick={async () => {
+                            if(buttonsDisabled.cooked || recipeCooked) return
+                            setButtonsDisabled({ ...buttonsDisabled, cooked: true})
+                            const markResult = await addCookedData(p.recipeId)
+                            if(markResult[0]) {
+                                if(userRecipeData) setUserRecipeData({...userRecipeData, cooked: userRecipeData.cooked.concat([new Date()])})
+                                setRecipeCooked(true)
+                            }
+                            else console.log(markResult[1])
+                            setTimeout(() => setButtonsDisabled({ ...buttonsDisabled, cooked: false}), 1000)
+                        }}
+                    >{recipeCooked ? <BiSolidDish opacity={buttonsDisabled.cooked ? 0.5 : 1}/> : <BiDish opacity={buttonsDisabled.cooked ? 0.5 : 1}/>}</div>
                     </div>
+                    {visibleCookedTooltip ? <div className='recipe-page-tooltip' style={{ marginLeft: "8rem", marginTop: "3.5rem"}}>{(userRecipeData && userRecipeData.cooked.length !== 0) ? (userRecipeData.cooked.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()).map((val, ind) => <div>{`${userRecipeData.cooked.length - ind}. - ${formatDateToDDMMYYYY(val)}`}</div>)) : "Noch nicht gekocht!"}</div> : null}
                 {userRecipeData ? <div className="recipe-page-rating">
                     {[...Array(5)].map((e, i) => {
                         return <div className="recipe-page-rating-star" onClick={async () => {
-                            const rating = i * 2
+                            if(buttonsDisabled.rating) return
+                            setButtonsDisabled({ ...buttonsDisabled, rating: true})
+                            const rating = i * 2 + 2
                             const ratingResult = await setRatingForRecipe(p.recipeId, rating)
                             if(ratingResult[0]) setUserRecipeData({...userRecipeData, rating: rating})
                             else console.log(ratingResult[1])
+                            setTimeout(() => setButtonsDisabled({ ...buttonsDisabled, rating: false}), 1000)
                         }}>
-                            {userRecipeData.rating ? userRecipeData.rating >= i * 2 + 2 ? <FaStar color='gold'/> : userRecipeData.rating >= i * 2 + 1 ? <FaStarHalfAlt color='gold'/> : <FaRegStar /> : <FaRegStar />}
+                            {userRecipeData.rating ? userRecipeData.rating >= i * 2 + 2 ? <FaStar color='gold' opacity={buttonsDisabled.rating ? 0.5 : 1}/> : userRecipeData.rating >= i * 2 + 1 ? <FaStarHalfAlt color='gold' opacity={buttonsDisabled.rating ? 0.5 : 1}/> : <FaRegStar color='gold' opacity={buttonsDisabled.rating ? 0.5 : 1}/> : <FaRegStar color='gold' opacity={buttonsDisabled.rating ? 0.5 : 1}/>}
                         </div>
                     })}
                 </div>: null}

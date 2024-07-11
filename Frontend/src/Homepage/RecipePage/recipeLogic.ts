@@ -96,3 +96,17 @@ export async function setNotesForRecipe(recipeId: unknown, notes: unknown) {
         }
     }, 1500)
 }
+
+export async function addCookedData(recipeId: unknown) {
+    if(typeof recipeId !== 'string') return [false, 'Invalid id']
+
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.markCooked(token ? token : "", recipeId)
+        if(result.error) return [false, result.error]
+        else return [true, 'Recipe was marked as cooked successfully']
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}
