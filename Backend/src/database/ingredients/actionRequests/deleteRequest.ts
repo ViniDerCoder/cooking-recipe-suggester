@@ -19,7 +19,7 @@ export default async function deleteRequest(userId: Uuid, ingredientId: Uuid) {
     else return {
         actionId: actionId,
         action: "DELETE",
-        createdAt: createdAt,
+        createdAt: new Date(createdAt),
         userId: userId,
         ingredientId: ingredientId
     };

@@ -19,7 +19,7 @@ export async function getUserFromEmail(email: string) {
             lastName: result.rows[0].last_name,
             username: result.rows[0].username,
             email: result.rows[0].email,
-            createdAt: result.rows[0].created_at
+            createdAt: new Date(result.rows[0].created_at)
         } as User;
     }
     else return "User not found by email";

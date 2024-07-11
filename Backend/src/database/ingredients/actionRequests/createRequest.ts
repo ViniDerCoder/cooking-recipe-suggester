@@ -35,7 +35,7 @@ export default async function createRequest(userId: Uuid, ingredient: {name: str
     else return {
         actionId: actionId,
         action: "CREATE",
-        createdAt: createdAt,
+        createdAt: new Date(createdAt),
         userId: userId,
         data: JSON.parse(data)
     };

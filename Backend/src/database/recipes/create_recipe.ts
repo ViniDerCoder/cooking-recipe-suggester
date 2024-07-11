@@ -24,7 +24,7 @@ export async function createRecipe(options: DatabaseRecipeCreationData) {
         name: options.name,
         description: options.description,
         instructions: options.instructions,
-        createdAt: createdAt,
+        createdAt: new Date(createdAt),
         createdById: options.createdById,
         cookingTime: options.cookingTime,
         waitingTime: options.waitingTime,

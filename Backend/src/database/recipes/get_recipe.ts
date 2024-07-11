@@ -112,7 +112,7 @@ export async function getRecipesByFilters(recipeIds: Array<Uuid>, filters: MealS
                 description: row.description,
                 instructions: row.instructions,
                 createdById: row.created_by.toString('hex'),
-                createdAt: row.created_at,
+                createdAt: new Date(row.created_at),
                 cookingTime: row.cooking_time,
                 waitingTime: row.waiting_time,
                 servings: row.servings,

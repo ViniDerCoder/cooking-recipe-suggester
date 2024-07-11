@@ -35,7 +35,7 @@ export default async function editRequest(userId: Uuid, ingredientId: Uuid, ingr
     else return {
         actionId: actionId,
         action: "UPDATE",
-        createdAt: createdAt,
+        createdAt: new Date(createdAt),
         userId: userId,
         ingredientId: ingredientId,
         data: JSON.parse(data)

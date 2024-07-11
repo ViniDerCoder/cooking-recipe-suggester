@@ -30,7 +30,7 @@ export async function registerNewUser(username: string, email: string, firstName
             lastName: lastName,
             username: username,
             email: email,
-            createdAt: createdAt
+            createdAt: new Date(createdAt)
         } as User
     };
 }

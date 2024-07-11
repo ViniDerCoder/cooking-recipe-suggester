@@ -19,7 +19,7 @@ export async function listUserRecipes(userId: Uuid) {
             name: row.name,
             description: row.description,
             instructions: row.instructions,
-            createdAt: row.created_at,
+            createdAt: new Date(row.created_at),
             createdById: row.created_by.toString('hex'),
             cookingTime: row.cooking_time,
             waitingTime: row.waiting_time,
