@@ -81,6 +81,14 @@ abstract class Recipes {
     static async deleteRecipe(token: string, recipeId: string) {
         return await BackendConnection.delete('recipes', recipeId, { }, token);
     }
+
+    static async getRecipeType(token: string, typeId: string) {
+        return await BackendConnection.get('recipes/types', typeId, { }, token);
+    }
+
+    static async getRecipeTypes(token: string) {
+        return await BackendConnection.get('recipes/types', undefined, { }, token);
+    }
 }
 
 abstract class Ingredients {

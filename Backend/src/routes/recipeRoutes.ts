@@ -10,6 +10,7 @@ import limit from '../utils/rate-limiter.js';
 import { cookedRecipe, markRecipe, unmarkRecipe } from '../controller/recipes/mark.js';
 import { getRecipesIngredients } from '../controller/recipes/ingredients/getRecipesIngredients.js';
 import { setNotesForRecipe, setRatingForRecipe } from '../controller/recipes/addUserData.js';
+import { getAllRecipeTypes, getRecipeTypeById } from '../controller/recipes/recipeTypes.js';
 const router = express.Router();
 
 
@@ -152,14 +153,30 @@ router.delete('/:id', limit(1000 * 60 * 20, 5), async (req, res) => {
     else return res.status(200).send({message: "Deletion was successfull", error: undefined});
 });
 
-router.post('/ingredients/', limit(1000 * 60), async (req, res) => {
+router.get('/ingredients/:id', limit(1000 * 60), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
-    const { id } = req.body;
+    const id = req.params.id;
 
     const result = await getRecipesIngredients(user.userId, id);
 
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Fetching ingredients of recipe was successfull", error: undefined, data: { ingredients: result }});
+})
+
+router.get('/types/:id', limit(1000 * 30), async (req, res) => {
+    const id = req.params.id;
+
+    const result = getRecipeTypeById(id);
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Fetching recipe type was successfull", error: undefined, data: { type: result }});
+});
+
+router.get('/types', limit(1000 * 30), async (req, res) => {
+    const result = getAllRecipeTypes();
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Fetching all recipe types was successfull", error: undefined, data: { types: result }});
 })
 
 export default router;

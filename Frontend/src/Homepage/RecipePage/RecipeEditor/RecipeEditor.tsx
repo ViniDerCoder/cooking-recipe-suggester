@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
 import { Ingredient, IngredientRecipeData, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
-import { editRecipe } from './recipeEditorLogic';
+import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
 
 export default function RecipeEditor(p: { recipeId?: string }) {
     console.log(p.recipeId)
@@ -19,23 +19,29 @@ export default function RecipeEditor(p: { recipeId?: string }) {
     const [ingredients, setIngredients] = useState<IngredientRecipeData | null>(null)
     const [ingredientChanges, setIngredientChanges] = useState<RecipeIngredientUpdateActions[]>([])
     const [ingredientsWithInformation, setIngredientsWithInformation] = useState<Ingredient | null>(null)
+    const [recipeTypes, setRecipeTypes] = useState<{name: string, id: string}[] | null>(null)
     const [changesMade, setChangesMade] = useState<boolean>(false)
     const [disabledButtons, setDisabledButtons] = useState({ save: false, public: false })
 
     useEffect(() => {
         if (p.recipeId) {
             (async () => {
-                const [recipe, ingredients] = await Promise.all([
+                const [lRecipe, lIngredients, lTypes] = await Promise.all([
                     getRecipeById(p.recipeId),
-                    getIngredientsOfRecipe(p.recipeId)
+                    getIngredientsOfRecipe(p.recipeId),
+                    getRecipeTypes()
                 ])
 
-                if (recipe[0] && typeof recipe[1] !== "string") {
-                    setRecipe(recipe[1])
+                if (lRecipe[0] && typeof lRecipe[1] !== "string") {
+                    setRecipe(lRecipe[1])
                 }
 
-                if (ingredients[0] && typeof ingredients[1] !== "string") {
-                    setIngredients(ingredients[1].map((ingredient: Ingredient) => ingredient.id))
+                if (lIngredients[0] && typeof lIngredients[1] !== "string") {
+                    setIngredients(lIngredients[1].map((ingredient: Ingredient) => ingredient.id))
+                }
+
+                if (lTypes[0] && typeof lTypes[1] !== "string") {
+                    setRecipeTypes(lTypes[1])
                 }
                 setLoading(false)
 
@@ -51,9 +57,9 @@ export default function RecipeEditor(p: { recipeId?: string }) {
         <div className="recipe-editor">
             <div className='recipe-editor-header'>
                 {recipe && "public" in recipe ? <div className='recipe-editor-header-public'
-                    style={{ opacity: disabledButtons.public ? 0.5 : 1}}
+                    style={{ opacity: disabledButtons.public ? 0.5 : 1 }}
                     onClick={() => {
-                        if(disabledButtons.public) return
+                        if (disabledButtons.public) return
                         setDisabledButtons({ ...disabledButtons, public: true })
                         setRecipe({ ...recipe, public: !recipe.public })
                         setChangesMade(true)
@@ -68,11 +74,11 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     <div className='recipe-editor-header-type'>{p.recipeId ? "Bearbeiten" : "Erstellen"}</div>
                 </div>
                 <div className='recipe-editor-header-save'
-                    style={{ opacity: disabledButtons.save ? 0.5 : 1}}
+                    style={{ opacity: disabledButtons.save ? 0.5 : 1 }}
                     onClick={() => {
                         if (disabledButtons.save || !changesMade) return
                         setDisabledButtons({ ...disabledButtons, save: true })
-                        if(!recipe) return
+                        if (!recipe) return
                         if ("public" in recipe) {
 
                             editRecipe(p.recipeId, recipe, ingredientChanges).then(([success, error]) => {
@@ -95,44 +101,91 @@ export default function RecipeEditor(p: { recipeId?: string }) {
             </div>
             <div className='recipe-editor-content'>
                 <div className='recipe-editor-content-texts'>
-                    <div className='recipe-editor-content-name'><input 
-                        value={recipe?.name ? recipe.name : undefined}
-                        onInput={(e) => {
-                            if(!recipe) return
-                            setRecipe({ ...recipe, name: (e.target as HTMLInputElement).value })
-                            setChangesMade(true)
-                        }}
-                    /></div>
+                    <div className='recipe-editor-content-name'>
+                        <div className='recipe-editor-content-name-title'>Name</div>
+                        <input className='recipe-editor-content-name-input'
+                            value={recipe?.name ? recipe.name : undefined}
+                            onInput={(e) => {
+                                if (!recipe) return
+                                setRecipe({ ...recipe, name: (e.target as HTMLInputElement).value })
+                                setChangesMade(true)
+                            }}
+                        /></div>
 
-                    <div className='recipe-editor-content-description'><input 
-                        value={recipe?.description ? recipe.description : undefined}
-                        onInput={(e) => {
-                            if(!recipe) return
-                            setRecipe({ ...recipe, description: (e.target as HTMLInputElement).value })
-                            setChangesMade(true)
-                        }}
-                    /></div>
+                    <div className='recipe-editor-content-description'>
+                        <div className='recipe-editor-content-name-title'>Beschreibung</div>
+                        <input className='recipe-editor-content-description-input'
+                            value={recipe?.description ? recipe.description : undefined}
+                            onInput={(e) => {
+                                if (!recipe) return
+                                setRecipe({ ...recipe, description: (e.target as HTMLInputElement).value })
+                                setChangesMade(true)
+                            }}
+                        /></div>
                 </div>
                 <div className="recipe-editor-content-times">
                     <div className='recipe-editor-content-cookingtime'>
                         <div className='recipe-editor-content-cookingtime-title'>Kochzeit</div>
-                        <input 
+                        <input
                             value={recipe?.cookingTime ? recipe.cookingTime : undefined}
                             onInput={(e) => {
                                 let val = (e.target as HTMLInputElement).value
-                                if(val.length === 0) val = "0"
-                                if(isNaN(parseInt(val))) return
-                                if(!recipe) return
+                                if (val.length === 0) val = "0"
+                                if (isNaN(parseInt(val))) return
+                                if (!recipe) return
                                 setRecipe({ ...recipe, cookingTime: parseInt(val) })
                                 setChangesMade(true)
                             }}
+                            step={1}
+                            type="number"
                         />
                     </div>
-                    <div className='recipe-editor-content-waitingtime'></div>
+                    <div className='recipe-editor-content-waitingtime'>
+                    <div className='recipe-editor-content-waitingtime-title'>Wartezeit</div>
+                        <input
+                            value={recipe?.waitingTime ? recipe.waitingTime : undefined}
+                            onInput={(e) => {
+                                let el = (e.target as HTMLInputElement)
+                                if (el.value.length === 0) el.value = "0"
+                                if (isNaN(parseInt(el.value))) return
+                                if (!recipe) return
+                                setRecipe({ ...recipe, waitingTime: parseInt(el.value) })
+                                setChangesMade(true)
+                            }}
+                            step={1}
+                            type="number"
+                        />
+                    </div>
                 </div>
-                <div className='recipe-editor-content-servings'></div>
+                <div className='recipe-editor-content-servings'>
+                    <div className='recipe-editor-content-servings-title'>Portionen</div>
+                    <input
+                        value={recipe?.servings ? recipe.servings : undefined}
+                        onInput={(e) => {
+                            let el = (e.target as HTMLInputElement)
+                            if (el.value.length === 0) el.value = "0"
+                            if (isNaN(parseInt(el.value))) return
+                            if (!recipe) return
+                            setRecipe({ ...recipe, servings: parseInt(el.value) })
+                            setChangesMade(true)
+                        }}
+                        step={1}
+                        type="number"
+                    />
+                </div>
 
-                <div className='recipe-editor-content-type'></div>
+                {recipeTypes ? 
+                <div className='recipe-editor-content-type'>
+                    <div className='recipe-editor-content-type-title'>Typ</div>
+                    <div className='recipe-editor-content-type-info'>Wähle den Typ, welcher am besten passt!</div>
+                    <div className='recipe-editor-content-type-select'>
+                        <select>
+                            {recipeTypes.map((type) => {
+                                return <option className='recipe-editor-content-type-select-option' key={type.id} value={type.id}>{type.name}</option>
+                            })}
+                        </select>
+                    </div>
+                </div> : null}
 
                 <div className='recipe-editor-content-ingredients'></div>
             </div>

@@ -120,3 +120,17 @@ export async function addCookedData(recipeId: unknown) {
         return [false, 'Error: ' + errorFromError(error)]
     }
 }
+
+export async function getRecipeType(typeId: unknown) {
+    if(typeof typeId !== 'string') return [false, 'Invalid id']
+
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.getRecipeType(token ? token : "", typeId)
+        if(result.data.type) return [true, result.data.type]
+        else return [false, result.error]
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}

@@ -19,3 +19,15 @@ export async function editRecipe(recipeId: unknown, recipe: RecipeEditData, ingr
         return [false, 'Error: ' + errorFromError(error)]
     }
 }
+
+export async function getRecipeTypes() {
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.getRecipeTypes(token ? token : "")
+        if(result.data.types) return [true, result.data.types]
+        else return [false, result.error]
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}
