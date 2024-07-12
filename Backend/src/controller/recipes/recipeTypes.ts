@@ -1,5 +1,5 @@
-import { isUuid } from "../../utils/types/other";
-import { getRecipeTypeById as dbGetRecipeTypeById, getAllRecipeTypes as dbGetAllRecipeTypes } from "../../database/recipes/recipe_types";
+import { isUuid } from "../../utils/types/other.js";
+import { getRecipeTypeById as dbGetRecipeTypeById, getAllRecipeTypes as dbGetAllRecipeTypes } from "../../database/recipes/recipe_types.js";
 
 
 export function getRecipeTypeById(id: unknown) {
