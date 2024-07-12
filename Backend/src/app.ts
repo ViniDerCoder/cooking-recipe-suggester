@@ -35,4 +35,12 @@ app.use('/api/auth', loginRoute);
 app.use('/api/ingredients', ingredientRoute);
 app.use('/api/suggestions', suggestionRoute);
 
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (err.message === 'Not allowed by CORS') {
+        res.status(403).json({ error: 'CORS policy does not allow access from the specified origin.' });
+    } else {
+        next(err);
+    }
+});
+
 export default app;

@@ -20,8 +20,8 @@ export async function cacheAllRecipeTypes() {
     }
 }
 
-export function getRecipeTypeById(id: Uuid): string | undefined {
-    return recipeTypes[id];
+export function getRecipeTypeById(id: Uuid): {id: string, name: string} | undefined {
+    return {id: id, name: recipeTypes[id]};
 }
 
 export function getAllRecipeTypes() {

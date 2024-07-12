@@ -113,6 +113,22 @@ router.get('/search', limit(), async (req, res) => {
     res.send('Search for recipes by name, ingredients, etc.');
 });
 
+router.get('/types/', limit(1000 * 30), async (req, res) => {
+    const result = getAllRecipeTypes();
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Fetching all recipe types was successfull", error: undefined, data: { types: result }});
+})
+
+router.get('/types/:id', limit(1000 * 30), async (req, res) => {
+    const id = req.params.id;
+
+    const result = getRecipeTypeById(id);
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Fetching recipe type was successfull", error: undefined, data: { type: result }});
+});
+
 router.get('/:id', limit(1000 * 20, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
 
@@ -161,22 +177,6 @@ router.get('/ingredients/:id', limit(1000 * 60), async (req, res) => {
 
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Fetching ingredients of recipe was successfull", error: undefined, data: { ingredients: result }});
-})
-
-router.get('/types/:id', limit(1000 * 30), async (req, res) => {
-    const id = req.params.id;
-
-    const result = getRecipeTypeById(id);
-
-    if(typeof result === "string") return res.status(400).send({error: result});
-    else return res.status(200).send({message: "Fetching recipe type was successfull", error: undefined, data: { type: result }});
-});
-
-router.get('/types', limit(1000 * 30), async (req, res) => {
-    const result = getAllRecipeTypes();
-
-    if(typeof result === "string") return res.status(400).send({error: result});
-    else return res.status(200).send({message: "Fetching all recipe types was successfull", error: undefined, data: { types: result }});
 })
 
 export default router;
