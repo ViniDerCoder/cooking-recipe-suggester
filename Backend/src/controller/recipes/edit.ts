@@ -1,6 +1,6 @@
 import { getIngredientsOfRecipe } from "../../database/ingredients/get_ingredients_of_recipe.js";
 import { getRecipeById } from "../../database/recipes/get_recipe.js";
-import { isRecipeEditData } from "../../utils/types/recipe.js";
+import { editabelRecipeProperties, isRecipeEditData } from "../../utils/types/recipe.js";
 import { isIngredientUpdateActionList } from "../../utils/types/ingredient.js";
 import { updateRecipe } from "../../database/recipes/update_recipe.js";
 import { linkIngredientToRecipe } from "../../database/ingredients/link_ingredient_to_recipe.js";
@@ -27,6 +27,7 @@ export async function editRecipeById(recipeId: unknown, userId: unknown, newReci
     const newRecipeData: {[key: string]: Array<string> | string | boolean | number} = {}
     if(newRecipe !== undefined && newRecipe !== null) {
         for(const key of Object.keys(newRecipe)) {
+            if(!editabelRecipeProperties.includes(key as any)) continue;
             if(newRecipe[key] !== undefined && newRecipe[key] !== null) newRecipeData[key] = newRecipe[key];
         }
     }
