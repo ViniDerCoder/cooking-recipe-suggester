@@ -1,16 +1,13 @@
-import nodemailer from 'nodemailer';
 import { config } from 'dotenv'
-import nodeMailjet from 'node-mailjet'
+import { Recipient, EmailParams, MailerSend, Sender } from 'mailersend';
 
 config();
 
-if (!process.env['MAILJET_API_KEY'] || !process.env['MAILJET_API_SECRET'] || !process.env["EMAILER_USER_ADDRESS"]) throw new Error('Please provide the Emailer API key and secret in the .env file');
+if (!process.env['MAILERSEND_API_KEY'] || !process.env["MAILERSEND_ADDRESS"]) throw new Error('Please provide the Emailer API key and address in the .env file');
 
-const mailjet = new nodeMailjet({
-    apiKey: process.env.MAILJET_API_KEY,
-    apiSecret: process.env.MAILJET_API_SECRET
-})
-
+const mailer = new MailerSend({
+    apiKey: process.env['MAILERSEND_API_KEY']
+});
 
 export const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
@@ -19,21 +16,17 @@ export async function sendMail(to: Array<string>, subject: string, text: string,
         if (!to.some((email) => email.match(emailRegex))) return resolve("Invalid email");
 
         try {
-            const request = await mailjet.post('send', { version: 'v3.1' }).request({
-                Messages: [
-                    {
-                        From: {
-                            Email: process.env.EMAILER_USER_ADDRESS,
-                            Name: 'Cooking Recipe Suggester'
-                        },
-                        To: to.map((email) => ({ Email: email })),
-                        Subject: subject,
-                        TextPart: text,
-                        HTMLPart: html
-                    }
-                ]
-            })
-            resolve(request.body)
+            const recipients = to.map((email) => new Recipient(email));
+            const emailParams = new EmailParams()
+                .setFrom({ email: process.env["MAILERSEND_ADDRESS"] || "", name: "Cooking Recipe Suggester" })
+                .setTo(recipients)
+                .setSubject(subject)
+                .setText(text)
+            if(html) emailParams.setHtml(html)
+
+            const request = await mailer.email.send(emailParams)
+
+            resolve(request)
         } catch (e) {
             return reject(e)
         }
