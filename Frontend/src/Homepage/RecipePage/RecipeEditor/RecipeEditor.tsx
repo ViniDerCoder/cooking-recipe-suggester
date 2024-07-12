@@ -12,6 +12,8 @@ import { Ingredient, IngredientRecipeData, RecipeIngredientUpdateActions } from 
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
 import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
 
+type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS"
+
 export default function RecipeEditor(p: { recipeId?: string }) {
     console.log(p.recipeId)
     const [loading, setLoading] = useState<boolean>(true)
@@ -21,7 +23,8 @@ export default function RecipeEditor(p: { recipeId?: string }) {
     const [ingredientsWithInformation, setIngredientsWithInformation] = useState<Ingredient | null>(null)
     const [recipeTypes, setRecipeTypes] = useState<{ name: string, id: string }[] | null>(null)
     const [changesMade, setChangesMade] = useState<boolean>(false)
-    const [disabledButtons, setDisabledButtons] = useState({ save: false, public: false })
+    const [disabledButtons, setDisabledButtons] = useState({ save: false, public: false, back: false })
+    const [changesStack, setChangesStack] = useState<{field: EditorFields, newValue: any, oldValue: any}[]>([])
 
     useEffect(() => {
         if (p.recipeId) {
@@ -87,6 +90,15 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     <div>Rezept Editor</div>
                     <div className='recipe-editor-header-type'>{p.recipeId ? "Bearbeiten" : "Erstellen"}</div>
                 </div>
+                <div className='recipe-editor-header-back'
+                    style={{ opacity: changesStack.length === 0 || disabledButtons.back ? 0.5 : 1 }}
+                    onClick={() => {
+                        if (disabledButtons.back || !changesMade) return
+                        setDisabledButtons({ ...disabledButtons, back: true })
+                        if (changesStack.length < 1) return
+                    }}
+                >
+                </div>
                 <div className='recipe-editor-header-save'
                     style={{ opacity: disabledButtons.save ? 0.5 : 1 }}
                     onClick={() => {
@@ -108,14 +120,16 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                     }}
                 ><Tooltip
-                        element={changesMade ? <BiSolidSave size={"2rem"} /> : <BiSave size={"2rem"} />}
-                        message={changesMade ? "Speichern" : "Nichs zu speichern"}
-                        sx={{ style: { marginRight: "2rem" } }}
-                    /></div>
+                    element={changesMade ? <BiSolidSave size={"2rem"} /> : <BiSave size={"2rem"} />}
+                    message={changesMade ? "Speichern" : "Nichs zu speichern"}
+                    sx={{ style: { marginRight: "2rem" } }}
+                />
+                </div>
             </div>
             <div className='recipe-editor-content'>
                 <div className='recipe-editor-content-image'>
                     <div className='recipe-editor-content-image-title'>Bild</div>
+                    <img alt={recipe.name || ""} src={recipe.imageUrl || ""} />
                     <input className='recipe-editor-content-image-input' type="file" onInput={(event) => {
                         if (!recipe) return
                         let file = (event.target as HTMLInputElement).files?.[0]
@@ -127,7 +141,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                             setChangesMade(true)
                         }
                         reader.readAsDataURL(file)
-                    }}/>
+                    }} />
                     <div className='recipe-editor-content-image-info'>Wähle ein Bild für dein Rezept!</div>
                 </div>
                 <div className='recipe-editor-content-texts'>
@@ -140,18 +154,41 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                                 setRecipe({ ...recipe, name: (e.target as HTMLInputElement).value })
                                 setChangesMade(true)
                             }}
-                        /></div>
+                        />
+                    </div>
 
                     <div className='recipe-editor-content-description'>
                         <div className='recipe-editor-content-name-title'>Beschreibung</div>
-                        <input className='recipe-editor-content-description-input'
+                        <textarea className='recipe-editor-content-description-input'
                             value={recipe?.description ? recipe.description : undefined}
                             onInput={(e) => {
                                 if (!recipe) return
                                 setRecipe({ ...recipe, description: (e.target as HTMLInputElement).value })
                                 setChangesMade(true)
                             }}
-                        /></div>
+                            style={{ resize: "none" }}
+                        />
+                    </div>
+
+                    {recipeTypes ?
+                        <div className='recipe-editor-content-type'>
+                            <div className='recipe-editor-content-type-title'>Typ</div>
+                            <div className='recipe-editor-content-type-info'>Wähle den Typ, welcher am besten passt!</div>
+                            <div className='recipe-editor-content-type-select'>
+                                <select
+                                    onChange={(e) => {
+                                        if (!recipe) return
+                                        setRecipe({ ...recipe, typeId: (e.target as HTMLSelectElement).value })
+                                        setChangesMade(true)
+                                    }}
+                                >
+                                    {recipeTypes.sort((a, b) => a.name.localeCompare(b.name)).map((type) => {
+                                        return <option selected={recipe.typeId === type.id ? true : false} className='recipe-editor-content-type-select-option' key={type.id} value={type.id}>{type.name}</option>
+                                    })}
+                                </select>
+                            </div>
+                        </div> : null
+                    }
                 </div>
                 <div className="recipe-editor-content-times">
                     <div className='recipe-editor-content-cookingtime'>
@@ -203,25 +240,6 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         type="number"
                     />
                 </div>
-
-                {recipeTypes ?
-                    <div className='recipe-editor-content-type'>
-                        <div className='recipe-editor-content-type-title'>Typ</div>
-                        <div className='recipe-editor-content-type-info'>Wähle den Typ, welcher am besten passt!</div>
-                        <div className='recipe-editor-content-type-select'>
-                            <select
-                                onChange={(e) => {
-                                    if (!recipe) return
-                                    setRecipe({ ...recipe, typeId: (e.target as HTMLSelectElement).value })
-                                    setChangesMade(true)
-                                }}
-                            >
-                                {recipeTypes.sort((a, b) => a.name.localeCompare(b.name)).map((type) => {
-                                    return <option selected={recipe.typeId === type.id ? true : false} className='recipe-editor-content-type-select-option' key={type.id} value={type.id}>{type.name}</option>
-                                })}
-                            </select>
-                        </div>
-                    </div> : null}
 
                 <div className='recipe-editor-content-ingredients'></div>
             </div>
