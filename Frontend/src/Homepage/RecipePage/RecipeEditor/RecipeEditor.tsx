@@ -11,8 +11,9 @@ import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
 import { Ingredient, IngredientRecipeData, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
 import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
+import { LuUndo2 } from 'react-icons/lu';
 
-type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS"
+type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC"
 
 export default function RecipeEditor(p: { recipeId?: string }) {
     console.log(p.recipeId)
@@ -65,7 +66,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
         <div className='recipe-editor-header'>
             <div className='recipe-editor-header-title'>
                 <div>Rezept Editor</div>
-                <div className='recipe-editor-header-type'>Laden fehlgeschlage</div>
+                <div className='recipe-editor-header-type'>Laden fehlgeschlagen</div>
             </div>
         </div>
     </div>
@@ -78,8 +79,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     onClick={() => {
                         if (disabledButtons.public) return
                         setDisabledButtons({ ...disabledButtons, public: true })
-                        setRecipe({ ...recipe, public: !recipe.public })
-                        setChangesMade(true)
+                        newChange("PUBLIC", !recipe.public, recipe.public, [recipe, setRecipe], [changesStack, setChangesStack])
                         setTimeout(() => setDisabledButtons({ ...disabledButtons, public: false }), 1000)
                     }}
                 ><Tooltip
@@ -93,16 +93,21 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 <div className='recipe-editor-header-back'
                     style={{ opacity: changesStack.length === 0 || disabledButtons.back ? 0.5 : 1 }}
                     onClick={() => {
-                        if (disabledButtons.back || !changesMade) return
+                        if (disabledButtons.back || changesStack.length === 0) return
                         setDisabledButtons({ ...disabledButtons, back: true })
                         if (changesStack.length < 1) return
+                        changeBack([changesStack, setChangesStack], [recipe, setRecipe])
+                        setTimeout(() => setDisabledButtons({ ...disabledButtons, back: false }), 250)
                     }}
-                >
+                ><Tooltip
+                    element={<LuUndo2  size={"2rem"} style={{marginRight: "1rem"}}/>}
+                    message={"Zurück"}
+                />
                 </div>
                 <div className='recipe-editor-header-save'
                     style={{ opacity: disabledButtons.save ? 0.5 : 1 }}
                     onClick={() => {
-                        if (disabledButtons.save || !changesMade) return
+                        if (disabledButtons.save || changesStack.length === 0) return
                         setDisabledButtons({ ...disabledButtons, save: true })
                         if (!recipe) return
                         if ("public" in recipe) {
@@ -120,8 +125,8 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                     }}
                 ><Tooltip
-                    element={changesMade ? <BiSolidSave size={"2rem"} /> : <BiSave size={"2rem"} />}
-                    message={changesMade ? "Speichern" : "Nichs zu speichern"}
+                    element={changesStack.length !== 0 ? <BiSolidSave size={"2rem"} /> : <BiSave size={"2rem"} />}
+                    message={changesStack.length !== 0 ? "Speichern" : "Nichs zu speichern"}
                     sx={{ style: { marginRight: "2rem" } }}
                 />
                 </div>
@@ -130,15 +135,15 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 <div className='recipe-editor-content-image'>
                     <div className='recipe-editor-content-image-title'>Bild</div>
                     <img alt={recipe.name || ""} src={recipe.imageUrl || ""} />
-                    <input className='recipe-editor-content-image-input' type="file" onInput={(event) => {
+                    <input className='recipe-editor-content-image-input' type="file" accept='image/png, image/jpeg'
+                    onChange={(event) => {
                         if (!recipe) return
                         let file = (event.target as HTMLInputElement).files?.[0]
                         if (!file) return
                         let reader = new FileReader()
                         reader.onload = (e) => {
                             if (!recipe) return
-                            setRecipe({ ...recipe, imageUrl: (e.target?.result as string) })
-                            setChangesMade(true)
+                            newChange("IMAGE", e.target?.result as string, recipe.imageUrl, [recipe, setRecipe], [changesStack, setChangesStack])
                         }
                         reader.readAsDataURL(file)
                     }} />
@@ -149,10 +154,9 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         <div className='recipe-editor-content-name-title'>Name</div>
                         <input className='recipe-editor-content-name-input'
                             value={recipe?.name ? recipe.name : undefined}
-                            onInput={(e) => {
+                            onChange={(e) => {
                                 if (!recipe) return
-                                setRecipe({ ...recipe, name: (e.target as HTMLInputElement).value })
-                                setChangesMade(true)
+                                newChange("NAME", (e.target as HTMLInputElement).value as string, recipe.name, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
                         />
                     </div>
@@ -161,10 +165,9 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         <div className='recipe-editor-content-name-title'>Beschreibung</div>
                         <textarea className='recipe-editor-content-description-input'
                             value={recipe?.description ? recipe.description : undefined}
-                            onInput={(e) => {
+                            onChange={(e) => {
                                 if (!recipe) return
-                                setRecipe({ ...recipe, description: (e.target as HTMLInputElement).value })
-                                setChangesMade(true)
+                                newChange("DESCRIPTION", (e.target as HTMLTextAreaElement).value as string, recipe.description, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
                             style={{ resize: "none" }}
                         />
@@ -178,8 +181,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                                 <select
                                     onChange={(e) => {
                                         if (!recipe) return
-                                        setRecipe({ ...recipe, typeId: (e.target as HTMLSelectElement).value })
-                                        setChangesMade(true)
+                                        newChange("TYPE", (e.target as HTMLSelectElement).value as string, recipe.typeId, [recipe, setRecipe], [changesStack, setChangesStack])
                                     }}
                                 >
                                     {recipeTypes.sort((a, b) => a.name.localeCompare(b.name)).map((type) => {
@@ -195,13 +197,12 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         <div className='recipe-editor-content-cookingtime-title'>Kochzeit</div>
                         <input
                             value={recipe?.cookingTime ? recipe.cookingTime : undefined}
-                            onInput={(e) => {
-                                let val = (e.target as HTMLInputElement).value
-                                if (val.length === 0) val = "0"
-                                if (isNaN(parseInt(val))) return
+                            onChange={(e) => {
+                                let el = (e.target as HTMLInputElement)
+                                if (el.value.length === 0) el.value = "0"
+                                if (isNaN(parseInt(el.value))) return
                                 if (!recipe) return
-                                setRecipe({ ...recipe, cookingTime: parseInt(val) })
-                                setChangesMade(true)
+                                newChange("COOKINGTIME", parseInt(el.value), recipe.cookingTime, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
                             step={1}
                             type="number"
@@ -211,13 +212,12 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         <div className='recipe-editor-content-waitingtime-title'>Wartezeit</div>
                         <input
                             value={recipe?.waitingTime ? recipe.waitingTime : undefined}
-                            onInput={(e) => {
+                            onChange={(e) => {
                                 let el = (e.target as HTMLInputElement)
                                 if (el.value.length === 0) el.value = "0"
                                 if (isNaN(parseInt(el.value))) return
                                 if (!recipe) return
-                                setRecipe({ ...recipe, waitingTime: parseInt(el.value) })
-                                setChangesMade(true)
+                                newChange("WAITINGTIME", parseInt(el.value), recipe.waitingTime, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
                             step={1}
                             type="number"
@@ -228,13 +228,12 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     <div className='recipe-editor-content-servings-title'>Portionen</div>
                     <input
                         value={recipe?.servings ? recipe.servings : undefined}
-                        onInput={(e) => {
+                        onChange={(e) => {
                             if (!recipe) return
                             let el = (e.target as HTMLInputElement)
                             if (el.value.length === 0) el.value = "0"
                             if (isNaN(parseInt(el.value))) return
-                            setRecipe({ ...recipe, servings: parseInt(el.value) })
-                            setChangesMade(true)
+                            newChange("SERVINGS", parseInt(el.value), recipe.servings, [recipe, setRecipe], [changesStack, setChangesStack])
                         }}
                         step={1}
                         type="number"
@@ -245,4 +244,50 @@ export default function RecipeEditor(p: { recipeId?: string }) {
             </div>
         </div>
     )
+}
+
+function newChange(field: EditorFields, newValue: any, oldValue: any, recipeState: [RecipeEditData | RecipeCreationData, (p: RecipeEditData | RecipeCreationData) => void], stackState: [{field: EditorFields, newValue: any, oldValue: any}[], (p: {field: EditorFields, newValue: any, oldValue: any}[]) => void]) {
+    stackState[1]([...stackState[0], {field: field, newValue: newValue, oldValue: oldValue}])
+    change(field, newValue, recipeState)
+}
+
+function changeBack(stackState: [{field: EditorFields, newValue: any, oldValue: any}[], (p: {field: EditorFields, newValue: any, oldValue: any}[]) => void], recipeState: [RecipeEditData | RecipeCreationData, (p: RecipeEditData | RecipeCreationData) => void]) {
+    if (stackState[0].length < 1) return
+    let last = stackState[0].pop()
+    if (!last) return
+    change(last.field, last.oldValue, recipeState)
+    stackState[1](stackState[0])
+}
+
+function change(field: EditorFields, newValue: any, recipeState: [RecipeEditData | RecipeCreationData, (p: RecipeEditData | RecipeCreationData) => void]) {
+    console.log(field, newValue)
+    switch (field) {
+        case "IMAGE":
+            console.log("IMAGE")
+            recipeState[1]({ ...recipeState[0], imageUrl: newValue })
+            break
+        case "NAME":
+            recipeState[1]({ ...recipeState[0], name: newValue })
+            break
+        case "DESCRIPTION":
+            recipeState[1]({ ...recipeState[0], description: newValue })
+            break
+        case "TYPE":
+            recipeState[1]({ ...recipeState[0], typeId: newValue })
+            break
+        case "COOKINGTIME":
+            recipeState[1]({ ...recipeState[0], cookingTime: newValue })
+            break
+        case "WAITINGTIME":
+            recipeState[1]({ ...recipeState[0], waitingTime: newValue })
+            break
+        case "SERVINGS":
+            recipeState[1]({ ...recipeState[0], servings: newValue })
+            break
+        case "INGREDIENTS":
+            break
+        case "PUBLIC":
+            recipeState[1]({ ...recipeState[0], public: newValue })
+            break
+    }
 }
