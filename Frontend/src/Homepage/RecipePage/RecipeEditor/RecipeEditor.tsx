@@ -8,7 +8,7 @@ import { BiSave, BiSolidSave } from "react-icons/bi";
 import { RecipeCreationData, RecipeEditData } from '../../../../../Backend/src/utils/types/recipe';
 import { createRef, useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
-import { Ingredient, IngredientRecipeData, RecipeIngredientUnit, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
+import { FullRecipeIngredient, Ingredient, IngredientRecipeData, RecipeIngredientUnit, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
 import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
@@ -21,7 +21,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
     console.log(p.recipeId)
     const [loading, setLoading] = useState<boolean>(true)
     const [recipe, setRecipe] = useState<RecipeEditData | RecipeCreationData | null>(null)
-    const [ingredients, setIngredients] = useState<IngredientRecipeData | null>(null)
+    const [ingredients, setIngredients] = useState<FullRecipeIngredient[] | null>(null)
     const [ingredientChanges, setIngredientChanges] = useState<RecipeIngredientUpdateActions[]>([])
     const [ingredientsWithInformation, setIngredientsWithInformation] = useState<Ingredient | null>(null)
     const [recipeTypes, setRecipeTypes] = useState<{ name: string, id: string }[] | null>(null)
@@ -45,7 +45,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 }
 
                 if (lIngredients[0] && typeof lIngredients[1] !== "string") {
-                    setIngredients(lIngredients[1].map((ingredient: Ingredient) => ingredient.id))
+                    setIngredients(lIngredients[1])
                 }
 
                 if (lTypes[0] && typeof lTypes[1] !== "string") {
@@ -263,9 +263,10 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 <div className='recipe-editor-content-ingredients'>
                     <IngredientSelector 
                         ref={ingredientSelector} 
-                        onIngredientAdd={(ingredientId: string, unit: RecipeIngredientUnit, amount: number) => {}}
+                        initialIngredients={ingredients}
+                        onIngredientAdd={(ingr: FullRecipeIngredient) => {}}
                         onIngredientRemove={(ingredientId: string) => {}}
-                        onIngredientChange={(ingredientId: string, unit: RecipeIngredientUnit, amount: number) => {}}
+                        onIngredientChange={(ingr: FullRecipeIngredient) => {}}
                     />
                 </div>
             </div>

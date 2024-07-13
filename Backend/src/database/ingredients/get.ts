@@ -53,8 +53,8 @@ export async function getIngredientsByIds(ids: Uuid[]) {
     + 'WHERE id IN ?';
 
     const result = await query(q, params);
-    if(typeof result === "string") return 'Error getting ingredient by id';
-    if(result.rows.length === 0) return 'Ingredient not found';
+    if(typeof result === "string") return 'Error getting ingredients by ids';
+    if(result.rows.length === 0) return 'Ingredients not found';
     const ingredients = result.rows.map((row) => {
         return {
             id: row.id.toString('hex'),

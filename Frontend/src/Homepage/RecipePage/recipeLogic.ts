@@ -33,6 +33,7 @@ export async function getIngredientsOfRecipe(recipeId: unknown) {
     try {
         const result = await Backend.Ingredients.getIngredientsOfRecipe(token ? token : "", recipeId)
         if(result.data.ingredients) {
+            sessionStorage.setItem("ingredient-info-cache", JSON.stringify({...cache, ...result.data.ingredients}))
             sessionStorage.setItem("recipe-ingredients-cache", JSON.stringify({...cache, [recipeId]: [new Date(), result.data.ingredients]}))
             return [true, result.data.ingredients]
         }

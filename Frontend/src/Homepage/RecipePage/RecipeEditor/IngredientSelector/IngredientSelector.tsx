@@ -1,39 +1,44 @@
 import '../../../../ColorScheme.css';
 import './IngredientSelector.css';
 
-import { forwardRef, useImperativeHandle, useState } from "react";
-import { RecipeIngredientUnit } from "../../../../../../Backend/src/utils/types/ingredient";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { FullRecipeIngredient, RecipeIngredientUnit } from "../../../../../../Backend/src/utils/types/ingredient";
 import { IoIosAdd } from 'react-icons/io';
 import { RiArrowUpSLine } from "react-icons/ri";
+import { validUnits, validUnitsName } from './ingredientSelectorLogic';
+import { FaMinus } from 'react-icons/fa';
 
 const IngredientSelector = forwardRef((p: {
-    initialIngredients?: { ingredientId: string, unit: RecipeIngredientUnit, amount: number }[],
-    onIngredientAdd: (ingredientId: string, unit: RecipeIngredientUnit, amount: number) => void,
-    onIngredientRemove: (ingredientId: string) => void,
-    onIngredientChange: (ingredientId: string, unit: RecipeIngredientUnit, amount: number) => void,
+    initialIngredients?: FullRecipeIngredient[],
+    onIngredientAdd: (ingr: FullRecipeIngredient) => void,
+    onIngredientRemove: (id: string) => void,
+    onIngredientChange: (ingr: FullRecipeIngredient) => void,
 }, ref) => {
-    const [ingredients, setIngredients] = useState(p.initialIngredients ? p.initialIngredients : [{ ingredientId: '', unit: 'gram' as RecipeIngredientUnit, amount: 0 }]);
-    const [headerDown, setHeaderDown] = useState(true);
-
+    const [ingredients, setIngredients] = useState(p.initialIngredients ? p.initialIngredients : [{ properties: {}, name: "t", id: '', unit: 'gram' as RecipeIngredientUnit, amount: 0 }]);
+    const [headerDown, setHeaderDown] = useState(false);
+    
     useImperativeHandle(ref, () => ({
         getInitialIngredients: () => p.initialIngredients,
         getIngredients: () => ingredients,
-        addIngredient: (ingredientId: string, unit: RecipeIngredientUnit, amount: number, fireListener = true) => {
-            setIngredients([...ingredients, { ingredientId, unit, amount }]);
-            if(fireListener) p.onIngredientAdd(ingredientId, unit, amount);
+        addIngredient: (ingr: FullRecipeIngredient, fireListener = true) => {
+            setIngredients([...ingredients, ingr]);
+            if(fireListener) p.onIngredientAdd(ingr);
         },
-        removeIngredient: (ingredientId: string, fireListener = true) => {
-            setIngredients(ingredients.filter(i => i.ingredientId !== ingredientId));
-            if(fireListener) p.onIngredientRemove(ingredientId);
+        removeIngredient: (id: string, fireListener = true) => {
+            setIngredients(ingredients.filter(i => i.id !== id));
+            if(fireListener) p.onIngredientRemove(id);
         },
-        changeIngredient: (ingredientId: string, unit: RecipeIngredientUnit, amount: number, fireListener = true) => {
+        changeIngredient: (ingr: FullRecipeIngredient, fireListener = true) => {
             const newIngredients = [...ingredients];
-            const index = newIngredients.findIndex(i => i.ingredientId === ingredientId);
-            newIngredients[index] = { ingredientId, unit, amount };
+            const index = newIngredients.findIndex(i => i.id === ingr.id);
+            newIngredients[index] = ingr;
             setIngredients(newIngredients);
-            if(fireListener) p.onIngredientChange(ingredientId, unit, amount);
+            if(fireListener) p.onIngredientChange(ingr);
         }
     }));
+
+    useEffect(() => {
+    }, [ingredients]);
 
     return (
         <div className="ingredient-selector">
@@ -45,10 +50,15 @@ const IngredientSelector = forwardRef((p: {
                 <div className='ingredient-selector-header-plus' onClick={()=> { setHeaderDown(!headerDown)}}>{headerDown ? <RiArrowUpSLine size={"2rem"}/> : <IoIosAdd size={"2rem"}/>}</div>
             </div>
             {!headerDown ? <div className='ingredient-selector-ingredient-list'>
-                {ingredients.map(i => <div key={i.ingredientId} className="ingredient-selector-ingredient">
-                    <div className="ingredient-selector-ingredient-amount">{i.amount}</div>
-                    <div className="ingredient-selector-ingredient-unit">{i.unit}</div>
-                    <div className="ingredient-selector-ingredient-name">{i.ingredientId}</div>
+                {ingredients.map(ingr => <div key={ingr.id} className="ingredient-selector-ingredient">
+                    <div className="ingredient-selector-ingredient-amount">{ingr.amount}</div>
+                    <div className="ingredient-selector-ingredient-unit">
+                        <select>
+                            {validUnits.map((u, i) => <option selected={ingr.unit === u} key={u ? u : (u === undefined ? "undefined" : "null")}>{validUnitsName[i]}</option>)}
+                        </select>
+                    </div>
+                    <div className="ingredient-selector-ingredient-name">{ingr.name}</div>
+                    <div className="ingredient-selector-ingredient-remove" onClick={() => p.onIngredientRemove(ingr.id)}><FaMinus /></div>
                 </div>)}
             </div> : null}
         </div>

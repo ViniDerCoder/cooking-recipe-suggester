@@ -100,6 +100,10 @@ abstract class Ingredients {
         return await BackendConnection.get('ingredients/search', undefined, { search: search }, token);
     }
 
+    static async filterIngredientsByIds(token: string, ids: string[]) {
+        return await BackendConnection.post('ingredients/filter/id', undefined, { ids }, token);
+    }
+
     static async filterIngredients(token: string, filters: any) {
         return await BackendConnection.post('ingredients/filter', undefined, { filters }, token);
     }

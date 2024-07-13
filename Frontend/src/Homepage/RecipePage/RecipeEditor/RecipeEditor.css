@@ -22,6 +22,7 @@
 .recipe-editor-header-public {
     padding-left: 1rem;
     margin-left: auto; 
+    cursor: pointer;
 }
 
 .recipe-editor-header-title {
@@ -40,10 +41,12 @@
 
 .recipe-editor-header-back{
     user-select: none;
+    cursor: pointer;
 }
 
 .recipe-editor-header-save {
     margin-right: 2.3rem; 
+    cursor: pointer;
 }
 
 .recipe-editor-content {

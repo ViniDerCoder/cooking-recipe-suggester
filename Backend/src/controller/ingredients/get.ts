@@ -1,4 +1,4 @@
-import { getAllIngredients as dbGetAllIngredients, getIngredientById as dbGetIngredientById } from "../../database/ingredients/get.js";
+import { getAllIngredients as dbGetAllIngredients, getIngredientById as dbGetIngredientById, getIngredientsByIds as dbGetIngredientsByIds } from "../../database/ingredients/get.js";
 import { IngredientFilters, isIngredientFilters } from "../../utils/types/ingredient.js";
 import { isUuid } from "../../utils/types/other.js";
 
@@ -12,6 +12,17 @@ export async function getIngredientById(ingredientId: unknown) {
     if(!isUuid(ingredientId)) return 'Invalid input';
 
     const result = await dbGetIngredientById(ingredientId);
+    return result;
+}
+
+export async function getIngredientsByIds(ingredientIds: unknown) {
+    if(!Array.isArray(ingredientIds)) return 'Invalid input';
+    if(ingredientIds.some((id) => !isUuid(id))) return 'Invalid input';
+    if(ingredientIds.length < 1) return [];
+
+    const result = await dbGetIngredientsByIds(ingredientIds);
+    if(typeof result === "string") return result;
+
     return result;
 }
 
