@@ -77,7 +77,7 @@ export async function getIngredientsByIds(ids: Uuid[]) {
 }
 
 export async function getAllIngredients(limit?: number) {
-    if(Date.now() - lastFullCache < 1000 * 60 * 25) return Object.values(ingredientCache);
+    if(Date.now() - lastFullCache < 1000 * 60 * 25) return Object.values(ingredientCache).slice(undefined, limit);
 
     const params = typeof limit === "number" ? [limit] : [];
     const q = ''
@@ -108,6 +108,6 @@ export async function getAllIngredients(limit?: number) {
         ingredients.push(ingredient);
         ingredientCache[row.id] = ingredient;
     });
-    lastFullCache = Date.now();
+    if(typeof limit !== "number") lastFullCache = Date.now();
     return ingredients;
 }

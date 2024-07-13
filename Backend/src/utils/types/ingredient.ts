@@ -197,8 +197,8 @@ export function isIngredientFilters(any: any): any is IngredientFilters {
 
     return any.every((filter) => {
         if(typeof filter !== "object" || !filter) return false;
-        if(!isIngredientPropertyFilter(filter.name)) return false;
-        if(typeof filter.value !== "boolean") return false;
+        if(!isIngredientPropertyFilter(filter.name) && filter.name !== "name") return false;
+        if(typeof filter.value !== (filter.name === "name" ? "string" : "boolean")) return false;
 
         return true;
     });
