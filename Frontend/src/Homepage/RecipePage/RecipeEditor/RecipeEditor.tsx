@@ -5,14 +5,15 @@ import '../RecipePage.css'
 import { MdPublic, MdPublicOff } from "react-icons/md";
 import { BiSave, BiSolidSave } from "react-icons/bi";
 
-import { Recipe, RecipeCreationData, RecipeEditData } from '../../../../../Backend/src/utils/types/recipe';
+import { RecipeCreationData, RecipeEditData } from '../../../../../Backend/src/utils/types/recipe';
 import { createRef, useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
-import { Ingredient, IngredientRecipeData, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
+import { Ingredient, IngredientRecipeData, RecipeIngredientUnit, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
 import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
-import { TbClockHour4 } from 'react-icons/tb';
+import { TbClockHour4, TbClockPause } from 'react-icons/tb';
+import IngredientSelector from './IngredientSelector/IngredientSelector';
 
 type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC"
 
@@ -24,11 +25,11 @@ export default function RecipeEditor(p: { recipeId?: string }) {
     const [ingredientChanges, setIngredientChanges] = useState<RecipeIngredientUpdateActions[]>([])
     const [ingredientsWithInformation, setIngredientsWithInformation] = useState<Ingredient | null>(null)
     const [recipeTypes, setRecipeTypes] = useState<{ name: string, id: string }[] | null>(null)
-    const [changesMade, setChangesMade] = useState<boolean>(false)
     const [disabledButtons, setDisabledButtons] = useState({ save: false, public: false, back: false })
     const [changesStack, setChangesStack] = useState<{ field: EditorFields, newValue: any, oldValue: any }[]>([])
 
     const previewImage = createRef<HTMLImageElement>()
+    const ingredientSelector = createRef()
 
     useEffect(() => {
         if (p.recipeId) {
@@ -100,7 +101,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         setDisabledButtons({ ...disabledButtons, back: true })
                         if (changesStack.length < 1) return
                         changeBack([changesStack, setChangesStack], [recipe, setRecipe])
-                        setTimeout(() => setDisabledButtons({ ...disabledButtons, back: false }), 250)
+                        setTimeout(() => setDisabledButtons({ ...disabledButtons, back: false }), 100)
                     }}
                 ><Tooltip
                         element={<LuUndo2 size={"2rem"} style={{ marginRight: "1rem" }} />}
@@ -117,7 +118,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
 
                             editRecipe(p.recipeId, recipe, ingredientChanges).then(([success, error]) => {
                                 if (success) {
-                                    setChangesMade(false)
+                                    setChangesStack([])
                                 } else {
                                     console.error(error)
                                 }
@@ -217,6 +218,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                                 let el = (e.target as HTMLInputElement)
                                 if (el.value.length === 0) el.value = "0"
                                 if (isNaN(parseInt(el.value))) return
+                                if(parseInt(el.value) < 0) el.value = "0"
                                 if (!recipe) return
                                 newChange("COOKINGTIME", parseInt(el.value), recipe.cookingTime, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
@@ -225,13 +227,14 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         />
                     </div>
                     <div className='recipe-editor-content-waitingtime'>
-                        <div className='recipe-editor-content-title'>Wartezeit</div>
+                        <div className='recipe-editor-content-title'><TbClockPause style={{justifySelf: "center"}}/><div>Wartezeit</div></div>
                         <input
                             value={recipe?.waitingTime ? recipe.waitingTime : undefined}
                             onChange={(e) => {
                                 let el = (e.target as HTMLInputElement)
                                 if (el.value.length === 0) el.value = "0"
                                 if (isNaN(parseInt(el.value))) return
+                                if(parseInt(el.value) < 0) el.value = "0"
                                 if (!recipe) return
                                 newChange("WAITINGTIME", parseInt(el.value), recipe.waitingTime, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
@@ -245,10 +248,11 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     <input
                         value={recipe?.servings ? recipe.servings : undefined}
                         onChange={(e) => {
-                            if (!recipe) return
                             let el = (e.target as HTMLInputElement)
                             if (el.value.length === 0) el.value = "0"
                             if (isNaN(parseInt(el.value))) return
+                            if(parseInt(el.value) < 0) el.value = "0"
+                            if (!recipe) return
                             newChange("SERVINGS", parseInt(el.value), recipe.servings, [recipe, setRecipe], [changesStack, setChangesStack])
                         }}
                         step={1}
@@ -256,7 +260,14 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     />
                 </div>
 
-                <div className='recipe-editor-content-ingredients'></div>
+                <div className='recipe-editor-content-ingredients'>
+                    <IngredientSelector 
+                        ref={ingredientSelector} 
+                        onIngredientAdd={(ingredientId: string, unit: RecipeIngredientUnit, amount: number) => {}}
+                        onIngredientRemove={(ingredientId: string) => {}}
+                        onIngredientChange={(ingredientId: string, unit: RecipeIngredientUnit, amount: number) => {}}
+                    />
+                </div>
             </div>
         </div>
     )
