@@ -16,7 +16,10 @@
 
 .ingredient-selector-new-ingredient-list {
     overflow: hidden;
-    position: absolute;
+}
+
+.ingredient-selector-filter {
+    overflow: hidden;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -28,18 +31,9 @@
     transition: all 0.5s ease;
 }
 
-.ingredient-selector-filter {
-    overflow: hidden;
-    position: absolute;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 2.7rem;
-    margin-left: 0;
-    width: 25rem;
-    background-color: var(--primary-color);
-    border-radius: 1rem 1rem 0.3rem 0.3rem;
-    transition: all 0.5s ease;
+.ingredient-selector-filter[data-visible="false"] {
+    border-radius: 0.3rem 0.3rem 1rem 1rem;
+    transform: translateY(-2.7rem);
 }
 
 .ingredient-selector-filter input {
@@ -54,12 +48,45 @@
     appearance: none;
     -moz-appearance: textfield;
     transition: all 1s ease;
+    margin-right: 0.3rem;
 }
 
 .ingredient-selector-filter input:focus {
     outline: none;
-    width: 11.5rem;
+    width: 10rem;
     border: 0.14rem solid var(--tertiary-color);
+}
+
+.ingredient-selector-filter-type {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 1.3rem;
+    cursor: pointer;
+    background-color: var(--secondary-color);
+    border-radius: 0.3rem;
+    user-select: none;
+}
+
+.ingredient-selector-filter-type * {
+    display: flex;
+    width: 99%;
+    padding: 0.05rem;
+}
+
+.ingredient-selector-filter-apply {
+    background-color: var(--secondary-color);
+    border-radius: 0.5rem;
+    display: flex;
+    font-size: 0.9rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    margin-right: 0.3rem;
+    margin-left: 0.3rem;
+    padding-bottom: 0.1rem;
+    cursor: pointer;
+    text-align: center;
 }
 
 .ingredient-selector-header {
