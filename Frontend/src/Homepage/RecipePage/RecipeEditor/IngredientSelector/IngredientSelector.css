@@ -1,0 +1,72 @@
+.ingredient-selector {
+    display: flex;
+    flex-direction: column;
+    width: 25rem;
+    height: 25rem;
+    margin: 0.5rem 0;
+    background-color: var(--secondary-color);
+    border-radius: 1rem;
+    border: 0.17rem solid var(--secondary-color);
+}
+
+.ingredient-selector:hover {
+    border: 0.17rem solid var(--tertiary-color);
+}
+
+.ingredient-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-color);
+    border-radius: 1rem 1rem 0.3rem 0.3rem;
+}
+
+.ingredient-selector-new-ingredient-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 100%;
+    padding: 0.5rem;
+}
+
+.ingredient-selector-header[data-down="true"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-color);
+    border-radius: 0.3rem 0.3rem 1rem 1rem;
+}
+
+.ingredient-selector-header-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding: 0.5rem;
+}
+
+.ingredient-selector-header-plus {
+    display: flex;
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.ingredient-selector-ingredient-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 100%;
+    padding: 0.5rem;
+}
+
+.ingredient-selector-ingredient {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: 0.2rem solid var(--primary-color);
+    background-color: var(--secondary-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+}

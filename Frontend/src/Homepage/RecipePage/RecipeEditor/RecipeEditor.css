@@ -229,6 +229,12 @@
     border: 0.14rem solid var(--tertiary-color);
 }
 
+.recipe-editor-content-ingredients {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
 @media (orientation: portrait) {
     .recipe-editor-content {
         flex-direction: column;
@@ -238,10 +244,26 @@
     }
 }
 
-.recipe-editor-content * {
+.recipe-editor-content-ingredients,
+.recipe-editor-content-servings,
+.recipe-editor-content-times,
+.recipe-editor-content-image,
+.recipe-editor-content-texts,
+.recipe-editor-content-servings *,
+.recipe-editor-content-times *,
+.recipe-editor-content-image *,
+.recipe-editor-content-texts * {
     transition: transform 0.2s ease;
 }
 
-.recipe-editor-content *:hover {
+.recipe-editor-content-ingredients:hover,
+.recipe-editor-content-servings:hover,
+.recipe-editor-content-times:hover,
+.recipe-editor-content-image:hover,
+.recipe-editor-content-texts:hover,
+.recipe-editor-content-servings *:hover,
+.recipe-editor-content-times *:hover,
+.recipe-editor-content-image *:hover,
+.recipe-editor-content-texts *:hover {
     transform: scale(1.02);
 }
