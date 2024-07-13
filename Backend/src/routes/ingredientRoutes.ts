@@ -5,7 +5,6 @@ import limit from '../utils/rate-limiter.js';
 import { getAllIngredientIds, getIngredientById, getIngredientIdsMatchingFilter, getIngredientsByIds } from '../controller/ingredients/get.js';
 import { doActionRequest } from '../controller/ingredients/actionRequest.js';
 import { AuthenticationUser } from '../utils/types/authentication.js';
-import { getIngredientsOfRecipe } from '../database/ingredients/get_ingredients_of_recipe.js';
 import { getRecipesIngredients } from '../controller/recipes/ingredients/getRecipesIngredients.js';
 
 const router = express.Router();

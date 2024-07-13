@@ -76,14 +76,16 @@ export async function getIngredientsByIds(ids: Uuid[]) {
     return ingredients;
 }
 
-export async function getAllIngredients() {
+export async function getAllIngredients(limit?: number) {
     if(Date.now() - lastFullCache < 1000 * 60 * 25) return Object.values(ingredientCache);
 
+    const params = limit ? [limit] : [];
     const q = ''
     + 'SELECT * FROM '
     + 'cooking_recipe_suggester.ingredients';
+    + (limit ? ' LIMIT ?' : '');
 
-    const result = await query(q, []);
+    const result = await query(q, params);
     if(typeof result === "string") return 'Error getting all ingredients';
 
     const ingredients: Ingredient[] = [];

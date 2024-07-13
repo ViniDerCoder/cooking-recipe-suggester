@@ -28,9 +28,8 @@ export async function getIngredientsByIds(ingredientIds: unknown) {
 
 export async function getIngredientIdsMatchingFilter(filters: unknown, limit: unknown, offset: unknown) {
     if(!isIngredientFilters(filters)) return 'Invalid input';
-    if(filters.length < 1) return await getAllIngredientIds();
 
-    const result = await dbGetAllIngredients();
+    const result = await dbGetAllIngredients(typeof offset === "number" && typeof limit === "number" ? limit + offset + 1 : undefined);
     if(typeof result === "string") return result;
 
     return result.filter((ingredient) => {
