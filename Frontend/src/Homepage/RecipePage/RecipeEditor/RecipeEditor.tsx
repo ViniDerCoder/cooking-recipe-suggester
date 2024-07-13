@@ -29,7 +29,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
     const [changesStack, setChangesStack] = useState<{ field: EditorFields, newValue: any, oldValue: any }[]>([])
 
     const previewImage = createRef<HTMLImageElement>()
-    const ingredientSelector = createRef()
+    const ingredientSelector = createRef<typeof IngredientSelector>()
 
     useEffect(() => {
         if (p.recipeId) {
@@ -100,7 +100,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         if (disabledButtons.back || changesStack.length === 0) return
                         setDisabledButtons({ ...disabledButtons, back: true })
                         if (changesStack.length < 1) return
-                        changeBack([changesStack, setChangesStack], [recipe, setRecipe])
+                        changeBack([changesStack, setChangesStack], [recipe, setRecipe], ingredientSelector)
                         setTimeout(() => setDisabledButtons({ ...disabledButtons, back: false }), 100)
                     }}
                 ><Tooltip
@@ -264,9 +264,15 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     <IngredientSelector 
                         ref={ingredientSelector} 
                         initialIngredients={ingredients}
-                        onIngredientAdd={(ingr: FullRecipeIngredient) => {}}
-                        onIngredientRemove={(ingredientId: string) => {}}
-                        onIngredientChange={(ingr: FullRecipeIngredient) => {}}
+                        onIngredientAdd={(ingr: FullRecipeIngredient) => {
+                            setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: ingr, oldValue: undefined }])
+                        }}
+                        onIngredientRemove={(ingr: FullRecipeIngredient) => {
+                            setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: undefined, oldValue: ingr }])}
+                        }
+                        onIngredientChange={(newIngr: FullRecipeIngredient, oldIngr: FullRecipeIngredient) => {
+                            setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: newIngr, oldValue: oldIngr }])
+                        }}
                     />
                 </div>
             </div>
@@ -279,15 +285,15 @@ function newChange(field: EditorFields, newValue: any, oldValue: any, recipeStat
     change(field, newValue, recipeState)
 }
 
-function changeBack(stackState: [{ field: EditorFields, newValue: any, oldValue: any }[], (p: { field: EditorFields, newValue: any, oldValue: any }[]) => void], recipeState: [RecipeEditData | RecipeCreationData, (p: RecipeEditData | RecipeCreationData) => void]) {
+function changeBack(stackState: [{ field: EditorFields, newValue: any, oldValue: any }[], (p: { field: EditorFields, newValue: any, oldValue: any }[]) => void], recipeState: [RecipeEditData | RecipeCreationData, (p: RecipeEditData | RecipeCreationData) => void], ingredientSelectorRef?: React.RefObject<any>) {
     if (stackState[0].length < 1) return
     let last = stackState[0].pop()
     if (!last) return
-    change(last.field, last.oldValue, recipeState)
+    change(last.field, last.field === "INGREDIENTS" ? {new: last.oldValue, old: last.newValue} : last.oldValue, recipeState, ingredientSelectorRef)
     stackState[1](stackState[0])
 }
 
-function change(field: EditorFields, newValue: any, recipeState: [RecipeEditData | RecipeCreationData, (p: RecipeEditData | RecipeCreationData) => void]) {
+function change(field: EditorFields, newValue: any, recipeState: [RecipeEditData | RecipeCreationData, (p: RecipeEditData | RecipeCreationData) => void], ingredientSelectorRef?: React.RefObject<any>) {
     console.log(field, newValue)
     switch (field) {
         case "IMAGE":
@@ -313,6 +319,17 @@ function change(field: EditorFields, newValue: any, recipeState: [RecipeEditData
             recipeState[1]({ ...recipeState[0], servings: newValue })
             break
         case "INGREDIENTS":
+            if(ingredientSelectorRef) {
+                const current = ingredientSelectorRef.current
+                if(!current) return
+                if(!newValue.new && newValue.old) {
+                    current.removeIngredient(newValue.old.id, false)
+                } else if(newValue.new && !newValue.old) {
+                    current.addIngredient(newValue.new, false)
+                } else if(newValue.new && newValue.old) {
+                    current.changeIngredient(newValue.new, false)
+                }
+            }
             break
         case "PUBLIC":
             recipeState[1]({ ...recipeState[0], public: newValue })

@@ -71,6 +71,57 @@
     cursor: default;
 }
 
+.ingredient-selector-ingredient-amount input {
+    color: var(--tertiary-color);
+    background-color: var(--secondary-color);
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+    border: 0.14rem solid var(--secondary-color);
+    text-align: left;
+    padding: 0.2rem;
+    width: 4rem;
+    appearance: none;
+    -moz-appearance: textfield;
+}
+
+.ingredient-selector-ingredient-amount input:focus {
+    outline: none;
+    border: 0.14rem solid var(--tertiary-color);
+}
+
+.ingredient-selector-ingredient-amount input::-webkit-inner-spin-button,
+.ingredient-selector-ingredient-amount input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.ingredient-selector-ingredient-unit select {
+    color: var(--tertiary-color);
+    background-color: var(--secondary-color);
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+    border: 0.14rem solid var(--secondary-color);
+    text-align: center;
+    padding: 0.2rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.ingredient-selector-ingredient-unit select:focus {
+    outline: none;
+    border: 0.14rem solid var(--tertiary-color);
+}
+
+.ingredient-selector-ingredient-name {
+    color: var(--tertiary-color);
+    background-color: var(--primary-color-dimmed);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    padding: 0.2rem;
+    font-weight: bold;
+}
+
 .ingredient-selector-ingredient-remove {
     display: flex;
     margin-right: 0.5rem;

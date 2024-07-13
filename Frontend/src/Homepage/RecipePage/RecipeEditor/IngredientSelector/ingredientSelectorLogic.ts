@@ -27,5 +27,5 @@ export async function getIngredientInfosByIds(ids: string[]) {
     }
 }
 
-export const validUnits         = [undefined,   null,   'cup',      'tablespoon',   'teaspoon',     'gram',     'kilogram',     'milliliter',   'liter',    'some',     'big',  'small',    'shot',     'pinch',    'drop',     'packet'];
-export const validUnitsName     = ["-",         "-",    "Tasse",    "Esslöffel",    "Teelöffel",    "Gramm",    "Kilogramm",    "Milliliter",   "Liter",    "etwas",    "groß", "klein",    "Schuss",   "Prise",    "Tropfen",  "Päckchen"];
+export const validUnits         = [undefined,   null,   'cup',      'tablespoon',   'teaspoon',     'gram',     'kilogram',     'milliliter',   'liter',    'some',     'big',      'small',    'shot',     'pinch',    'drop',     'packet'];
+export const validUnitsName     = ["-",         "-",    "Tasse",    "Esslöffel",    "Teelöffel",    "Gramm",    "Kilogramm",    "Milliliter",   "Liter",    "etwas",    "groß(e)",  "klein(e)", "Schuss",   "Prise",    "Tropfen",  "Päckchen"];
