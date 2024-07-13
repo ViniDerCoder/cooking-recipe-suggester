@@ -8,7 +8,7 @@ import { BiSave, BiSolidSave } from "react-icons/bi";
 import { RecipeCreationData, RecipeEditData } from '../../../../../Backend/src/utils/types/recipe';
 import { createRef, useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
-import { FullRecipeIngredient, Ingredient, IngredientRecipeData, RecipeIngredientUnit, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
+import { FullRecipeIngredient, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
 import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
@@ -23,7 +23,6 @@ export default function RecipeEditor(p: { recipeId?: string }) {
     const [recipe, setRecipe] = useState<RecipeEditData | RecipeCreationData | null>(null)
     const [ingredients, setIngredients] = useState<FullRecipeIngredient[] | null>(null)
     const [ingredientChanges, setIngredientChanges] = useState<RecipeIngredientUpdateActions[]>([])
-    const [ingredientsWithInformation, setIngredientsWithInformation] = useState<Ingredient | null>(null)
     const [recipeTypes, setRecipeTypes] = useState<{ name: string, id: string }[] | null>(null)
     const [disabledButtons, setDisabledButtons] = useState({ save: false, public: false, back: false })
     const [changesStack, setChangesStack] = useState<{ field: EditorFields, newValue: any, oldValue: any }[]>([])

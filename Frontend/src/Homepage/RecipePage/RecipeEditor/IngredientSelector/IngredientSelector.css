@@ -7,26 +7,71 @@
     background-color: var(--secondary-color);
     border-radius: 1rem;
     border: 0.17rem solid var(--secondary-color);
+    overflow: hidden;
 }
 
 .ingredient-selector:hover {
     border: 0.17rem solid var(--tertiary-color);
 }
 
-.ingredient-selector-header {
+.ingredient-selector-new-ingredient-list {
+    overflow: hidden;
+    position: absolute;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 2.7rem;
+    margin-left: 0;
+    width: 25rem;
     background-color: var(--primary-color);
     border-radius: 1rem 1rem 0.3rem 0.3rem;
+    transition: all 0.5s ease;
 }
 
-.ingredient-selector-new-ingredient-list {
+.ingredient-selector-filter {
+    overflow: hidden;
+    position: absolute;
     display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    height: 100%;
-    padding: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.7rem;
+    margin-left: 0;
+    width: 25rem;
+    background-color: var(--primary-color);
+    border-radius: 1rem 1rem 0.3rem 0.3rem;
+    transition: all 0.5s ease;
+}
+
+.ingredient-selector-filter input {
+    color: var(--tertiary-color);
+    background-color: var(--secondary-color);
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+    border: 0.14rem solid var(--secondary-color);
+    text-align: left;
+    margin-left: 0.3rem;
+    width: 4rem;
+    appearance: none;
+    -moz-appearance: textfield;
+    transition: all 1s ease;
+}
+
+.ingredient-selector-filter input:focus {
+    outline: none;
+    width: 11.5rem;
+    border: 0.14rem solid var(--tertiary-color);
+}
+
+.ingredient-selector-header {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.7rem;
+    width: 25rem;
+    background-color: var(--primary-color);
+    border-radius: 1rem 1rem 0.3rem 0.3rem;
+    transition: all 0.5s ease;
 }
 
 .ingredient-selector-header[data-down="true"] {
@@ -35,6 +80,7 @@
     align-items: center;
     background-color: var(--primary-color);
     border-radius: 0.3rem 0.3rem 1rem 1rem;
+    transform: translateY(22.3rem);
 }
 
 .ingredient-selector-header-title {
@@ -56,6 +102,8 @@
     overflow-y: auto;
     height: 100%;
     padding: 0.5rem;
+    margin-top: 2.5rem;
+    overflow: hidden;
 }
 
 .ingredient-selector-ingredient {
@@ -68,7 +116,13 @@
     border: 0.2rem solid var(--primary-color);
     background-color: var(--primary-color-dimmed);
     border-radius: 0.5rem;
+    transition: all 0.75s ease;
+    transform: translateX(0);
     cursor: default;
+}
+
+.ingredient-selector-ingredient[data-visible="false"] {
+    transform: translateX(25rem);
 }
 
 .ingredient-selector-ingredient-amount input {

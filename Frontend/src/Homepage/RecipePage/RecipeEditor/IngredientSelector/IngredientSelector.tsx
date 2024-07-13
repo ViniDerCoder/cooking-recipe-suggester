@@ -16,6 +16,7 @@ const IngredientSelector = forwardRef((p: {
 }, ref) => {
     const [ingredients, setIngredients] = useState(p.initialIngredients ? p.initialIngredients : []);
     const [headerDown, setHeaderDown] = useState(false);
+    const [visibleElements, setVisibleElements] = useState({ ingredientList: true, filter: true });
     
     useImperativeHandle(ref, () => ({
         getInitialIngredients: () => p.initialIngredients,
@@ -45,15 +46,37 @@ const IngredientSelector = forwardRef((p: {
 
     return (
         <div className="ingredient-selector">
-            {headerDown ? <div className="ingredient-selector-new-ingredient-list" data-down={headerDown} onClick={() => setHeaderDown(!headerDown)}>
-
+            {headerDown ? <div className="ingredient-selector-new-ingredient-list">
+                <div className="ingredient-selector-filter">
+                    <input type="text" placeholder="Suche"/>
+                    <div data-visble={visibleElements.filter}>Filter:</div>
+                    <div data-visble={visibleElements.filter}>Vegan</div>
+                    <div data-visble={visibleElements.filter}>Vegetarisch</div>
+                    <div data-visble={visibleElements.filter}>Glutenfrei</div>
+                    <div data-visble={visibleElements.filter}>Ohne Milchprodukte</div>
+                    <div data-visble={visibleElements.filter}>Ohne Eiprodukte</div>
+                    <div data-visble={visibleElements.filter}>Ohne Nüsse</div>
+                    <div data-visble={visibleElements.filter}>Ohne Fisch</div>
+                    <div data-visble={visibleElements.filter}>Ohne Schalentiere</div>
+                    <div data-visble={visibleElements.filter}>Ohne Soja</div>
+                </div>
             </div> : null}
             <div className="ingredient-selector-header" data-down={headerDown}>
                 <div className='ingredient-selector-header-title'>Zutaten</div>
-                <div className='ingredient-selector-header-plus' onClick={()=> { setHeaderDown(!headerDown)}}>{headerDown ? <RiArrowUpSLine size={"2rem"}/> : <IoIosAdd size={"2rem"}/>}</div>
+                <div className='ingredient-selector-header-plus' onClick={()=> { 
+                    if(!headerDown) {
+                        setVisibleElements({ ...visibleElements, ingredientList: false })
+                        setTimeout(() => setHeaderDown(!headerDown), 400)
+                    } else {
+                        setHeaderDown(!headerDown)
+                        setVisibleElements({ ...visibleElements, ingredientList: false })
+                        setTimeout(() => setVisibleElements({ ...visibleElements, ingredientList: true }), 300)
+                        
+                    }
+                    }}>{headerDown ? <RiArrowUpSLine size={"2rem"}/> : <IoIosAdd size={"2rem"}/>}</div>
             </div>
             {!headerDown ? <div className='ingredient-selector-ingredient-list'>
-                {ingredients.map(ingr => <div key={ingr.id} className="ingredient-selector-ingredient">
+                {ingredients.map(ingr => <div key={ingr.id} className="ingredient-selector-ingredient" data-visible={visibleElements.ingredientList}>
                     <div className="ingredient-selector-ingredient-amount"><input
                             value={ingr.amount}
                             onChange={(e) => {
