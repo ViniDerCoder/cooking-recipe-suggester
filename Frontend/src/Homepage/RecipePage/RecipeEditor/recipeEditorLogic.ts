@@ -1,5 +1,5 @@
-import { IngredientUpdateActionList, isIngredientUpdateActionList } from "../../../../../Backend/src/utils/types/ingredient"
-import { isRecipeEditData, RecipeEditData } from "../../../../../Backend/src/utils/types/recipe"
+import { IngredientUpdateActionList} from "../../../../../Backend/src/utils/types/ingredient"
+import { RecipeEditData } from "../../../../../Backend/src/utils/types/recipe"
 import { getAuthToken } from "../../../utils/auth"
 import { Backend } from "../../../utils/backendConnection/routes"
 import { errorFromError } from "../../../utils/backendConnection/utils"
@@ -13,7 +13,11 @@ export async function editRecipe(recipeId: unknown, recipe: RecipeEditData, ingr
 
     try {
         const result = await Backend.Recipes.updateRecipe(token ? token : "", recipeId, recipe, ingredients)
-        if(result.data.recipe) return [true, '']
+        if(result.data.recipe) {
+            const cache = JSON.parse(sessionStorage.getItem("recipe-cache") || "{}")
+            sessionStorage.setItem("recipe-cache", JSON.stringify({...cache, [recipeId]: [new Date(), result.data.recipe]}))
+            return [true, '']
+        }
         else return [false, result.error]
     } catch (error) {
         return [false, 'Error: ' + errorFromError(error)]

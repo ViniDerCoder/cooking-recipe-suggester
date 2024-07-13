@@ -53,6 +53,26 @@
     transform: translateX(25rem);
 }
 
+.ingredient-selector-new-ingredient-name {
+    color: var(--tertiary-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    padding: 0.2rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    width: 80%;
+    font-weight: bold;
+    justify-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ingredient-selector-new-ingredient-info,
+.ingredient-selector-new-ingredient-add {
+    display: flex;
+}
+
 .ingredient-selector-filter {
     overflow: hidden;
     display: flex;
@@ -171,9 +191,9 @@
 .ingredient-selector-ingredient {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     padding: 0.5rem;
+    overflow: visible;
     margin: 0.5rem 0;
     border: 0.2rem solid var(--primary-color);
     background-color: var(--primary-color-dimmed);
@@ -193,7 +213,7 @@
     font-size: 0.9rem;
     border-radius: 0.5rem;
     border: 0.14rem solid var(--secondary-color);
-    text-align: left;
+    text-align: right;
     padding: 0.2rem;
     width: 4rem;
     appearance: none;
@@ -217,11 +237,12 @@
     font-size: 0.9rem;
     border-radius: 0.5rem;
     border: 0.14rem solid var(--secondary-color);
-    text-align: center;
+    text-align: left;
     padding: 0.2rem;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+    margin-left: 0.5rem;
 }
 
 .ingredient-selector-ingredient-unit select:focus {
@@ -237,11 +258,25 @@
     padding: 0.2rem;
     padding-left: 0.3rem;
     padding-right: 0.3rem;
+    width: 100%;
+    margin-left: 0.5rem;
     font-weight: bold;
+    justify-self: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ingredient-selector-ingredient-info {
+    display: flex;
+    margin-left: 0.5rem;
 }
 
 .ingredient-selector-ingredient-remove {
     display: flex;
     margin-right: 0.5rem;
     cursor: pointer;
+    justify-self: right;
+    margin-left: 0.5rem;
+    right: 1rem;
 }

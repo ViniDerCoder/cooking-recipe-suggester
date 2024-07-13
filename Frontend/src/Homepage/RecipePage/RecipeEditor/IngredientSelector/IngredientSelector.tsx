@@ -12,6 +12,7 @@ import { FaMinus } from 'react-icons/fa';
 import { TbEgg, TbEggOff, TbMeat, TbMeatOff, TbPlant2, TbPlant2Off } from 'react-icons/tb';
 import { LuBean, LuBeanOff, LuFish, LuFishOff, LuMilk, LuMilkOff, LuNut, LuNutOff, LuWheat, LuWheatOff } from 'react-icons/lu';
 import { GiNautilusShell } from 'react-icons/gi';
+import { IoInformationCircleOutline } from "react-icons/io5";
 import Tooltip from '../../../../Defaults/Tooltip/Tooltip';
 
 const IngredientSelector = forwardRef((p: {
@@ -26,7 +27,6 @@ const IngredientSelector = forwardRef((p: {
     const [visibleElements, setVisibleElements] = useState({ ingredientList: true, filter: true, newIngredientList: true });
     const [filterStates, setFilterStates] = useState({ vegan: 2, vegetarian: 2, glutenFree: 2, dairyFree: 2, nutFree: 2, eggFree: 2, fishFree: 2, shellfishFree: 2, soyFree: 2 });
     const [searchState, setSearchState] = useState<string | undefined>(undefined);
-    const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(false);
     const [searches, setSearches] = useState(0);
 
@@ -54,9 +54,9 @@ const IngredientSelector = forwardRef((p: {
     }));
 
     useEffect(() => {
-        const fetchIngredients = async (filter: IngredientFilters, p: number) => {
+        const fetchIngredients = async (filter: IngredientFilters) => {
             setLoading(true);
-            const result = await getIngredients(filter, 10, p);
+            const result = await getIngredients(filter, 12, 0);
             if (result[0] && typeof result[1] !== "string") {
                 setNewIngredients(result[1]);
                 setLoading(false);
@@ -65,7 +65,7 @@ const IngredientSelector = forwardRef((p: {
             }
         }
 
-        fetchIngredients(([...Object.entries(filterStates).filter((val) => val[1] !== 2).map(([k, v]) => ({ name: k as IngredientPropertyFilter, value: v === 1 }))] as IngredientFilters).concat(searchState ? [{ name: "name", value: searchState }] : []), page);
+        fetchIngredients(([...Object.entries(filterStates).filter((val) => val[1] !== 2).map(([k, v]) => ({ name: k as IngredientPropertyFilter, value: v === 1 }))] as IngredientFilters).concat(searchState ? [{ name: "name", value: searchState }] : []));
     }, [searches]);
 
     return (
@@ -125,20 +125,24 @@ const IngredientSelector = forwardRef((p: {
                             message={filterStates.soyFree === 2 ? 'Sojafrei/Nicht Sojafrei' : filterStates.soyFree === 1 ? 'Sojafrei' : 'Nicht Sojafrei'}
                             sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
                         />
-                        </div>
+                    </div>
                     <div className="ingredient-selector-filter-apply" onClick={() => setSearches(searches + 1)}>Suchen</div>
                 </div>
                 <div className="ingredient-selector-new-ingredients-list">
                     {loading ? <div className="ingredient-selector-new-ingredients-loading">Lade...</div> : newIngredients.map(ingr =>
                         <div key={ingr.id} className="ingredient-selector-new-ingredient" data-visible={visibleElements.newIngredientList}>
                             <div className="ingredient-selector-new-ingredient-name">{ingr.name}</div>
+                            <Tooltip
+                                element={<div className="ingredient-selector-new-ingredient-info"><IoInformationCircleOutline /></div>}
+                                message={<TooltipElementMessage ingr={ingr}/>}
+                            />
                             <div className="ingredient-selector-new-ingredient-add" onClick={() => {
                                 const ingredient = ingredients.find(i => i.id === ingr.id);
-                                if(ingredient) {
+                                if (ingredient) {
                                     setIngredients(ingredients.filter(i => i.id !== ingr.id));
                                     p.onIngredientRemove(ingredient);
                                 } else {
-                                    const newIngr = { id: ingr.id, name: ingr.name, amount: 1, unit: undefined } as FullRecipeIngredient;
+                                    const newIngr = { id: ingr.id, name: ingr.name, amount: 1, unit: undefined, properties: ingr.properties } as FullRecipeIngredient;
                                     setIngredients([...ingredients, newIngr]);
                                     p.onIngredientAdd(newIngr);
                                 }
@@ -198,6 +202,11 @@ const IngredientSelector = forwardRef((p: {
                         </select>
                     </div>
                     <div className="ingredient-selector-ingredient-name">{ingr.name}</div>
+                    <Tooltip
+                        element={<div className="ingredient-selector-ingredient-info"><IoInformationCircleOutline size={"1.5rem"} /></div>}
+                        message={<TooltipElementMessage ingr={ingr}/>}
+                        sx={{ style: { width: "max-content", textWrap: "nowrap", zIndex: 1000, position: "absolute" } }}
+                    />
                     <div className="ingredient-selector-ingredient-remove" onClick={() => {
                         setIngredients(ingredients.filter(i => i.id !== ingr.id));
                         p.onIngredientRemove(ingr)
@@ -207,5 +216,21 @@ const IngredientSelector = forwardRef((p: {
         </div>
     )
 })
+
+function TooltipElementMessage(p: {ingr: FullRecipeIngredient | Ingredient}) {
+    return (
+        <div>
+            {(p.ingr.properties.vegan ? 'Vegan' : 'Nicht Vegan')} <br />
+            {(p.ingr.properties.vegetarian ? 'Vegetarisch' : 'Nicht Vegetarisch')} <br />
+            {(p.ingr.properties.glutenFree ? 'Glutenfrei' : 'Nicht Glutenfrei')} <br />
+            {(p.ingr.properties.dairyFree ? 'Milchfrei' : 'Nicht Milchfrei')} <br />
+            {(p.ingr.properties.nutFree ? 'Nussfrei' : 'Nicht Nussfrei')} <br />
+            {(p.ingr.properties.eggFree ? 'Eifrei' : 'Nicht Eifrei')} <br />
+            {(p.ingr.properties.fishFree ? 'Fischfrei' : 'Nicht Fischfrei')} <br />
+            {(p.ingr.properties.shellfishFree ? 'Schalentierfrei' : 'Nicht Schalentierfrei')} <br />
+            {(p.ingr.properties.soyFree ? 'Sojafrei' : 'Nicht Sojafrei')} <br />
+        </div>
+    )
+}
 
 export default IngredientSelector;

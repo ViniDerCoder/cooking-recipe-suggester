@@ -8,7 +8,7 @@ import { BiSave, BiSolidSave } from "react-icons/bi";
 import { RecipeCreationData, RecipeEditData } from '../../../../../Backend/src/utils/types/recipe';
 import { createRef, useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
-import { FullRecipeIngredient, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
+import { FullRecipeIngredient, IngredientUpdateActionList, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
 import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
@@ -150,7 +150,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                                     newChange("IMAGE", e.target?.result as string, recipe.imageUrl, [recipe, setRecipe], [changesStack, setChangesStack])
                                 }
                                 reader.readAsDataURL(file)
-                            }} 
+                            }}
                             onMouseEnter={(e) => {
                                 const current = previewImage.current
                                 if (!current) return
@@ -210,14 +210,14 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 </div>
                 <div className="recipe-editor-content-times">
                     <div className='recipe-editor-content-cookingtime'>
-                        <div className='recipe-editor-content-title'><TbClockHour4 style={{justifySelf: "center"}}/><div>Kochzeit</div></div>
+                        <div className='recipe-editor-content-title'><TbClockHour4 style={{ justifySelf: "center" }} /><div>Kochzeit</div></div>
                         <input
                             value={recipe?.cookingTime ? recipe.cookingTime : undefined}
                             onChange={(e) => {
                                 let el = (e.target as HTMLInputElement)
                                 if (el.value.length === 0) el.value = "0"
                                 if (isNaN(parseInt(el.value))) return
-                                if(parseInt(el.value) < 0) el.value = "0"
+                                if (parseInt(el.value) < 0) el.value = "0"
                                 if (!recipe) return
                                 newChange("COOKINGTIME", parseInt(el.value), recipe.cookingTime, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
@@ -226,14 +226,14 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         />
                     </div>
                     <div className='recipe-editor-content-waitingtime'>
-                        <div className='recipe-editor-content-title'><TbClockPause style={{justifySelf: "center"}}/><div>Wartezeit</div></div>
+                        <div className='recipe-editor-content-title'><TbClockPause style={{ justifySelf: "center" }} /><div>Wartezeit</div></div>
                         <input
                             value={recipe?.waitingTime ? recipe.waitingTime : undefined}
                             onChange={(e) => {
                                 let el = (e.target as HTMLInputElement)
                                 if (el.value.length === 0) el.value = "0"
                                 if (isNaN(parseInt(el.value))) return
-                                if(parseInt(el.value) < 0) el.value = "0"
+                                if (parseInt(el.value) < 0) el.value = "0"
                                 if (!recipe) return
                                 newChange("WAITINGTIME", parseInt(el.value), recipe.waitingTime, [recipe, setRecipe], [changesStack, setChangesStack])
                             }}
@@ -250,7 +250,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                             let el = (e.target as HTMLInputElement)
                             if (el.value.length === 0) el.value = "1"
                             if (isNaN(parseInt(el.value))) return
-                            if(parseInt(el.value) < 1) el.value = "1"
+                            if (parseInt(el.value) < 1) el.value = "1"
                             if (!recipe) return
                             newChange("SERVINGS", parseInt(el.value), recipe.servings, [recipe, setRecipe], [changesStack, setChangesStack])
                         }}
@@ -260,16 +260,58 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 </div>
 
                 <div className='recipe-editor-content-ingredients'>
-                    <IngredientSelector 
-                        ref={ingredientSelector} 
+                    <IngredientSelector
+                        ref={ingredientSelector}
                         initialIngredients={ingredients}
                         onIngredientAdd={(ingr: FullRecipeIngredient) => {
+                            if (ingredientChanges.find((change) => change.ingredientId === ingr.id)) {
+                                setIngredientChanges(ingredientChanges.map((change) => {
+                                    if (change.ingredientId === ingr.id && change.type === "REMOVE") {
+                                        return { type: "UPDATE", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }
+                                    } else if (change.ingredientId === ingr.id && change.type === "ADD") {
+                                        return { type: "ADD", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }
+                                    } else if (change.ingredientId === ingr.id && change.type === "UPDATE") {
+                                        return { type: "UPDATE", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }
+                                    }
+                                    return change
+                                }))
+                            } else {
+                                setIngredientChanges([...ingredientChanges, { type: "ADD", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }])
+                            }
                             setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: ingr, oldValue: undefined }])
                         }}
                         onIngredientRemove={(ingr: FullRecipeIngredient) => {
-                            setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: undefined, oldValue: ingr }])}
+                            if (ingredientChanges.find((change) => change.ingredientId === ingr.id)) {
+                                const newChanges = ingredientChanges.map((change) => {
+                                    if (change.ingredientId === ingr.id && change.type === "ADD") {
+                                        return undefined
+                                    } else if (change.ingredientId === ingr.id && change.type === "UPDATE") {
+                                        return { type: "REMOVE" as const, ingredientId: ingr.id }
+                                    }
+                                    return change
+                                }).filter((change) => change !== undefined)
+                                setIngredientChanges(newChanges as any)
+                            } else {
+                                setIngredientChanges([...ingredientChanges, { type: "REMOVE", ingredientId: ingr.id }])
+                            }
+                            setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: undefined, oldValue: ingr }])
+                        }
                         }
                         onIngredientChange={(newIngr: FullRecipeIngredient, oldIngr: FullRecipeIngredient) => {
+                            if (ingredientChanges.find((change) => change.ingredientId === newIngr.id)) {
+                                setIngredientChanges(ingredientChanges.map((change) => {
+                                    if (change.ingredientId === newIngr.id && change.type === "ADD") {
+                                        return { type: "ADD", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }
+                                    } else if (change.ingredientId === newIngr.id && change.type === "UPDATE") {
+                                        return { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }
+                                    } else if (change.ingredientId === newIngr.id && change.type === "REMOVE") {
+                                        return { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }
+                                    }
+                                    return change
+                                }))
+                            } else {
+                                setIngredientChanges([...ingredientChanges, { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }])
+                            }
                             setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: newIngr, oldValue: oldIngr }])
                         }}
                     />
@@ -288,7 +330,7 @@ function changeBack(stackState: [{ field: EditorFields, newValue: any, oldValue:
     if (stackState[0].length < 1) return
     let last = stackState[0].pop()
     if (!last) return
-    change(last.field, last.field === "INGREDIENTS" ? {new: last.oldValue, old: last.newValue} : last.oldValue, recipeState, ingredientSelectorRef)
+    change(last.field, last.field === "INGREDIENTS" ? { new: last.oldValue, old: last.newValue } : last.oldValue, recipeState, ingredientSelectorRef)
     stackState[1](stackState[0])
 }
 
@@ -318,14 +360,14 @@ function change(field: EditorFields, newValue: any, recipeState: [RecipeEditData
             recipeState[1]({ ...recipeState[0], servings: newValue })
             break
         case "INGREDIENTS":
-            if(ingredientSelectorRef) {
+            if (ingredientSelectorRef) {
                 const current = ingredientSelectorRef.current
-                if(!current) return
-                if(!newValue.new && newValue.old) {
+                if (!current) return
+                if (!newValue.new && newValue.old) {
                     current.removeIngredient(newValue.old.id, false)
-                } else if(newValue.new && !newValue.old) {
+                } else if (newValue.new && !newValue.old) {
                     current.addIngredient(newValue.new, false)
-                } else if(newValue.new && newValue.old) {
+                } else if (newValue.new && newValue.old) {
                     current.changeIngredient(newValue.new, false)
                 }
             }

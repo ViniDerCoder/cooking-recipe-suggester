@@ -12,6 +12,10 @@ export async function createCustomRecipe(userId: unknown, recipe: unknown, ingre
 
     if(!getRecipeTypeById(recipe.typeId)) return 'Invalid recipe type';
 
+    if(ingredients.length < 1) return 'No ingredients provided';
+    if(recipe.cookingTime < 0 || recipe.servings < 1) return 'Invalid recipe data';
+    if(recipe.description.length > 500) return 'Description too long';
+
     const unexistingIngredients = (await Promise.all(ingredients.map(async (ingredient) => typeof await getIngredientById(ingredient.id) === "string"))).filter((result) => result);
     if(unexistingIngredients.length >= 1) return 'Invalid ingredients provided';
 

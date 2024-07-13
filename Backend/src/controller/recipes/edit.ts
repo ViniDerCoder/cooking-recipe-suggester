@@ -16,6 +16,9 @@ export async function editRecipeById(recipeId: unknown, userId: unknown, newReci
 
     if(!isIngredientUpdateActionList(newIngredients) && newIngredients !== undefined && newIngredients !== null) return 'Invalid input';
 
+    if(newRecipe.cookingTime < 0 || newRecipe.servings < 1) return 'Invalid recipe data';
+    if(newRecipe.description.length > 500) return 'Description too long';
+
     const recipe = await getRecipeById(recipeId);
     if(typeof recipe === "string") return recipe;
     
