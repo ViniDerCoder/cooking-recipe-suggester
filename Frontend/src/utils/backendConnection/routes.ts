@@ -1,5 +1,5 @@
 import { RecipeCreationData, RecipeEditData } from "../../../../Backend/src/utils/types/recipe";
-import { IngredientProperties, IngredientRecipeList, IngredientUpdateActionList } from "../../../../Backend/src/utils/types/ingredient";
+import { IngredientFilters, IngredientProperties, IngredientRecipeList, IngredientUpdateActionList } from "../../../../Backend/src/utils/types/ingredient";
 import { SuggestionsSettings } from "../../../../Backend/src/utils/types/suggestion";
 import { BackendConnection } from "./base";
 
@@ -104,8 +104,12 @@ abstract class Ingredients {
         return await BackendConnection.post('ingredients/filter/id', undefined, { ids }, token);
     }
 
-    static async filterIngredients(token: string, filters: any) {
+    static async filterIngredients(token: string, filters: IngredientFilters) {
         return await BackendConnection.post('ingredients/filter', undefined, { filters }, token);
+    }
+
+    static async filterIngredientsWithPaging(token: string, filters: IngredientFilters, offset: number, limit: number) {
+        return await BackendConnection.post('ingredients/filter', undefined, { filters, offset, limit }, token);
     }
 
     static async getIngredient(token: string, ingredientId: string) {

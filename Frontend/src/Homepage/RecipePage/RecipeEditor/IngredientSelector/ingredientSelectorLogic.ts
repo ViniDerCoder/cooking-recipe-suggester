@@ -4,7 +4,7 @@ import { errorFromError } from "../../../../utils/backendConnection/utils";
 
 
 export function getIngredients(amount: number, page: number) {
-
+    
 }
 
 export async function getIngredientInfosByIds(ids: string[]) {

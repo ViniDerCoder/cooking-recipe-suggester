@@ -187,6 +187,9 @@ export function isIngredientActionRequest(any: any): any is IngredientActionRequ
 export type IngredientFilters = Array<{
     name: IngredientPropertyFilter,
     value: boolean
+} | {
+    name: "name",
+    value: string
 }>
 
 export function isIngredientFilters(any: any): any is IngredientFilters {

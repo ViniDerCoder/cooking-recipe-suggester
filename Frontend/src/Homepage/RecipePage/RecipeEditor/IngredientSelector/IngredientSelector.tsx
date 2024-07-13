@@ -3,7 +3,7 @@ import './IngredientSelector.css';
 import '../../RecipePage.css';
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { FullRecipeIngredient, RecipeIngredientUnit } from "../../../../../../Backend/src/utils/types/ingredient";
+import { FullRecipeIngredient, IngredientFilters, IngredientPropertyFilter, RecipeIngredientUnit } from "../../../../../../Backend/src/utils/types/ingredient";
 import { IoIosAdd } from 'react-icons/io';
 import { RiArrowUpSLine } from "react-icons/ri";
 import { validUnits, validUnitsName } from './ingredientSelectorLogic';
@@ -22,6 +22,9 @@ const IngredientSelector = forwardRef((p: {
     const [headerDown, setHeaderDown] = useState(false);
     const [visibleElements, setVisibleElements] = useState({ ingredientList: true, filter: true });
     const [filterStates, setFilterStates] = useState({ vegan: 2, vegetarian: 2, glutenFree: 2, dairyFree: 2, nutFree: 2, eggFree: 2, fishFree: 2, shellfishFree: 2, soyFree: 2 });
+    const [searchState, setSearchState] = useState<string | undefined> (undefined);
+    const [page, setPage] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     useImperativeHandle(ref, () => ({
         getInitialIngredients: () => p.initialIngredients,
@@ -47,13 +50,25 @@ const IngredientSelector = forwardRef((p: {
     }));
 
     useEffect(() => {
-    }, [ingredients]);
+        const fetchIngredients = async (filter: IngredientFilters, p: number) => {
+            setLoading(true);
+            
+            setLoading(false);
+        }
+
+        fetchIngredients(([...Object.entries(filterStates).filter((val) => val[1] !== 2).map(([k, v]) => ({ name: k as IngredientPropertyFilter, value: v === 1 }))] as IngredientFilters).concat(searchState ? [{ name: "name", value: searchState }] : []), page);
+    }, [filterStates, searchState, page]);
 
     return (
         <div className="ingredient-selector">
-            {headerDown ? <div className="ingredient-selector-new-ingredient-list">
+            {headerDown ? <div className="ingredient-selector-new-ingredients">
                 <div className="ingredient-selector-filter" data-visible={visibleElements.filter}>
-                    <input type="text" placeholder="Suche" />
+                    <input type="text" placeholder="Suche" 
+                        onChange={(e) => {
+                            if(e.target.value.length === 0) setSearchState(undefined)
+                            else setSearchState(e.target.value)
+                        }}
+                    />
                     <div className='ingredient-selector-filter-type'>
                         <div onClick={() => setFilterStates({...filterStates, vegan: filterStates.vegan === 2 ? 0 : filterStates.vegan + 1})}>{filterStates.vegan === 0 ? <TbPlant2Off color='#7da811' /> : (filterStates.vegan === 1 ? <TbPlant2 color='#7da811' /> : <TbPlant2 color='#7da811' opacity={0.5} />)}</div>
                         <div onClick={() => setFilterStates({...filterStates, vegetarian: filterStates.vegetarian === 2 ? 0 : filterStates.vegetarian + 1})}>{filterStates.vegetarian === 0 ? <TbMeat color='#8c0b23' /> : (filterStates.vegetarian === 1 ? <TbMeatOff color='#8c0b23' /> : <TbMeatOff color='#8c0b23' opacity={0.5} />)}</div>
@@ -66,6 +81,9 @@ const IngredientSelector = forwardRef((p: {
                         <div onClick={() => setFilterStates({...filterStates, soyFree: filterStates.soyFree === 2 ? 0 : filterStates.soyFree + 1})}>{filterStates.soyFree === 0 ? <LuBean color='#b38d12' /> : (filterStates.soyFree === 1 ? <LuBeanOff color='#b38d12' /> : <LuBeanOff color='#b38d12' opacity={0.5} />)}</div>
                     </div>
                     <div className="ingredient-selector-filter-apply">Suchen</div>
+                </div>
+                <div className="ingredient-selector-new-ingridients-list">
+                    {loading ? <div className="ingredient-selector-new-ingredients-loading">Lade...</div> : null}
                 </div>
             </div> : null}
             <div className="ingredient-selector-header" data-down={headerDown}>
