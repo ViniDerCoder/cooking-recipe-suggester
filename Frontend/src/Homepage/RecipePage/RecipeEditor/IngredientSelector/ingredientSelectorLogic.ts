@@ -47,5 +47,5 @@ export async function getIngredientInfosByIds(ids: unknown) {
 
 export const validFilters = ["vegan", "vegetarian", "glutenFree", "dairyFree", "nutFree", "eggFree", "fishFree", "shellfishFree", "soyFree"]
 
-export const validUnits         = [undefined,   null,   'cup',      'tablespoon',   'teaspoon',     'gram',     'kilogram',     'milliliter',   'liter',    'some',     'big',      'small',    'shot',     'pinch',    'drop',     'packet'];
-export const validUnitsName     = ["-",         "-",    "Tasse",    "Esslöffel",    "Teelöffel",    "Gramm",    "Kilogramm",    "Milliliter",   "Liter",    "etwas",    "groß(e)",  "klein(e)", "Schuss",   "Prise",    "Tropfen",  "Päckchen"];
+export const validUnits         = [undefined,   null,   'cup',      'tablespoon',   'teaspoon',     'gram',     'kilogram',     'milliliter',   'liter',    'some',     'big',          'small',        'shot',     'pinch',    'drop',     'packet'];
+export const validUnitsName     = ["-",         "-",    "Tasse",    "Esslöffel",    "Teelöffel",    "Gramm",    "Kilogramm",    "Milliliter",   "Liter",    "etwas",    "groß(e/es)",  "klein(e/es)",   "Schuss",   "Prise",    "Tropfen",  "Päckchen"];

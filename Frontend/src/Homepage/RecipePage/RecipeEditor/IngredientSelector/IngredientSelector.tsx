@@ -5,13 +5,14 @@ import '../../RecipePage.css';
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FullRecipeIngredient, Ingredient, IngredientFilters, IngredientPropertyFilter, RecipeIngredientUnit } from "../../../../../../Backend/src/utils/types/ingredient";
-import { IoIosAdd } from 'react-icons/io';
+import { IoIosAdd, IoIosRemove } from 'react-icons/io';
 import { RiArrowUpSLine } from "react-icons/ri";
 import { getIngredients, validUnits, validUnitsName } from './ingredientSelectorLogic';
 import { FaMinus } from 'react-icons/fa';
 import { TbEgg, TbEggOff, TbMeat, TbMeatOff, TbPlant2, TbPlant2Off } from 'react-icons/tb';
 import { LuBean, LuBeanOff, LuFish, LuFishOff, LuMilk, LuMilkOff, LuNut, LuNutOff, LuWheat, LuWheatOff } from 'react-icons/lu';
 import { GiNautilusShell } from 'react-icons/gi';
+import Tooltip from '../../../../Defaults/Tooltip/Tooltip';
 
 const IngredientSelector = forwardRef((p: {
     initialIngredients?: FullRecipeIngredient[],
@@ -22,10 +23,10 @@ const IngredientSelector = forwardRef((p: {
     const [ingredients, setIngredients] = useState(p.initialIngredients ? p.initialIngredients : []);
     const [newIngredients, setNewIngredients] = useState<Ingredient[]>([]);
     const [headerDown, setHeaderDown] = useState(false);
-    const [visibleElements, setVisibleElements] = useState({ ingredientList: true, filter: true });
+    const [visibleElements, setVisibleElements] = useState({ ingredientList: true, filter: true, newIngredientList: true });
     const [filterStates, setFilterStates] = useState({ vegan: 2, vegetarian: 2, glutenFree: 2, dairyFree: 2, nutFree: 2, eggFree: 2, fishFree: 2, shellfishFree: 2, soyFree: 2 });
     const [searchState, setSearchState] = useState<string | undefined>(undefined);
-    const [page, setPage] = useState(-1);
+    const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(false);
     const [searches, setSearches] = useState(0);
 
@@ -54,7 +55,6 @@ const IngredientSelector = forwardRef((p: {
 
     useEffect(() => {
         const fetchIngredients = async (filter: IngredientFilters, p: number) => {
-            if (p === -1) return;
             setLoading(true);
             const result = await getIngredients(filter, 10, p);
             if (result[0] && typeof result[1] !== "string") {
@@ -73,33 +73,76 @@ const IngredientSelector = forwardRef((p: {
             {headerDown ? <div className="ingredient-selector-new-ingredients">
                 <div className="ingredient-selector-filter" data-visible={visibleElements.filter}>
                     <input type="text" placeholder="Suche"
+                        value={searchState ? searchState : ""}
                         onChange={(e) => {
                             if (e.target.value.length === 0) setSearchState(undefined)
                             else setSearchState(e.target.value)
                         }}
                     />
                     <div className='ingredient-selector-filter-type'>
-                        <div onClick={() => setFilterStates({ ...filterStates, vegan: filterStates.vegan === 2 ? 0 : filterStates.vegan + 1 })}>{filterStates.vegan === 0 ? <TbPlant2Off color='#7da811' /> : (filterStates.vegan === 1 ? <TbPlant2 color='#7da811' /> : <TbPlant2 color='#7da811' opacity={0.5} />)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, vegetarian: filterStates.vegetarian === 2 ? 0 : filterStates.vegetarian + 1 })}>{filterStates.vegetarian === 0 ? <TbMeat color='#8c0b23' /> : (filterStates.vegetarian === 1 ? <TbMeatOff color='#8c0b23' /> : <TbMeatOff color='#8c0b23' opacity={0.5} />)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, glutenFree: filterStates.glutenFree === 2 ? 0 : filterStates.glutenFree + 1 })}>{filterStates.glutenFree === 0 ? <LuWheat color='#cfa646' /> : (filterStates.glutenFree === 1 ? <LuWheatOff color='#cfa646' /> : <LuWheatOff color='#cfa646' opacity={0.5} />)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, dairyFree: filterStates.dairyFree === 2 ? 0 : filterStates.dairyFree + 1 })}>{filterStates.dairyFree === 0 ? <LuMilk color='#f2f2f2' /> : (filterStates.dairyFree === 1 ? <LuMilkOff color='#f2f2f2' /> : <LuMilkOff color='#f2f2f2' opacity={0.5} />)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, eggFree: filterStates.eggFree === 2 ? 0 : filterStates.eggFree + 1 })}>{filterStates.eggFree === 0 ? <TbEgg color='#d4d2d2' /> : (filterStates.eggFree === 1 ? <TbEggOff color='#d4d2d2' /> : <TbEggOff color='#d4d2d2' opacity={0.5} />)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, nutFree: filterStates.nutFree === 2 ? 0 : filterStates.nutFree + 1 })}>{filterStates.nutFree === 0 ? <LuNut color='#8a4704' /> : (filterStates.nutFree === 1 ? <LuNutOff color='#8a4704' /> : <LuNutOff color='#8a4704' opacity={0.5} />)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, fishFree: filterStates.fishFree === 2 ? 0 : filterStates.fishFree + 1 })}>{filterStates.fishFree === 0 ? <LuFish color='#1f85b8' /> : (filterStates.fishFree === 1 ? <LuFishOff color='#1f85b8' /> : <LuFishOff color='#1f85b8' opacity={0.5} />)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, shellfishFree: filterStates.shellfishFree === 2 ? 0 : filterStates.shellfishFree + 1 })}>{filterStates.shellfishFree === 0 ? <GiNautilusShell color='#3f4345' /> : (filterStates.shellfishFree === 1 ? <span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345' /></span> : <span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345' opacity={0.5} /></span>)}</div>
-                        <div onClick={() => setFilterStates({ ...filterStates, soyFree: filterStates.soyFree === 2 ? 0 : filterStates.soyFree + 1 })}>{filterStates.soyFree === 0 ? <LuBean color='#b38d12' /> : (filterStates.soyFree === 1 ? <LuBeanOff color='#b38d12' /> : <LuBeanOff color='#b38d12' opacity={0.5} />)}</div>
-                    </div>
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, vegan: filterStates.vegan === 2 ? 0 : filterStates.vegan + 1 })}>{filterStates.vegan === 0 ? <TbPlant2Off color='#7da811' /> : (filterStates.vegan === 1 ? <TbPlant2 color='#7da811' /> : <TbPlant2 color='#7da811' opacity={0.5} />)}</div>}
+                            message={filterStates.vegan === 2 ? 'Vegan/Nicht Vegan' : filterStates.vegan === 1 ? 'Vegan' : 'Nicht Vegan'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, vegetarian: filterStates.vegetarian === 2 ? 0 : filterStates.vegetarian + 1 })}>{filterStates.vegetarian === 0 ? <TbMeat color='#8c0b23' /> : (filterStates.vegetarian === 1 ? <TbMeatOff color='#8c0b23' /> : <TbMeatOff color='#8c0b23' opacity={0.5} />)}</div>}
+                            message={filterStates.vegetarian === 2 ? 'Vegetarisch/Nicht Vegetarisch' : filterStates.vegetarian === 1 ? 'Vegetarisch' : 'Nicht Vegetarisch'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, glutenFree: filterStates.glutenFree === 2 ? 0 : filterStates.glutenFree + 1 })}>{filterStates.glutenFree === 0 ? <LuWheat color='#cfa646' /> : (filterStates.glutenFree === 1 ? <LuWheatOff color='#cfa646' /> : <LuWheatOff color='#cfa646' opacity={0.5} />)}</div>}
+                            message={filterStates.glutenFree === 2 ? 'Glutenfrei/Nicht Glutenfrei' : filterStates.glutenFree === 1 ? 'Glutenfrei' : 'Nicht Glutenfrei'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, dairyFree: filterStates.dairyFree === 2 ? 0 : filterStates.dairyFree + 1 })}>{filterStates.dairyFree === 0 ? <LuMilk color='#f2f2f2' /> : (filterStates.dairyFree === 1 ? <LuMilkOff color='#f2f2f2' /> : <LuMilkOff color='#f2f2f2' opacity={0.5} />)}</div>}
+                            message={filterStates.dairyFree === 2 ? 'Milchfrei/Nicht Milchfrei' : filterStates.dairyFree === 1 ? 'Milchfrei' : 'Nicht Milchfrei'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, eggFree: filterStates.eggFree === 2 ? 0 : filterStates.eggFree + 1 })}>{filterStates.eggFree === 0 ? <TbEgg color='#d4d2d2' /> : (filterStates.eggFree === 1 ? <TbEggOff color='#d4d2d2' /> : <TbEggOff color='#d4d2d2' opacity={0.5} />)}</div>}
+                            message={filterStates.eggFree === 2 ? 'Eifrei/Nicht Eifrei' : filterStates.eggFree === 1 ? 'Eifrei' : 'Nicht Eifrei'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, nutFree: filterStates.nutFree === 2 ? 0 : filterStates.nutFree + 1 })}>{filterStates.nutFree === 0 ? <LuNut color='#8a4704' /> : (filterStates.nutFree === 1 ? <LuNutOff color='#8a4704' /> : <LuNutOff color='#8a4704' opacity={0.5} />)}</div>}
+                            message={filterStates.nutFree === 2 ? 'Nussfrei/Nicht Nussfrei' : filterStates.nutFree === 1 ? 'Nussfrei' : 'Nicht Nussfrei'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, fishFree: filterStates.fishFree === 2 ? 0 : filterStates.fishFree + 1 })}>{filterStates.fishFree === 0 ? <LuFish color='#1f85b8' /> : (filterStates.fishFree === 1 ? <LuFishOff color='#1f85b8' /> : <LuFishOff color='#1f85b8' opacity={0.5} />)}</div>}
+                            message={filterStates.fishFree === 2 ? 'Fischfrei/Nicht Fischfrei' : filterStates.fishFree === 1 ? 'Fischfrei' : 'Nicht Fischfrei'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, shellfishFree: filterStates.shellfishFree === 2 ? 0 : filterStates.shellfishFree + 1 })}>{filterStates.shellfishFree === 0 ? <GiNautilusShell color='#3f4345' /> : (filterStates.shellfishFree === 1 ? <span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345' /></span> : <span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345' opacity={0.5} /></span>)}</div>}
+                            message={filterStates.shellfishFree === 2 ? 'Schalentierfrei/Nicht Schalentierfrei' : filterStates.shellfishFree === 1 ? 'Schalentierfrei' : 'Nicht Schalentierfrei'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        <Tooltip
+                            element={<div onClick={() => setFilterStates({ ...filterStates, soyFree: filterStates.soyFree === 2 ? 0 : filterStates.soyFree + 1 })}>{filterStates.soyFree === 0 ? <LuBean color='#b38d12' /> : (filterStates.soyFree === 1 ? <LuBeanOff color='#b38d12' /> : <LuBeanOff color='#b38d12' opacity={0.5} />)}</div>}
+                            message={filterStates.soyFree === 2 ? 'Sojafrei/Nicht Sojafrei' : filterStates.soyFree === 1 ? 'Sojafrei' : 'Nicht Sojafrei'}
+                            sx={{ style: { marginTop: "1.5rem", width: "min-content", textWrap: "nowrap" } }}
+                        />
+                        </div>
                     <div className="ingredient-selector-filter-apply" onClick={() => setSearches(searches + 1)}>Suchen</div>
                 </div>
-                <div className="ingredient-selector-new-ingridients-list">
+                <div className="ingredient-selector-new-ingredients-list">
                     {loading ? <div className="ingredient-selector-new-ingredients-loading">Lade...</div> : newIngredients.map(ingr =>
-                        <div key={ingr.id} className="ingredient-selector-new-ingredient">
+                        <div key={ingr.id} className="ingredient-selector-new-ingredient" data-visible={visibleElements.newIngredientList}>
                             <div className="ingredient-selector-new-ingredient-name">{ingr.name}</div>
                             <div className="ingredient-selector-new-ingredient-add" onClick={() => {
-                                const newIngr = { id: ingr.id, name: ingr.name, amount: 1, unit: undefined } as FullRecipeIngredient;
-                                setIngredients([...ingredients, newIngr]);
-                                p.onIngredientAdd(newIngr);
-                            }}><IoIosAdd size={"2rem"} /></div>
+                                const ingredient = ingredients.find(i => i.id === ingr.id);
+                                if(ingredient) {
+                                    setIngredients(ingredients.filter(i => i.id !== ingr.id));
+                                    p.onIngredientRemove(ingredient);
+                                } else {
+                                    const newIngr = { id: ingr.id, name: ingr.name, amount: 1, unit: undefined } as FullRecipeIngredient;
+                                    setIngredients([...ingredients, newIngr]);
+                                    p.onIngredientAdd(newIngr);
+                                }
+                            }}>{ingredients.find((val) => val.id === ingr.id) ? <IoIosRemove size={"2rem"} style={{ marginTop: "0.15rem" }} /> : <IoIosAdd size={"2rem"} style={{ marginTop: "0.15rem" }} />}</div>
                         </div>
                     )}
                 </div>
@@ -108,11 +151,11 @@ const IngredientSelector = forwardRef((p: {
                 <div className='ingredient-selector-header-title'>Zutaten</div>
                 <div className='ingredient-selector-header-plus' onClick={() => {
                     if (!headerDown) {
-                        if (page === -1) setPage(0);
+                        setSearches(searches + 1)
                         setVisibleElements({ ...visibleElements, ingredientList: false })
                         setTimeout(() => setHeaderDown(!headerDown), 400)
                     } else {
-                        setVisibleElements({ ...visibleElements, filter: false })
+                        setVisibleElements({ ...visibleElements, filter: false, newIngredientList: false })
                         setTimeout(() => {
                             setHeaderDown(!headerDown)
                             setVisibleElements({ ...visibleElements, ingredientList: false })

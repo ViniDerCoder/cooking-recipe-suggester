@@ -248,9 +248,9 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         value={recipe?.servings ? recipe.servings : undefined}
                         onChange={(e) => {
                             let el = (e.target as HTMLInputElement)
-                            if (el.value.length === 0) el.value = "0"
+                            if (el.value.length === 0) el.value = "1"
                             if (isNaN(parseInt(el.value))) return
-                            if(parseInt(el.value) < 0) el.value = "0"
+                            if(parseInt(el.value) < 1) el.value = "1"
                             if (!recipe) return
                             newChange("SERVINGS", parseInt(el.value), recipe.servings, [recipe, setRecipe], [changesStack, setChangesStack])
                         }}

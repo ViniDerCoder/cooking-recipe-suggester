@@ -43,7 +43,7 @@ export async function getIngredientIdsMatchingFilter(filters: unknown, limit: un
             if(filter.name === "fishFree") return ingredient.properties.fishFree === filter.value;
             if(filter.name === "shellfishFree") return ingredient.properties.shellfishFree === filter.value;
             if(filter.name === "soyFree") return ingredient.properties.soyFree === filter.value;
-            if(filter.name === "name") return ingredient.name.includes(filter.value);
+            if(filter.name === "name") return ingredient.name.toLowerCase().includes(filter.value.toLowerCase());
             return false;
         });
     }).slice(typeof offset === "number" && typeof limit === "number" ? offset : undefined, typeof offset === "number" && typeof limit === "number" ? offset + limit : undefined);

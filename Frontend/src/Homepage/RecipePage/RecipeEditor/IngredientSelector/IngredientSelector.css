@@ -18,6 +18,41 @@
     overflow: hidden;
 }
 
+.ingredient-selector-new-ingredients-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 18.6rem;
+    padding: 0.5rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.ingredient-selector-new-ingredients-list::-webkit-scrollbar {
+    display: none;
+}
+
+.ingredient-selector-new-ingredient {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin: 0.35rem 0;
+    border: 0.2rem solid var(--primary-color);
+    background-color: var(--primary-color-dimmed);
+    border-radius: 0.5rem;
+    transition: all 0.75s ease;
+    transform: translateX(0);
+    cursor: default;
+    transition: all 0.5s ease;
+}
+
+.ingredient-selector-new-ingredient[data-visible="false"] {
+    transform: translateX(25rem);
+}
+
 .ingredient-selector-filter {
     overflow: hidden;
     display: flex;
@@ -200,6 +235,8 @@
     border-radius: 0.5rem;
     font-size: 1rem;
     padding: 0.2rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
     font-weight: bold;
 }
 
