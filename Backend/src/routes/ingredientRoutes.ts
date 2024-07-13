@@ -36,9 +36,9 @@ router.post('/filter/id', limit(1000 * 60), async (req, res) => {
 });
 
 router.post('/filter', limit(1000 * 60), async (req, res) => {
-    const { filters } = req.body
+    const { filters, offset, limit } = req.body
 
-    const result = await getIngredientIdsMatchingFilter(filters);
+    const result = await getIngredientIdsMatchingFilter(filters, limit, offset);
     
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Fetching of filtered ingredients was successfull", error: undefined, data: { ingredients: result }});

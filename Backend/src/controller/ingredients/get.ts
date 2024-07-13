@@ -26,7 +26,7 @@ export async function getIngredientsByIds(ingredientIds: unknown) {
     return result;
 }
 
-export async function getIngredientIdsMatchingFilter(filters: unknown) {
+export async function getIngredientIdsMatchingFilter(filters: unknown, limit: unknown, offset: unknown) {
     if(!isIngredientFilters(filters)) return 'Invalid input';
     if(filters.length < 1) return await getAllIngredientIds();
 
@@ -46,5 +46,5 @@ export async function getIngredientIdsMatchingFilter(filters: unknown) {
             if(filter.name === "soyFree") return ingredient.properties.soyFree === filter.value;
             return false;
         });
-    }).map((ingredient) => { return { id: ingredient.id, name: ingredient.name } });
+    }).slice(typeof offset === "number" && typeof limit === "number" ? offset : undefined, typeof offset === "number" && typeof limit === "number" ? offset + limit : undefined);
 }
