@@ -38,12 +38,12 @@ export async function getRecipeById(id: Uuid) {
 export async function getRecipesByIds(ids: Array<Uuid>) {
     if(ids.length === 0) return [];
 
-    const params = [...ids];
+    const params = [ids];
     const q = ''
     + 'SELECT * '
     + 'FROM '
     + 'cooking_recipe_suggester.recipes '
-    + `WHERE id = ? ${'OR id = ? '.repeat(ids.length - 1)}`;
+    + `WHERE id IN ?`;
 
     const result = await query(q, params);
     if(typeof result === "string") return 'Error getting recipe';
