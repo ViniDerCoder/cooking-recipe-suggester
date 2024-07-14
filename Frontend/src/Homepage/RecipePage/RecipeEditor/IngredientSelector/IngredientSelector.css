@@ -171,6 +171,22 @@
     padding: 0.5rem;
 }
 
+.ingredient-selector-header-allergenes {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.ingredient-selector-header-allergenes div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .ingredient-selector-header-plus {
     display: flex;
     font-size: 1.5rem;

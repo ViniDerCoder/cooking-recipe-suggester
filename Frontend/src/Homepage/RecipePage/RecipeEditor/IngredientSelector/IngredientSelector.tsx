@@ -60,6 +60,7 @@ const IngredientSelector = forwardRef((p: {
             if (result[0] && typeof result[1] !== "string") {
                 setNewIngredients(result[1]);
                 setLoading(false);
+                setTimeout(() => setVisibleElements({ ...visibleElements, newIngredientList: true }), 300);
             } else {
                 console.error(result[1]);
             }
@@ -135,6 +136,7 @@ const IngredientSelector = forwardRef((p: {
                             <Tooltip
                                 element={<div className="ingredient-selector-new-ingredient-info"><IoInformationCircleOutline /></div>}
                                 message={<TooltipElementMessage ingr={ingr}/>}
+                                sx={{ style: { textWrap: "nowrap", right: "2rem", top: "0.25rem" } }}
                             />
                             <div className="ingredient-selector-new-ingredient-add" onClick={() => {
                                 const ingredient = ingredients.find(i => i.id === ingr.id);
@@ -153,11 +155,61 @@ const IngredientSelector = forwardRef((p: {
             </div> : null}
             <div className="ingredient-selector-header" data-down={headerDown}>
                 <div className='ingredient-selector-header-title'>Zutaten</div>
+                <div className="ingredient-selector-header-allergenes">
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.vegan) ? <TbPlant2Off color='#7da811' /> : <TbPlant2 color='#7da811' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.vegan) ? "Nicht Vegan" : "Vegan"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.vegetarian) ? <TbMeat color='#8c0b23' /> : <TbMeatOff color='#8c0b23' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.vegetarian) ? "Nicht Vegetarisch" : "Vegetarisch"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.glutenFree) ? <LuWheat color='#cfa646' /> : <LuWheatOff color='#cfa646' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.glutenFree) ? "Nicht Glutenfrei" : "Glutenfrei"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.dairyFree) ? <LuMilk color='#f2f2f2' /> : <LuMilkOff color='#f2f2f2' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.dairyFree) ? "Nicht Milchfrei" : "Milchfrei"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.nutFree) ? <LuNut color='#8a4704' /> : <LuNutOff color='#8a4704' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.nutFree) ? "Nicht Nussfrei" : "Nussfrei"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.eggFree) ? <TbEgg color='#d4d2d2' /> : <TbEggOff color='#d4d2d2' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.eggFree) ? "Nicht Eifrei" : "Eifrei"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.fishFree) ? <LuFish color='#1f85b8' /> : <LuFishOff color='#1f85b8' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.fishFree) ? "Nicht Fischfrei" : "Fischfrei"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.shellfishFree) ? <GiNautilusShell color='#3f4345' /> : <span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345' /></span>}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.shellfishFree) ? "Nicht Schalentierfrei" : "Schalentierfrei"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                    <Tooltip
+                        element={<div>{ingredients.some((ingr) => !ingr.properties.soyFree) ? <LuBean color='#b38d12' /> : <LuBeanOff color='#b38d12' />}</div>}
+                        message={ingredients.some((ingr) => !ingr.properties.soyFree) ? "Nicht Sojafrei" : "Sojafrei"}
+                        sx={{ style: { textWrap: "nowrap", bottom: headerDown ? "2.5rem" : undefined, top: headerDown ? undefined : "2.5rem" } }}
+                    />
+                </div>
                 <div className='ingredient-selector-header-plus' onClick={() => {
                     if (!headerDown) {
                         setSearches(searches + 1)
-                        setVisibleElements({ ...visibleElements, ingredientList: false })
-                        setTimeout(() => setHeaderDown(!headerDown), 400)
+                        setVisibleElements({ ...visibleElements, ingredientList: false, newIngredientList: false })
+                        setTimeout(() => {
+                            setHeaderDown(!headerDown)
+                            setTimeout(() => setVisibleElements({ ...visibleElements, filter: true, newIngredientList: loading ? false : true }), 300)
+                        }, 400)
                     } else {
                         setVisibleElements({ ...visibleElements, filter: false, newIngredientList: false })
                         setTimeout(() => {
@@ -205,7 +257,7 @@ const IngredientSelector = forwardRef((p: {
                     <Tooltip
                         element={<div className="ingredient-selector-ingredient-info"><IoInformationCircleOutline size={"1.5rem"} /></div>}
                         message={<TooltipElementMessage ingr={ingr}/>}
-                        sx={{ style: { textWrap: "nowrap", zIndex: 1000, position: "absolute" } }}
+                        sx={{ style: { textWrap: "nowrap", right: "-3rem" } }}
                     />
                     <div className="ingredient-selector-ingredient-remove" onClick={() => {
                         setIngredients(ingredients.filter(i => i.id !== ingr.id));
@@ -218,6 +270,19 @@ const IngredientSelector = forwardRef((p: {
 })
 
 function TooltipElementMessage(p: {ingr: FullRecipeIngredient | Ingredient}) {
+    return (
+        <div>
+            {p.ingr.properties.vegan ? <TbPlant2 color='#7da811' /> : <TbPlant2Off color='#7da811' />}
+            {p.ingr.properties.vegetarian ? <TbMeatOff color='#8c0b23' /> : <TbMeat color='#8c0b23' />}
+            {!p.ingr.properties.glutenFree ? <LuWheat color='#cfa646' /> : <LuWheatOff color='#cfa646' />}
+            {!p.ingr.properties.dairyFree ? <LuMilk color='#f2f2f2' /> : <LuMilkOff color='#f2f2f2' />}
+            {!p.ingr.properties.nutFree ? <LuNut color='#8a4704' /> : <LuNutOff color='#8a4704' />}
+            {!p.ingr.properties.eggFree ? <TbEgg color='#d4d2d2' /> : <TbEggOff color='#d4d2d2' />}
+            {!p.ingr.properties.fishFree ? <LuFish color='#1f85b8' /> : <LuFishOff color='#1f85b8' />}
+            {!p.ingr.properties.shellfishFree ? <GiNautilusShell color='#3f4345' /> : <span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345' /></span>}
+            {!p.ingr.properties.soyFree ? <LuBean color='#b38d12' /> : <LuBeanOff color='#b38d12' />}
+        </div>
+        )
     return (
         <div>
             {(p.ingr.properties.vegan ? 'Vegan' : 'Nicht Vegan')} <br />
