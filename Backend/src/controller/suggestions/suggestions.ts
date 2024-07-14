@@ -153,6 +153,7 @@ function rnd(min: number, max: number) {
 async function loadDataForSuggestion(userId: Uuid, suggestion: Suggestion) {
     const recipes = await getRecipesByIds([...(suggestion.morning?.recipes || []), ...(suggestion.midday?.recipes || []), ...(suggestion.evening?.recipes || [])]);
     if(typeof recipes === "string") return recipes;
+    if(recipes.length === 0) return 'No recipes found';
     const userRecipes = await getUserDataFromRecipes(recipes.map((recipe) => recipe.id), userId);
     if(typeof userRecipes === "string") return userRecipes;
 
