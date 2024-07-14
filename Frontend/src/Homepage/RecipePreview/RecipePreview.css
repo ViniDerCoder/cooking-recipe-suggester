@@ -5,8 +5,14 @@
     height: 13rem;
     width: 10rem;
     border-radius: 0.5rem;
-    overflow: hidden;
-    border: 0.1rem solid var(--tertiary-color);
+    border: 0.2rem solid var(--secondary-color);
+    box-shadow: 0 0 0.5rem 0.05rem var(--secondary-color);
+    transition: box-shadow 0.3s ease;
+}
+
+.recipe-preview:hover {
+    cursor: pointer;
+    box-shadow: 0 0 0.5rem 0.2rem var(--secondary-color);
 }
 
 .recipe-preview-image-cover {
@@ -15,13 +21,14 @@
 }
 
 .recipe-preview-image {
+    border-radius: 0.3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    height: 100%;
+    width: 10rem;
+    height: 10rem;
     align-self: flex-start;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .recipe-preview-image-cover::after {
@@ -49,9 +56,31 @@
 
 }
 
+.recipe-preview-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--tertiary-color);
+    margin-right: 0.3rem;
+}
+
+.recipe-preview-content-row {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: space-around;
+    overflow: hidden;
+    width: 90%;
+    margin-top: -0.2rem;
+}
+.recipe-preview-content-row > div {
+    max-width: 87%;
+}
+
 .recipe-preview-name {
     display: block;
-    width: 90%;
     text-align: left;
     color: var(--tertiary-color);
     white-space: nowrap;
@@ -59,11 +88,15 @@
     text-overflow: ellipsis;
 }
 
-.recipe-preview-rating {
+.recipe-preview-edit {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5rem;
-    font-weight: bold;
+    margin-left: 0.2rem;
+    color: var(--tertiary-color-dimmed);
+}
+
+.recipe-preview-edit:hover {
+    cursor:alias;
     color: var(--tertiary-color);
 }
