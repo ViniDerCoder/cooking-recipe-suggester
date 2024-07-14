@@ -1,0 +1,29 @@
+.homepage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    background-color: var(--primary-color);
+}
+
+.homepage-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    width: 100%;
+    height: 5rem;
+    background-color: var(--secondary-color-dimmed);
+}
+
+.homepage-header-title {
+    background: var(--tertiary-color);
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 2rem;
+    text-align: left;
+}

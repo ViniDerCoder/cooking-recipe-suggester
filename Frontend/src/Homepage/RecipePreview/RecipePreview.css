@@ -1,0 +1,69 @@
+.recipe-preview {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 13rem;
+    width: 10rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 0.1rem solid var(--tertiary-color);
+}
+
+.recipe-preview-image-cover {
+    position: relative;
+    display: inline-block;
+}
+
+.recipe-preview-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    align-self: flex-start;
+    object-fit: contain;
+}
+
+.recipe-preview-image-cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--secondary-color) 100%);
+    pointer-events: none;
+}
+
+.recipe-preview-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--secondary-color);
+    color: var(--tertiary-color);
+    font-size: 0.8rem;
+    font-weight: bold;
+
+}
+
+.recipe-preview-name {
+    display: block;
+    width: 90%;
+    text-align: left;
+    color: var(--tertiary-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recipe-preview-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--tertiary-color);
+}

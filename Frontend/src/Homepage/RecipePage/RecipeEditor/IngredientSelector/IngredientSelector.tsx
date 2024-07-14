@@ -60,7 +60,6 @@ const IngredientSelector = forwardRef((p: {
             if (result[0] && typeof result[1] !== "string") {
                 setNewIngredients(result[1]);
                 setLoading(false);
-                setTimeout(() => setVisibleElements({ ...visibleElements, newIngredientList: true }), 300);
             } else {
                 console.error(result[1]);
             }
@@ -208,7 +207,7 @@ const IngredientSelector = forwardRef((p: {
                         setVisibleElements({ ...visibleElements, ingredientList: false, newIngredientList: false })
                         setTimeout(() => {
                             setHeaderDown(!headerDown)
-                            setTimeout(() => setVisibleElements({ ...visibleElements, filter: true, newIngredientList: loading ? false : true }), 300)
+                            setTimeout(() => setVisibleElements({ ...visibleElements, filter: true, newIngredientList: true }), 300)
                         }, 400)
                     } else {
                         setVisibleElements({ ...visibleElements, filter: false, newIngredientList: false })
@@ -227,12 +226,19 @@ const IngredientSelector = forwardRef((p: {
                         value={ingr.amount}
                         onChange={(e) => {
                             let el = (e.target as HTMLInputElement)
-                            if (el.value.length === 0) el.value = "1"
-                            if (isNaN(parseInt(el.value))) return
-                            if (parseInt(el.value) < 1) el.value = "1"
-                            const oldIngr = JSON.parse(JSON.stringify(ingredients.find(i => i.id === ingr.id))) as FullRecipeIngredient;
                             const newIngr = ingredients.find(i => i.id === ingr.id)
                             if (!newIngr) return;
+                            if (el.value.length === 0) {
+                                if(newIngr.amount === 1) return
+                                else el.value = "1"
+                            }
+                            if (isNaN(parseInt(el.value))) return
+                            if (parseInt(el.value) < 1) {
+                                if(newIngr.amount === 1) return
+                                else el.value = "1"
+                            }
+                            if(parseInt(el.value) === newIngr.amount) return
+                            const oldIngr = JSON.parse(JSON.stringify(ingredients.find(i => i.id === ingr.id))) as FullRecipeIngredient;
                             setIngredients(ingredients.map(i => i.id === ingr.id ? { ...ingr, amount: parseInt(el.value) } : i));
                             p.onIngredientChange({ ...newIngr, amount: parseInt(el.value) }, oldIngr);
                         }}
@@ -281,19 +287,6 @@ function TooltipElementMessage(p: {ingr: FullRecipeIngredient | Ingredient}) {
             {!p.ingr.properties.fishFree ? <LuFish color='#1f85b8' /> : <LuFishOff color='#1f85b8' />}
             {!p.ingr.properties.shellfishFree ? <GiNautilusShell color='#3f4345' /> : <span border-color="#3f4345" className='recipe-page-allergies-strikethrough'><GiNautilusShell color='#3f4345' /></span>}
             {!p.ingr.properties.soyFree ? <LuBean color='#b38d12' /> : <LuBeanOff color='#b38d12' />}
-        </div>
-        )
-    return (
-        <div>
-            {(p.ingr.properties.vegan ? 'Vegan' : 'Nicht Vegan')} <br />
-            {(p.ingr.properties.vegetarian ? 'Vegetarisch' : 'Nicht Vegetarisch')} <br />
-            {(p.ingr.properties.glutenFree ? 'Glutenfrei' : 'Nicht Glutenfrei')} <br />
-            {(p.ingr.properties.dairyFree ? 'Milchfrei' : 'Nicht Milchfrei')} <br />
-            {(p.ingr.properties.nutFree ? 'Nussfrei' : 'Nicht Nussfrei')} <br />
-            {(p.ingr.properties.eggFree ? 'Eifrei' : 'Nicht Eifrei')} <br />
-            {(p.ingr.properties.fishFree ? 'Fischfrei' : 'Nicht Fischfrei')} <br />
-            {(p.ingr.properties.shellfishFree ? 'Schalentierfrei' : 'Nicht Schalentierfrei')} <br />
-            {(p.ingr.properties.soyFree ? 'Sojafrei' : 'Nicht Sojafrei')} <br />
         </div>
     )
 }
