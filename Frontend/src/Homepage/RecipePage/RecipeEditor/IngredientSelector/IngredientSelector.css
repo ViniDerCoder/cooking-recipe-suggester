@@ -179,16 +179,23 @@
 }
 
 .ingredient-selector-ingredient-list {
+    position: relative;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow-y: scroll;
     height: 100%;
     padding: 0.5rem;
     margin-top: 2.5rem;
-    overflow: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.ingredient-selector-ingredient-list::-webkit-scrollbar {
+    display: none;
 }
 
 .ingredient-selector-ingredient {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;

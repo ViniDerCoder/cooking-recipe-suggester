@@ -205,7 +205,7 @@ const IngredientSelector = forwardRef((p: {
                     <Tooltip
                         element={<div className="ingredient-selector-ingredient-info"><IoInformationCircleOutline size={"1.5rem"} /></div>}
                         message={<TooltipElementMessage ingr={ingr}/>}
-                        sx={{ style: { width: "max-content", textWrap: "nowrap", zIndex: 1000, position: "absolute" } }}
+                        sx={{ style: { textWrap: "nowrap", zIndex: 1000, position: "absolute" } }}
                     />
                     <div className="ingredient-selector-ingredient-remove" onClick={() => {
                         setIngredients(ingredients.filter(i => i.id !== ingr.id));

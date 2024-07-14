@@ -6,7 +6,7 @@ import { useState } from "react"
 export default function Tooltip(p: { element: JSX.Element, message: string | JSX.Element, sx?: React.HTMLAttributes<HTMLDivElement> }) {
     const [visibleTooltip, setVisibleTooltip] = useState(false)
     return (
-        <div>
+        <div style={{position: 'relative'}}>
             <div
                 onTouchStart={() => setVisibleTooltip(true)}
                 onTouchEnd={() => setVisibleTooltip(false)}

@@ -14,6 +14,7 @@ import { createRecipe, editRecipe, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
 import { TbClockHour4, TbClockPause } from 'react-icons/tb';
 import IngredientSelector from './IngredientSelector/IngredientSelector';
+import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 
 type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC" | "INSTRUCTIONS"
 
@@ -23,7 +24,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
     const [ingredients, setIngredients] = useState<FullRecipeIngredient[] | null>(null)
     const [ingredientChanges, setIngredientChanges] = useState<RecipeIngredientUpdateActions[]>([])
     const [recipeTypes, setRecipeTypes] = useState<{ name: string, id: string }[] | null>(null)
-    const [disabledButtons, setDisabledButtons] = useState({ save: false, public: false, back: false })
+    const [disabledButtons, setDisabledButtons] = useState({ save: false, public: false, back: false, addInstruction: false })
     const [changesStack, setChangesStack] = useState<{ field: EditorFields, newValue: any, oldValue: any }[]>([])
 
     const previewImage = createRef<HTMLImageElement>()
@@ -134,13 +135,16 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                                 setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                             })
                         } else {
-                            createRecipe(recipe, ingredients.map((ingr) => {
+                            const ingredients = ingredientChanges.map((ingr) => {
+                                if(ingr.type === "REMOVE") return undefined
                                 return {
-                                    id: ingr.id,
+                                    id: ingr.ingredientId,
                                     amount: ingr.amount,
                                     unit: ingr.unit
                                 } as IngredientRecipeData
-                            })).then(([success, error]) => {
+                            }).filter((ingr) => ingr !== undefined)
+
+                            createRecipe(recipe, ingredients as any).then(([success, error]) => {
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])
@@ -342,8 +346,32 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 </div>
             </div>
             <div className='recipe-editor-instructions'>
+                <div className='recipe-editor-instructions-title'>Anleitung</div>
+                <div className='recipe-editor-instructions-add'
+                    style={{ opacity: disabledButtons.addInstruction ? 0.5 : 1 }}
+                    onClick={() => {
+                        if (disabledButtons.addInstruction) return
+                        if (!recipe) return
+                        setDisabledButtons({ ...disabledButtons, addInstruction: true })
+                        newChange("INSTRUCTIONS", [...recipe.instructions ? recipe.instructions : [], ""], recipe.instructions ? [...recipe.instructions] : recipe.instructions, [recipe, setRecipe], [changesStack, setChangesStack])
+                        setTimeout(() => setDisabledButtons({ ...disabledButtons, addInstruction: false }), 1000)
+                    }}
+                >
+                    <FaPlus size={"1.5rem"}/>
+                </div>
                 {recipe && recipe.instructions ? recipe.instructions.map((instruction, index) => {
                     return (<div className='recipe-editor-instructions-instruction' key={index}>
+                        <div className='recipe-editor-instructions-instruction-delete'
+                            onClick={() => {
+                                if (!recipe) return
+                                let newInstructions = [...recipe.instructions ? recipe.instructions : []]
+                                if (newInstructions.length < index) return
+                                newInstructions.splice(index, 1)
+                                newChange("INSTRUCTIONS", newInstructions, recipe.instructions ? [...recipe.instructions] : recipe.instructions, [recipe, setRecipe], [changesStack, setChangesStack])
+                            }}
+                        >
+                            <FaTrashAlt />
+                        </div>
                         <div className='recipe-editor-instructions-instruction-title'>Schritt {index + 1}</div>
                         <textarea
                             value={instruction}
