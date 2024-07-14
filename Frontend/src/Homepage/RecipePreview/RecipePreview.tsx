@@ -1,3 +1,4 @@
+import { basename } from '../../App';
 import '../../ColorScheme.css';
 import Tooltip from '../../Defaults/Tooltip/Tooltip';
 import './RecipePreview.css';
@@ -12,7 +13,7 @@ export default function RecipePreview(p: { imageUrl?: string, showEditButton: bo
     return (
         <div className="recipe-preview"
             onClick={() => {
-                window.location.href = `./#/recipe/${p.recipeId}`;
+                window.location.href = basename + `/recipe/${p.recipeId}`;
             }}
         >
             <div className='recipe-preview-image-cover'>
@@ -33,7 +34,7 @@ export default function RecipePreview(p: { imageUrl?: string, showEditButton: bo
                     {p.showEditButton ? <div className="recipe-preview-edit"
                         onClick={(e) => {
                             e.stopPropagation();
-                            window.location.href = `./#/recipe/${p.recipeId}/editor`;
+                            window.location.href = basename + `/recipe/${p.recipeId}/editor`;
                         }}
                     >
                         <MdModeEdit size={"1.2rem"} />

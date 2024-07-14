@@ -7,11 +7,12 @@
     border-radius: 0.5rem;
     border: 0.2rem solid var(--secondary-color);
     box-shadow: 0 0 0.5rem 0.05rem var(--secondary-color);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.1s ease;
 }
 
 .recipe-preview:hover {
     cursor: pointer;
+    transform: scale(1.01);
     box-shadow: 0 0 0.5rem 0.2rem var(--secondary-color);
 }
 
