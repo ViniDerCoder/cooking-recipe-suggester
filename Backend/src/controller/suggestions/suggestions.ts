@@ -157,9 +157,16 @@ async function loadDataForSuggestion(userId: Uuid, suggestion: Suggestion) {
     const userRecipes = await getUserDataFromRecipes(recipes.map((recipe) => recipe.id), userId);
     if(typeof userRecipes === "string") return userRecipes;
 
+    const linkedRecipes = recipes.map((recipe) => {
+        return {
+            recipe: recipe,
+            userData: userRecipes.find((userRecipe) => userRecipe.recipeId === recipe.id) as RecipeUserData
+        }
+    });
+
     return {
-        morning: suggestion.morning ? {recipes: recipes.filter((recipe) => suggestion.morning ? suggestion.morning.recipes.includes(recipe.id) : false)} : null,
-        midday : suggestion.midday  ? {recipes: recipes.filter((recipe) => suggestion.midday  ? suggestion.midday.recipes.includes(recipe.id)  : false)} : null,
-        evening: suggestion.evening ? {recipes: recipes.filter((recipe) => suggestion.evening ? suggestion.evening.recipes.includes(recipe.id) : false)} : null
+        morning: suggestion.morning ? {recipes: linkedRecipes.filter((recipe) => suggestion.morning ? suggestion.morning.recipes.includes(recipe.recipe.id) : false)} : null,
+        midday : suggestion.midday  ? {recipes: linkedRecipes.filter((recipe) => suggestion.midday  ? suggestion.midday.recipes.includes(recipe.recipe.id)  : false)} : null,
+        evening: suggestion.evening ? {recipes: linkedRecipes.filter((recipe) => suggestion.evening ? suggestion.evening.recipes.includes(recipe.recipe.id) : false)} : null
     } as SuggestionFullRecipe;
 }
