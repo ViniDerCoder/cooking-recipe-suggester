@@ -75,5 +75,30 @@ export async function getUserDataFromRecipe(recipeId: Uuid, userId: Uuid) {
             recipeDeletedName: row.recipe_deleted_name,
         } as RecipeUserData;
     }
+}
 
+export async function getUserDataFromRecipes(recipeIds: Uuid[], userId: Uuid) {
+    const params = [userId, recipeIds];
+    const q = ''
+    + 'SELECT * FROM '
+    + 'cooking_recipe_suggester.user_recipes '
+    + 'WHERE user_id = ? AND recipe_id IN ?';
+
+    const result = await query(q, params);
+    if(typeof result === "string") return 'Error getting user data from recipes';
+    else {
+        const rows = result.rows;
+        if(rows.length < 1) return "No recipes found";
+        return rows.map((row) => {
+            return {
+                recipeId: row.recipe_id.toString('hex'),
+                userId: row.user_id.toString('hex'),
+                rating: row.rating,
+                notes: row.notes,
+                cooked: row.cooked ? row.cooked : [],
+                recipeDeletedName: row.recipe_deleted_name,
+                
+            } as RecipeUserData
+        });
+    }
 }

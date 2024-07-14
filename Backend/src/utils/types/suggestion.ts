@@ -1,4 +1,5 @@
 import { isUuid, Uuid } from "./other.js";
+import { isRecipe, isRecipeUserData, Recipe, RecipeUserData } from "./recipe.js";
 
 
 export type SuggestionsSettings = {
@@ -175,6 +176,42 @@ export function isMealSuggestionRecipeFilter(any: any): any is MealSuggestionRec
 
     if(!Array.isArray(any.recipeTypesBlacklist)) return false;
     if(!any.recipeTypesBlacklist.every((typeId: any) => isUuid(typeId))) return false;
+
+    return true;
+}
+
+
+export type SuggestionFullRecipe = {
+    morning: MealSuggestionFullRecipe | null,
+    midday: MealSuggestionFullRecipe | null,
+    evening: MealSuggestionFullRecipe | null
+}
+
+export function isSuggestionFullRecipe(any: any): any is SuggestionFullRecipe {
+    if(typeof any !== "object" || !any) return false;
+
+    if(any.morning !== null && !isMealSuggestionFullRecipe(any.morning)) return false;
+    if(any.midday !== null && !isMealSuggestionFullRecipe(any.midday)) return false;
+    if(any.evening !== null && !isMealSuggestionFullRecipe(any.evening)) return false;
+
+    return true;
+}
+
+
+export type MealSuggestionFullRecipe = {
+    recipes: Array<{
+        recipe: Recipe,
+        userData: RecipeUserData
+    }>,
+}
+
+export function isMealSuggestionFullRecipe(any: any): any is MealSuggestionFullRecipe {
+    if(typeof any !== "object" || !any) return false;
+
+    if(!Array.isArray(any.recipes)) return false;
+    if(!any.recipes.every((recipe: any) => {
+        return isRecipe(recipe.recipe) && isRecipeUserData(recipe.userData)
+    })) return false;
 
     return true;
 }

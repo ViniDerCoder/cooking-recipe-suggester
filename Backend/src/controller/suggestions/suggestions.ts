@@ -1,10 +1,10 @@
-import { getRecipesByFilters } from "../../database/recipes/get_recipe.js";
-import { listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
+import { getRecipeById, getRecipesByFilters, getRecipesByIds } from "../../database/recipes/get_recipe.js";
+import { getUserDataFromRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
 import getSettingsOfUser from "../../database/suggestions/suggestionSettings/get.js";
 import onInterval from "../../utils/listener/interval.js";
 import { isUuid, Uuid } from "../../utils/types/other.js";
 import { Recipe, RecipeUserData } from "../../utils/types/recipe.js";
-import { Suggestion, MealSuggestion, MealSuggestionsSettings, MealSuggestionUserDataFilter, MealSuggestionRecipeFilter } from "../../utils/types/suggestion.js";
+import { Suggestion, MealSuggestionsSettings, MealSuggestionRecipeFilter, MealSuggestionFullRecipe, SuggestionFullRecipe } from "../../utils/types/suggestion.js";
 
 let suggestions: { [key: Uuid]: Suggestion } = {}
 
@@ -19,7 +19,7 @@ export function removeUserSuggestions(userId: Uuid) {
 export async function getSuggestionsForUser(userId: unknown) {
     if(!isUuid(userId)) return "Invalid userId";
 
-    if(suggestions[userId]) return suggestions[userId];
+    if(suggestions[userId]) return await loadDataForSuggestion(userId, suggestions[userId]);
     
     const suggestionSettings = await getSettingsOfUser(userId);
     if(typeof suggestionSettings === "string") return suggestionSettings;
@@ -33,24 +33,28 @@ export async function getSuggestionsForUser(userId: unknown) {
 
     const morningSuggestions = suggestionSettings.meals.morning.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.morning.settings, unFilteredUserRecipes, usedRecipes) : null;
     if(typeof morningSuggestions === "string") return morningSuggestions;
-    else suggestions[userId].morning = morningSuggestions;
+    else suggestions[userId].morning = morningSuggestions ? {recipes: morningSuggestions.recipes.map((r) => r.recipe.id)} : null;
 
     if(suggestions[userId].morning) usedRecipes = usedRecipes.concat(suggestions[userId].morning.recipes);
 
     const middaySuggestions = suggestionSettings.meals.midday.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.midday.settings, unFilteredUserRecipes, usedRecipes) : null;
     if(typeof middaySuggestions === "string") return middaySuggestions;
-    else suggestions[userId].midday = middaySuggestions;
+    else suggestions[userId].midday = middaySuggestions ? {recipes: middaySuggestions.recipes.map((r) => r.recipe.id)} : null;
 
     if(suggestions[userId].midday) usedRecipes = usedRecipes.concat(suggestions[userId].midday.recipes);
 
     const eveningSuggestions = suggestionSettings.meals.evening.enabled ? await getMealSuggestions(userId, suggestionSettings.meals.evening.settings, unFilteredUserRecipes, usedRecipes) : null;
     if(typeof eveningSuggestions === "string") return eveningSuggestions;
-    else suggestions[userId].evening = eveningSuggestions;
+    else suggestions[userId].evening = eveningSuggestions ? {recipes: eveningSuggestions.recipes.map((r) => r.recipe.id)} : null;
 
-    return suggestions[userId];
+    return {
+        morning: morningSuggestions,
+        midday: middaySuggestions,
+        evening: eveningSuggestions
+    } as SuggestionFullRecipe;
 }
 
-async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings, userRecipes: RecipeUserData[], blackListed: Array<Uuid> = []): Promise<MealSuggestion | string | null> {
+async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings, userRecipes: RecipeUserData[], blackListed: Array<Uuid> = []): Promise<MealSuggestionFullRecipe | string | null> {
 
     if(typeof userRecipes === "string") return "Error getting user recipes";
     if(userRecipes.length === 0) return null;
@@ -115,8 +119,8 @@ function generateSuggestionsFromRecipes(recipes: Array<{recipe: Recipe, userData
     });
 
     return {
-        recipes: sortedRecipes.map((recipe) => recipe.recipe.id).slice(0, suggestions),
-    } as MealSuggestion;
+        recipes: sortedRecipes.slice(0, suggestions),
+    } as MealSuggestionFullRecipe;
 }
 
 function compareRecipes(recipe1: {recipe: Recipe, userData: RecipeUserData}, recipe2: {recipe: Recipe, userData: RecipeUserData}) {
@@ -144,4 +148,17 @@ function compareRecipes(recipe1: {recipe: Recipe, userData: RecipeUserData}, rec
 
 function rnd(min: number, max: number) {
     return Math.floor(Math.random() * (max - min) + min);
+}
+
+async function loadDataForSuggestion(userId: Uuid, suggestion: Suggestion) {
+    const recipes = await getRecipesByIds([...(suggestion.morning?.recipes || []), ...(suggestion.midday?.recipes || []), ...(suggestion.evening?.recipes || [])]);
+    if(typeof recipes === "string") return recipes;
+    const userRecipes = await getUserDataFromRecipes(recipes.map((recipe) => recipe.id), userId);
+    if(typeof userRecipes === "string") return userRecipes;
+
+    return {
+        morning: suggestion.morning ? {recipes: recipes.filter((recipe) => suggestion.morning ? suggestion.morning.recipes.includes(recipe.id) : false)} : null,
+        midday : suggestion.midday  ? {recipes: recipes.filter((recipe) => suggestion.midday  ? suggestion.midday.recipes.includes(recipe.id)  : false)} : null,
+        evening: suggestion.evening ? {recipes: recipes.filter((recipe) => suggestion.evening ? suggestion.evening.recipes.includes(recipe.id) : false)} : null
+    } as SuggestionFullRecipe;
 }
