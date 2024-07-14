@@ -7,7 +7,7 @@ export default function Homepage() {
     return (
         <div className="homepage">
             <header className="homepage-header">
-                <RecipeEditor recipeId="2302335d-2561-4334-9136-6e383ef53fca"/>
+                <RecipeEditor/>
             </header>
         </div>
     );

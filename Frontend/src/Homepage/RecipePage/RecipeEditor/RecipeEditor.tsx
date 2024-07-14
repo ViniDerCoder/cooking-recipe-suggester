@@ -8,17 +8,16 @@ import { BiSave, BiSolidSave } from "react-icons/bi";
 import { RecipeCreationData, RecipeEditData } from '../../../../../Backend/src/utils/types/recipe';
 import { createRef, useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
-import { FullRecipeIngredient, IngredientUpdateActionList, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
+import { FullRecipeIngredient, IngredientRecipeData, IngredientUpdateActionList, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
-import { editRecipe, getRecipeTypes } from './recipeEditorLogic';
+import { createRecipe, editRecipe, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
 import { TbClockHour4, TbClockPause } from 'react-icons/tb';
 import IngredientSelector from './IngredientSelector/IngredientSelector';
 
-type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC"
+type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC" | "INSTRUCTIONS"
 
 export default function RecipeEditor(p: { recipeId?: string }) {
-    console.log(p.recipeId)
     const [loading, setLoading] = useState<boolean>(true)
     const [recipe, setRecipe] = useState<RecipeEditData | RecipeCreationData | null>(null)
     const [ingredients, setIngredients] = useState<FullRecipeIngredient[] | null>(null)
@@ -53,7 +52,17 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 setLoading(false)
 
             })()
-        } else setLoading(false)
+        } else {
+            (async () => {
+                const recipeTypes = await getRecipeTypes()
+                if (recipeTypes[0] && typeof recipeTypes[1] !== "string") {
+                    setRecipeTypes(recipeTypes[1])
+                }
+                setRecipe({ name: "", description: "", cookingTime: 1, waitingTime: 0, servings: 1, imageUrl: "", typeId: "", instructions: [] } as RecipeCreationData)
+                setIngredients([])
+                setLoading(false)
+            })()
+        }
     }, [p.recipeId])
 
     if (loading) return <div className="recipe-editor">
@@ -117,15 +126,30 @@ export default function RecipeEditor(p: { recipeId?: string }) {
 
                             editRecipe(p.recipeId, recipe, ingredientChanges).then(([success, error]) => {
                                 if (success) {
+                                    console.log("Success")
                                     setChangesStack([])
                                 } else {
                                     console.error(error)
                                 }
+                                setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                             })
                         } else {
-                            //createRecipe(recipe, ingredients)
+                            createRecipe(recipe, ingredients.map((ingr) => {
+                                return {
+                                    id: ingr.id,
+                                    amount: ingr.amount,
+                                    unit: ingr.unit
+                                } as IngredientRecipeData
+                            })).then(([success, error]) => {
+                                if (success) {
+                                    console.log("Success")
+                                    setChangesStack([])
+                                } else {
+                                    console.error(error)
+                                }
+                                setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
+                            })
                         }
-                        setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                     }}
                 ><Tooltip
                         element={changesStack.length !== 0 ? <BiSolidSave size={"2rem"} /> : <BiSave size={"2rem"} />}
@@ -138,7 +162,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 <div className='recipe-editor-content-image'>
                     <div className='recipe-editor-content-image-title'>Bild</div>
                     <div className='recipe-editor-content-image-preview'>
-                        <img ref={previewImage} alt={recipe.name || ""} src={recipe.imageUrl || ""} />
+                        <img ref={previewImage} alt={recipe.name || ""} style={{ backgroundColor: recipe.imageUrl ? "" : 'var(--tertiary-color-dimmed)' }} src={recipe.imageUrl || "https://cdn3.iconfinder.com/data/icons/design-n-code/100/272127c4-8d19-4bd3-bd22-2b75ce94ccb4-512.png"} />
                         <input type="file" accept='image/png, image/jpeg'
                             onChange={(event) => {
                                 if (!recipe) return
@@ -317,6 +341,24 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     />
                 </div>
             </div>
+            <div className='recipe-editor-instructions'>
+                {recipe && recipe.instructions ? recipe.instructions.map((instruction, index) => {
+                    return (<div className='recipe-editor-instructions-instruction' key={index}>
+                        <div className='recipe-editor-instructions-instruction-title'>Schritt {index + 1}</div>
+                        <textarea
+                            value={instruction}
+                            onChange={(e) => {
+                                if (!recipe) return
+                                let newInstructions = [...recipe.instructions ? recipe.instructions : []]
+                                if (newInstructions.length < index) return
+                                newInstructions[index] = (e.target as HTMLTextAreaElement).value
+                                newChange("INSTRUCTIONS", newInstructions, recipe.instructions ? [...recipe.instructions] : recipe.instructions, [recipe, setRecipe], [changesStack, setChangesStack])
+                            }}
+                            style={{ resize: "none" }}
+                        />
+                    </div>)
+                }) : null}
+            </div>
         </div>
     )
 }
@@ -374,6 +416,9 @@ function change(field: EditorFields, newValue: any, recipeState: [RecipeEditData
             break
         case "PUBLIC":
             recipeState[1]({ ...recipeState[0], public: newValue })
+            break
+        case "INSTRUCTIONS":
+            recipeState[1]({ ...recipeState[0], instructions: newValue })
             break
     }
 }

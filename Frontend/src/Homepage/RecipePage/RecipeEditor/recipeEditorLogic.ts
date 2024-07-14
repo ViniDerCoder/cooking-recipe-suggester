@@ -1,5 +1,5 @@
-import { IngredientUpdateActionList} from "../../../../../Backend/src/utils/types/ingredient"
-import { RecipeEditData } from "../../../../../Backend/src/utils/types/recipe"
+import { IngredientRecipeList, IngredientUpdateActionList} from "../../../../../Backend/src/utils/types/ingredient"
+import { RecipeCreationData, RecipeEditData } from "../../../../../Backend/src/utils/types/recipe"
 import { getAuthToken } from "../../../utils/auth"
 import { Backend } from "../../../utils/backendConnection/routes"
 import { errorFromError } from "../../../utils/backendConnection/utils"
@@ -16,6 +16,27 @@ export async function editRecipe(recipeId: unknown, recipe: RecipeEditData, ingr
         if(result.data.recipe) {
             const cache = JSON.parse(sessionStorage.getItem("recipe-cache") || "{}")
             sessionStorage.setItem("recipe-cache", JSON.stringify({...cache, [recipeId]: [new Date(), result.data.recipe]}))
+            const ingredientCache = JSON.parse(sessionStorage.getItem("recipe-ingredients-cache") || "{}")
+            delete ingredientCache[recipeId]
+            sessionStorage.setItem("recipe-ingredients-cache", JSON.stringify(ingredientCache))
+            return [true, '']
+        }
+        else return [false, result.error]
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}
+
+export async function createRecipe(recipe: RecipeCreationData, ingredients: IngredientRecipeList): Promise<[boolean, string]> {
+    if(typeof recipe !== 'object' || !Array.isArray(ingredients)) return [false, 'Invalid recipe/ingredients']
+    
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.createRecipe(token ? token : "", recipe, ingredients)
+        if(result.data.recipe) {
+            const cache = JSON.parse(sessionStorage.getItem("recipe-cache") || "{}")
+            sessionStorage.setItem("recipe-cache", JSON.stringify({...cache, [result.data.recipe.id]: [new Date(), result.data.recipe]}))
             return [true, '']
         }
         else return [false, result.error]
