@@ -5,6 +5,9 @@ import RecipePreview from './RecipePreview/RecipePreview';
 import { SuggestionFullRecipe } from '../../../Backend/src/utils/types/suggestion';
 import { getOwnRecipes, getSuggestions } from './homepageLogic';
 import { Recipe, RecipeUserData } from '../../../Backend/src/utils/types/recipe';
+import { FaPlus } from 'react-icons/fa';
+import { basename } from '../App';
+import { IoSettingsOutline } from 'react-icons/io5';
 
 
 
@@ -27,18 +30,31 @@ export default function Homepage() {
 
             if (lOwnRecipes[0] && typeof lOwnRecipes[1] !== "string") setOwnRecipes(lOwnRecipes[1]);
 
+            console.log(lSuggestions, lOwnRecipes);
+
+            if(!lSuggestions[0] || !lOwnRecipes[0]) return setLoading(true);
+
             setLoading(false);
         }
-        setSuggestions({morning:{recipes:[{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}}]},midday:{recipes:[{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5,}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}}]},evening:{recipes:[{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}},{recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"},userData:{userId:"1",rating:5}}]}} as any);
-        setOwnRecipes([{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}},{userData:{userId:"1",rating:5},recipe:{id:"1",name:"Test",imageUrl:"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",createdById:"1"}}] as any);
-        //fetchSuggestions();
+        
+        fetchSuggestions();
     }, [])
 
     return (
         <div className="homepage">
             <div className="homepage-header">
-                <div className="homepage-header-title">Home</div>
-                <div></div>
+                <div className="homepage-header-title"
+                    onClick={() => window.location.href = basename + "/"}
+                >Home</div>
+                <div className="homepage-header-buttons">
+
+                    <div className='homepage-header-buttons-create'
+                        onClick={() => { window.location.href = basename + "/recipe/create" }}
+                    ><FaPlus size={"2rem"}/></div>
+                    <div className='homepage-header-buttons-settings'
+                        onClick={() => { window.location.href = basename + "/settings" }}
+                    ><IoSettingsOutline size={"2rem"}/></div>
+                </div>
             </div>
             <div className="homepage-content">
                 <div className="homepage-content-recipes">

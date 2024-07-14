@@ -24,5 +24,20 @@ export async function getSuggestions(): Promise<[boolean, SuggestionFullRecipe |
 }
 
 export async function getOwnRecipes(): Promise<[boolean, string]> {
-    return [false, "Not implemented"];
+    const cache = JSON.parse(localStorage.getItem("own-recipes") || JSON.stringify({ date: 0 }));
+    if(cache.date > Date.now() - 1000 * 60) return [true, cache.data];
+
+    const token = getAuthToken();
+
+    try {
+        const result = await Backend.Recipes.getMarkedRecipes(token ? token : "");
+        if(result.data.userRecipes) {
+            sessionStorage.setItem("own-recipes", JSON.stringify({ date: Date.now(), data: result.data.userRecipes }));
+            return [true, result.data.userRecipes]
+        }
+        else return [false, result.error]
+    }
+    catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
 }

@@ -25,6 +25,77 @@
     font-weight: bold;
     margin-left: 2rem;
     text-align: left;
+
+    transition: transform 0.1s;
+}
+
+.homepage-header-title:hover {
+    transform:skewX(-10deg);
+    
+    background: linear-gradient(90deg,
+    rgba(255, 0, 0, 1) 0%,
+    rgba(255, 255, 0, 1) 25%,
+    rgba(0, 192, 255, 1) 50%,
+    rgba(192, 0, 255, 1) 75%,
+    rgba(255, 0, 0, 1) 100%);
+
+    background-size: 200% 200%;
+    background-clip: text;
+    animation: movingGradient 3s linear infinite;
+}
+
+@keyframes movingGradient {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: 200% 200%;
+    }
+}
+
+.homepage-header-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2rem;
+}
+
+.homepage-header-buttons-settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: transform 0.3s;
+}
+
+.homepage-header-buttons-settings:hover {
+    transform: rotate(90deg);
+    cursor: pointer;
+}
+
+.homepage-header-buttons-create {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--tertiary-color-dimmed);
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: bold;
+    margin-right: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.1s, color 0.1s, transform 0.2s;
+}
+
+.homepage-header-buttons-create:hover {
+    transform: rotate(90deg);
+    cursor: pointer;
+    background-color: var(--tertiary-color);
+    color: var(--primary-color);
 }
 
 .homepage-content {
@@ -81,6 +152,7 @@
     overflow-x: scroll;
     scrollbar-width: 0.2rem;
     padding-bottom: 1rem;
+    margin-right: 1rem;
 }
 
 .homepage-content-recipes-section-list[data-wrap="true"] {
@@ -88,6 +160,24 @@
     justify-content: center;
     overflow-x: hidden;
     overflow-y: scroll;
+    padding-top: 1rem;
+}
+
+.homepage *::-webkit-scrollbar {
+    width: 0.4em;
+    height: 0.4rem;
+}
+
+.homepage *::-webkit-scrollbar-track {
+    background: var(--primary-color);
+}
+
+.homepage *::-webkit-scrollbar-thumb {
+    background: var(--secondary-color-dimmed);
+}
+
+.homepage *::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color)
 }
 
 .homepage-content-recipes-section-list[data-wrap="true"] > .recipe-preview {
@@ -103,7 +193,6 @@
     flex-direction: column;
     align-items: left;
     justify-content: left;
-    width: 100%;
     height: 100%;
     color: var(--tertiary-color);
     font-size: 0.8rem;
