@@ -2,7 +2,7 @@ import query from "../../utils/query.js";
 import { Uuid } from "../../utils/types/other.js";
 
 export async function updateIngredientInRecipe(ingredientId: Uuid, recipeId: Uuid, amount: number, unit: string | null) {
-    const params = [recipeId, ingredientId, amount, unit];
+    const params = [amount, unit, recipeId, ingredientId];
     const q = ''
     + 'UPDATE '
     + 'cooking_recipe_suggester.recipe_ingredients '
