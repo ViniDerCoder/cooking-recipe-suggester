@@ -95,6 +95,7 @@
     overflow-y: auto;
     margin-top: 1rem;
     padding: 1rem;
+    padding-bottom: 3rem;
 }
 
 .suggestion-settings-content-title {
@@ -231,7 +232,11 @@
 }
 
 .suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="false"] {
-    display: none;
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
 }
 
 .suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="true"] {
@@ -248,6 +253,27 @@
     z-index: 10;
     margin-top: 0.25rem;
     margin-left: -0.4rem;
+    max-height: 12rem;
+    opacity: 1;
+    overflow: hidden;
+    overflow-y: scroll;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="true"]::-webkit-scrollbar {
+    display: none;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="true"]::-webkit-scrollbar-track {
+    display: none;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="true"]::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="true"]::-webkit-scrollbar-thumb:hover {
+    display: none;
 }
 
 .suggestion-settings-content-section-settings-entry#strings #dropdown-content div {
@@ -281,4 +307,36 @@
 
 .suggestion-settings-content-section-settings-entry-undefined:hover {
     cursor: pointer;
+}
+
+.suggestion-settings-save {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    background-color: var(--tertiary-color-dimmed);
+    color: var(--tertiary-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestion-settings-save:hover {
+    background-color: var(--secondary-color);
+}
+
+.suggestion-settings-save[data-saving="true"] {
+    background-color: var(--tertiary-color-dimmed-dimmed);
+    color: var(--tertiary-color-dimmed);
+    cursor: not-allowed;
+}
+
+.suggestion-settings-save[data-saving="true"]:hover {
+    background-color: var(--tertiary-color-dimmed-dimmed);
 }

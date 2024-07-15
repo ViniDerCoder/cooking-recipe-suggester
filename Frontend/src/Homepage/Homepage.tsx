@@ -66,6 +66,7 @@ export default function Homepage() {
                                 <div className="homepage-content-recipes-section-list-sublist-header">Morgens</div>
                                 <div className="homepage-content-recipes-section-list-sublist-list">
                                     {suggestions.morning.recipes.map((recipe) => <RecipePreview
+                                        key={recipe.recipe.id}
                                         imageUrl={recipe.recipe.imageUrl ? recipe.recipe.imageUrl : undefined}
                                         showEditButton={recipe.recipe.createdById === recipe.userData.userId}
                                         rating={recipe.userData.rating ? recipe.userData.rating : undefined}
@@ -78,6 +79,7 @@ export default function Homepage() {
                                 <div className="homepage-content-recipes-section-list-sublist-header">Mittags</div>
                                 <div className="homepage-content-recipes-section-list-sublist-list">
                                     {suggestions.midday.recipes.map((recipe) => <RecipePreview
+                                        key={recipe.recipe.id}
                                         imageUrl={recipe.recipe.imageUrl ? recipe.recipe.imageUrl : undefined}
                                         showEditButton={recipe.recipe.createdById === recipe.userData.userId}
                                         rating={recipe.userData.rating ? recipe.userData.rating : undefined}
@@ -90,6 +92,7 @@ export default function Homepage() {
                                 <div className="homepage-content-recipes-section-list-sublist-header">Abends</div>
                                 <div className="homepage-content-recipes-section-list-sublist-list">
                                     {suggestions.evening.recipes.map((recipe) => <RecipePreview
+                                        key={recipe.recipe.id}
                                         imageUrl={recipe.recipe.imageUrl ? recipe.recipe.imageUrl : undefined}
                                         showEditButton={recipe.recipe.createdById === recipe.userData.userId}
                                         rating={recipe.userData.rating ? recipe.userData.rating : undefined}
@@ -104,6 +107,7 @@ export default function Homepage() {
                         <div className="homepage-content-recipes-header">Eigene Rezepte</div>
                         <div className="homepage-content-recipes-section-list" data-wrap={true}>
                             {ownRecipes?.map((recipe) => <RecipePreview
+                                key={recipe.recipe.id}
                                 imageUrl={recipe.recipe.imageUrl ? recipe.recipe.imageUrl : undefined}
                                 showEditButton={true}
                                 rating={recipe.userData.rating ? recipe.userData.rating : undefined}

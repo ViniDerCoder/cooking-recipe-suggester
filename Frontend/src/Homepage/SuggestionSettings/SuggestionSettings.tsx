@@ -3,7 +3,7 @@ import './SuggestionSettings.css';
 
 import { useEffect, useRef, useState } from 'react';
 import { SuggestionsSettings } from '../../../../Backend/src/utils/types/suggestion';
-import { getSuggestionSettings } from './suggestionSettingsLogic';
+import { getSuggestionSettings, updateSuggestionSettings } from './suggestionSettingsLogic';
 
 import { ImBlocked } from "react-icons/im";
 import { getRecipeTypes } from '../RecipePage/RecipeEditor/recipeEditorLogic';
@@ -79,13 +79,11 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
             }
         }
     });
-    const isFirstRender = useRef(true);
+    const saveButton = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
+        if (p.hidden) return;
+
         const fetchSettings = async () => {
             const [lSettings, lRecipeTypes] = await Promise.all([
                 getSuggestionSettings(),
@@ -97,9 +95,10 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
             if (lRecipeTypes[0] && typeof lRecipeTypes[1] !== "string") setRecipeTypes(lRecipeTypes[1]);
 
             if (!lSettings[0] || !lRecipeTypes[0]) return setLoading(true);
+            else setLoading(false);
         }
         fetchSettings();
-    }, [])
+    }, [p.hidden])
 
     return (
         <div className="suggestion-settings-root" data-hidden={p.hidden}>
@@ -116,6 +115,17 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
                     </div>
                     <div className='suggestion-settings-content-fadeout' id="bottom"></div>
                 </div>
+                <div ref={saveButton} className="suggestion-settings-save"
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!saveButton.current) return
+                        if (saveButton.current.dataset.saving === "true") return;
+                        saveButton.current.dataset.saving = "true";
+                        const result = await updateSuggestionSettings(settings);
+                        if (result[0] && typeof result[1] !== "string") setSettings(result[1]);
+                        saveButton.current.dataset.saving = "false";
+                    }}
+                >Speichern</div>
             </div>
         </div>
     )
@@ -126,7 +136,7 @@ function SettingsSection(props: { recipeTypes: {id: string, name: string}[], tit
         <div className="suggestion-settings-content-section">
             <div className="suggestion-settings-content-section-title">{props.title}</div>
             <div className="suggestion-settings-content-section-settings">
-                <Setting setValue={(value) => props.setSettings({ ...props.settings, minRating: value })} key={"minRating"} title={"Minimale Bewertung"} value={props.settings.minRating} type='number' allowUndefined={false} />
+                <Setting setValue={(value) => props.setSettings({ ...props.settings, minRating: value })} key={"minRating"} title={"Minimale Bewertung (0-10)"} value={props.settings.minRating} type='number' allowUndefined={false} />
                 <Setting setValue={(value) => props.setSettings({ ...props.settings, unratedAllowed: value })} key={"unratedAllowed"} title={"Unbewertete einbeziehen"} value={props.settings.unratedAllowed} type='boolean' allowUndefined={false} />
 
                 <Setting setValue={(value) => props.setSettings({ ...props.settings, minTimesCooked: value })} key={"minTimesCooked"} title={"Minimale Gekocht Anzahl"} value={props.settings.minTimesCooked} type='number' allowUndefined={false} />
@@ -174,10 +184,14 @@ function Setting(props: { recipeTypes?: {id: string, name: string}[], title: str
         <div className="suggestion-settings-content-section-settings-entry-list" style={{ opacity: (props.value === null ? 0.5 : 1) }}>
             <div className="suggestion-settings-content-section-settings-entry" id={(props.type === "string[]" ? "strings" : props.type)}>
                 <div className="suggestion-settings-content-section-settings-entry-title">{props.title}</div>
-                {props.type === "boolean" ? <input type="checkbox" checked={props.value === null ? false : props.value as boolean} onInput={() => {
+                {props.type === "boolean" ? <input type="checkbox" checked={props.value === null ? false : props.value as boolean} onChange={() => {
                     props.setValue((props.value as boolean) ? false : true)
                 }} /> : null}
-                {props.type === "number" ? <input type="number" value={props.value as number} /> : null}
+                {props.type === "number" ? <input type="number" value={props.value === null ? "" : props.value as number} 
+                    onChange={(e) => 
+                        props.setValue(e.target.value === "" ? 0 : parseInt(e.target.value))
+                    }
+                /> : null}
                 {props.type === "string[]" && props.recipeTypes ? <div id="dropdown">
                     <div ref={dropDownPreviewRef} id="dropdown-preview"
                         onClick={(e) => {
@@ -195,7 +209,7 @@ function Setting(props: { recipeTypes?: {id: string, name: string}[], title: str
                     </div>
                 </div> : null}
             </div>
-            {props.allowUndefined ? <div className="suggestion-settings-content-section-settings-entry-undefined" onClick={() => props.setValue(null)}><ImBlocked /></div> : <div className="suggestion-settings-content-section-settings-entry-undefined"></div>}
+            {props.allowUndefined ? <div style={{ opacity: (props.value === null ? 0.3 : 1), cursor: (props.value === null ? "default" : "pointer") }} className="suggestion-settings-content-section-settings-entry-undefined" onClick={() => props.setValue(null)}><ImBlocked /></div> : <div className="suggestion-settings-content-section-settings-entry-undefined"></div>}
         </div>
     )
 }

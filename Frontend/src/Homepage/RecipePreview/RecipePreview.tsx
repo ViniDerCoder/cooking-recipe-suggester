@@ -21,7 +21,7 @@ export default function RecipePreview(p: { imageUrl?: string, showEditButton: bo
             </div>
             <div className="recipe-preview-content">
                 <div className="recipe-preview-rating">{[...Array(5)].map((e, i) => {
-                    return <div className="recipe-preview-rating-star">
+                    return <div key={i} className="recipe-preview-rating-star">
                         {p.rating ? p.rating >= i * 2 + 2 ? <FaStar color='gold' size={"1.2rem"} /> : p.rating >= i * 2 + 1 ? <FaStarHalfAlt color='gold' size={"1.2rem"} /> : <FaRegStar color='gold' size={"1.2rem"} /> : <FaRegStar color='gold' size={"1.2rem"} />}
                     </div>
                 })}
