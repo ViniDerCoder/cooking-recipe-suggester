@@ -213,10 +213,17 @@
 }
 
 .suggestion-settings-content-section-settings-entry#strings #dropdown-preview {
+    position: relative;
     border-radius: 0.6rem;
     text-align: left;
-    justify-content: center;
     font-size: 0.8rem;
+    height: 1.1rem;
+    width: 6rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    user-select: none;
 }
 
 .suggestion-settings-content-section-settings-entry#strings #dropdown-preview:hover {
@@ -239,13 +246,19 @@
     padding: 0.2rem;
     font-size: 0.8rem;
     z-index: 10;
-    margin-top: 0.4rem;
+    margin-top: 0.25rem;
     margin-left: -0.4rem;
 }
 
 .suggestion-settings-content-section-settings-entry#strings #dropdown-content div {
     padding: 0.1rem;
     border-bottom: 0.1rem solid var(--tertiary-color);
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content div[data-selected="true"] {
+    color: var(--primary-color);
 }
 
 .suggestion-settings-content-section-settings-entry#strings #dropdown-content div:last-child {

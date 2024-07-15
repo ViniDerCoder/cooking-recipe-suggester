@@ -69,11 +69,16 @@ export async function createRecipe(recipe: RecipeCreationData, ingredients: Ingr
 }
 
 export async function getRecipeTypes() {
+    const cache = JSON.parse(sessionStorage.getItem("recipe-types") || JSON.stringify({ date: 0 }))
+    if(cache.date > Date.now() - 1000 * 60 * 60) return [true, cache.data]
     const token = getAuthToken()
 
     try {
         const result = await Backend.Recipes.getRecipeTypes(token ? token : "")
-        if(result.data.types) return [true, result.data.types]
+        if(result.data.types) {
+            sessionStorage.setItem("recipe-types", JSON.stringify({ date: Date.now(), data: result.data.types }))
+            return [true, result.data.types]
+        }
         else return [false, result.error]
     } catch (error) {
         return [false, 'Error: ' + errorFromError(error)]

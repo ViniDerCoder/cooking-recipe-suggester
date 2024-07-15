@@ -6,9 +6,11 @@ import { SuggestionsSettings } from '../../../../Backend/src/utils/types/suggest
 import { getSuggestionSettings } from './suggestionSettingsLogic';
 
 import { ImBlocked } from "react-icons/im";
+import { getRecipeTypes } from '../RecipePage/RecipeEditor/recipeEditorLogic';
 
 export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hidden: boolean) => void }) {
     const [loading, setLoading] = useState(true);
+    const [recipeTypes, setRecipeTypes] = useState<{id: string, name: string}[]>([]);
     const [settings, setSettings] = useState<SuggestionsSettings>({
         userId: "1",
         meals: {
@@ -85,15 +87,18 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
             return;
         }
         const fetchSettings = async () => {
-            const [lSettings] = await Promise.all([
-                getSuggestionSettings()
+            const [lSettings, lRecipeTypes] = await Promise.all([
+                getSuggestionSettings(),
+                getRecipeTypes()
             ]);
 
             if (lSettings[0] && typeof lSettings[1] !== "string") setSettings(lSettings[1]);
 
-            if (!lSettings[0]) return setLoading(true);
+            if (lRecipeTypes[0] && typeof lRecipeTypes[1] !== "string") setRecipeTypes(lRecipeTypes[1]);
+
+            if (!lSettings[0] || !lRecipeTypes[0]) return setLoading(true);
         }
-        console.log("fetching settings")
+        fetchSettings();
     }, [])
 
     return (
@@ -105,9 +110,9 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
                     <div className='suggestion-settings-content-fadeout' id="top"></div>
                     <div className='suggestion-settings-content-settings'>
                         <div className='suggestion-settings-content-title'>Einstellungen</div>
-                        {settings ? <SettingsSection setSettings={(val) => setSettings({ ...settings, meals: { ...settings.meals, morning: { ...settings.meals.morning, settings: val } } })} title="Morgens" settings={settings.meals.morning.settings} /> : null}
-                        {settings ? <SettingsSection setSettings={(val) => setSettings({ ...settings, meals: { ...settings.meals, midday: { ...settings.meals.midday, settings: val } } })} title="Mittags" settings={settings.meals.midday.settings} /> : null}
-                        {settings ? <SettingsSection setSettings={(val) => setSettings({ ...settings, meals: { ...settings.meals, evening: { ...settings.meals.evening, settings: val } } })} title="Abends" settings={settings.meals.evening.settings} /> : null}
+                        {settings ? <SettingsSection recipeTypes={recipeTypes} setSettings={(val) => setSettings({ ...settings, meals: { ...settings.meals, morning: { ...settings.meals.morning, settings: val } } })} title="Morgens" settings={settings.meals.morning.settings} /> : null}
+                        {settings ? <SettingsSection recipeTypes={recipeTypes} setSettings={(val) => setSettings({ ...settings, meals: { ...settings.meals, midday: { ...settings.meals.midday, settings: val } } })} title="Mittags" settings={settings.meals.midday.settings} /> : null}
+                        {settings ? <SettingsSection recipeTypes={recipeTypes} setSettings={(val) => setSettings({ ...settings, meals: { ...settings.meals, evening: { ...settings.meals.evening, settings: val } } })} title="Abends" settings={settings.meals.evening.settings} /> : null}
                     </div>
                     <div className='suggestion-settings-content-fadeout' id="bottom"></div>
                 </div>
@@ -116,7 +121,7 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
     )
 }
 
-function SettingsSection(props: { title: string, setSettings: (settings: SuggestionsSettings["meals"]["morning"]["settings"]) => void, settings: SuggestionsSettings["meals"]["morning"]["settings"] }) {
+function SettingsSection(props: { recipeTypes: {id: string, name: string}[], title: string, setSettings: (settings: SuggestionsSettings["meals"]["morning"]["settings"]) => void, settings: SuggestionsSettings["meals"]["morning"]["settings"] }) {
     return (
         <div className="suggestion-settings-content-section">
             <div className="suggestion-settings-content-section-title">{props.title}</div>
@@ -139,14 +144,32 @@ function SettingsSection(props: { title: string, setSettings: (settings: Suggest
 
                 <Setting setValue={(value) => props.setSettings({ ...props.settings, maxPreparationTime: value })} key={"maxPreparationTime"} title={"Maximale Vorbereitungszeit (in Minuten)"} value={props.settings.maxPreparationTime} type="number" allowUndefined={true} />
 
-                <Setting setValue={(value) => props.setSettings({ ...props.settings, recipeTypesWhitelist: value })} key={"recipeTypesWhitelist"} title={"Rezept Typ Whitelist (leer für alle)"} value={props.settings.recipeTypesWhitelist} type="string[]" allowUndefined={false} />
-                <Setting setValue={(value) => props.setSettings({ ...props.settings, recipeTypesBlacklist: value })} key={"recipeTypesBlacklist"} title={"Rezept Typ Blacklist"} value={props.settings.recipeTypesBlacklist} type="string[]" allowUndefined={false} />
+                <Setting recipeTypes={props.recipeTypes} setValue={(value) => props.setSettings({ ...props.settings, recipeTypesWhitelist: value })} key={"recipeTypesWhitelist"} title={"Rezept Typ Whitelist (leer für alle)"} value={props.settings.recipeTypesWhitelist} type="string[]" allowUndefined={false} />
+                <Setting recipeTypes={props.recipeTypes}setValue={(value) => props.setSettings({ ...props.settings, recipeTypesBlacklist: value })} key={"recipeTypesBlacklist"} title={"Rezept Typ Blacklist"} value={props.settings.recipeTypesBlacklist} type="string[]" allowUndefined={false} />
             </div>
         </div>
     )
 }
 
-function Setting(props: { title: string, value: number | boolean | string[] | null, setValue: (val: any) => void, type: "number" | "boolean" | "string[]", allowUndefined: boolean }) {
+function Setting(props: { recipeTypes?: {id: string, name: string}[], title: string, value: number | boolean | string[] | null, setValue: (val: any) => void, type: "number" | "boolean" | "string[]", allowUndefined: boolean }) {
+    const dropDownContentRef = useRef<HTMLDivElement>(null);
+    const dropDownPreviewRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropDownContentRef.current && dropDownPreviewRef.current && 
+                !dropDownContentRef.current.contains(event.target as Node) && 
+                !dropDownPreviewRef.current.contains(event.target as Node)) {
+                dropDownContentRef.current.dataset.show = "false";
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className="suggestion-settings-content-section-settings-entry-list" style={{ opacity: (props.value === null ? 0.5 : 1) }}>
             <div className="suggestion-settings-content-section-settings-entry" id={(props.type === "string[]" ? "strings" : props.type)}>
@@ -155,12 +178,20 @@ function Setting(props: { title: string, value: number | boolean | string[] | nu
                     props.setValue((props.value as boolean) ? false : true)
                 }} /> : null}
                 {props.type === "number" ? <input type="number" value={props.value as number} /> : null}
-                {props.type === "string[]" ? <div id="dropdown">
-                    <div id="dropdown-preview">
-                        {(props.value as Array<string>).join(", ")}
+                {props.type === "string[]" && props.recipeTypes ? <div id="dropdown">
+                    <div ref={dropDownPreviewRef} id="dropdown-preview"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            const cur = dropDownContentRef.current
+                            if(cur) cur.dataset.show = cur.dataset.show === "true" ? "false" : "true"
+                        }}  
+                    >
+                        {(props.value as Array<string>).map((id) => props.recipeTypes?.find((val) => val.id === id)?.name).join(", ")}
                     </div>
-                    <div id="dropdown-content" data-show={props.title === "Rezept Typ Blacklist" ? false : true}>
-                        {["test", "test2", "test4"].map((element) => <div onClick={() => {}}>{element}</div>)}
+                    <div ref={dropDownContentRef} id="dropdown-content" data-show={props.title === "Rezept Typ Blacklist" ? false : true}>
+                        {props.recipeTypes.map(({ id, name }, i) => <div key={id} data-selected={(props.value as string[]).includes(id)} onClick={() => {
+                            props.setValue((props.value as string[]).includes(id) ? (props.value as string[]).filter((val) => val !== id) : [...(props.value as string[]), id])
+                        }}>{name}</div>)}
                     </div>
                 </div> : null}
             </div>
