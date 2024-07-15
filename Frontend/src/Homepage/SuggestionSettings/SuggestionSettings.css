@@ -23,15 +23,19 @@
     height: 100vh;
     overflow: hidden;
     z-index: 5;
-    animation: slideIn 0.5s ease-out forwards, backDropIn 2.5s ease-out forwards;
+    animation: slideIn 0.75s ease-out forwards, backDropIn 2.5s ease-out forwards;
 }
 
 @keyframes slideIn {
-    from {
-        transform: scale(0) translate(100%, -100%);
+    0% {
+        transform: scale(0) translate(350%, -350%);
         opacity: 0;
     }
-    to {
+    50% {
+        transform: scale(0.5) translate(0, 0);
+        opacity: 0.5;
+    }
+    100% {
         transform: scale(1) translate(0, 0);
         opacity: 1;
     }
@@ -47,16 +51,38 @@
 }
 
 .suggestion-settings-content {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     height: 80%;
-    background-color: var(--tertiary-color-dimmed);
+    background-color: var(--secondary-color);
     border-radius: 2rem;
     padding: 2rem;
     overflow: hidden;
     z-index: 6;
+}
+
+.suggestion-settings-content-fadeout {
+    position: absolute;
+    height: 3rem;
+    width: 90%;
+    padding: 2rem;
+    overflow: hidden;
+    background-color: transparent;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.suggestion-settings-content-fadeout#top {
+    background: linear-gradient(to bottom, var(--secondary-color), var(--secondary-color), transparent);
+    top: 0;
+}
+
+.suggestion-settings-content-fadeout#bottom {
+    background: linear-gradient(to top, var(--secondary-color), var(--secondary-color), transparent);
+    bottom: 0;
 }
 
 .suggestion-settings-content-settings {
@@ -67,6 +93,7 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    margin-top: 1rem;
     padding: 1rem;
 }
 
@@ -173,7 +200,61 @@
     background-color: var(--success-color);
 }
 
-.suggestion-settings-content-section-settings-entry #strings input {
+.suggestion-settings-content-section-settings-entry#strings div#dropdown {
+    background-color: var(--tertiary-color-dimmed);
+    color: var(--secondary-color);
+    appearance: none;
+    border: var(--tertiary-color-dimmed) 0.2rem solid;
+    border-radius: 0.6rem;
+    width: 6rem;
+    height: 1.1rem;
+    text-align: right;
+    padding: 0.2rem;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-preview {
+    border-radius: 0.6rem;
+    text-align: left;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-preview:hover {
+    cursor: pointer;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="false"] {
+    display: none;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content[data-show="true"] {
+    display: block;
+    position: sticky;
+    background-color: var(--secondary-color);
+    color: var(--tertiary-color);
+    border: var(--tertiary-color) 0.2rem solid;
+    border-radius: 0.6rem;
+    width: 6rem;
+    text-align: left;
+    padding: 0.2rem;
+    font-size: 0.8rem;
+    z-index: 10;
+    margin-top: 0.4rem;
+    margin-left: -0.4rem;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content div {
+    padding: 0.1rem;
+    border-bottom: 0.1rem solid var(--tertiary-color);
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content div:last-child {
+    border-bottom: none;
+}
+
+.suggestion-settings-content-section-settings-entry#strings #dropdown-content div:hover {
+    background-color: var(--primary-color-dimmed);
+    cursor: pointer;
 }
 
 .suggestion-settings-content-section-settings-entry-undefined {

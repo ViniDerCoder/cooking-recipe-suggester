@@ -155,8 +155,14 @@ function Setting(props: { title: string, value: number | boolean | string[] | nu
                     props.setValue((props.value as boolean) ? false : true)
                 }} /> : null}
                 {props.type === "number" ? <input type="number" value={props.value as number} /> : null}
-                {props.type === "string[]" ? <input type="text" value={props.value as Array<string>} /> : null}
-
+                {props.type === "string[]" ? <div id="dropdown">
+                    <div id="dropdown-preview">
+                        {(props.value as Array<string>).join(", ")}
+                    </div>
+                    <div id="dropdown-content" data-show={props.title === "Rezept Typ Blacklist" ? false : true}>
+                        {["test", "test2", "test4"].map((element) => <div onClick={() => {}}>{element}</div>)}
+                    </div>
+                </div> : null}
             </div>
             {props.allowUndefined ? <div className="suggestion-settings-content-section-settings-entry-undefined" onClick={() => props.setValue(null)}><ImBlocked /></div> : <div className="suggestion-settings-content-section-settings-entry-undefined"></div>}
         </div>
