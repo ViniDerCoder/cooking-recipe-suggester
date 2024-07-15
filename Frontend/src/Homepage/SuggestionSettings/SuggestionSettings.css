@@ -43,12 +43,50 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: 80%;
     height: 80%;
     background-color: var(--tertiary-color-dimmed);
     border-radius: 1rem;
     padding: 1rem;
     overflow: hidden;
+    overflow-y: scroll;
     z-index: 6;
+}
+
+.suggestion-settings-content-section-settings-entry-list {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.suggestion-settings-content-section-settings-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-left: 1rem;
+}
+
+.suggestion-settings-content-section-settings-entry #number {
+}
+
+.suggestion-settings-content-section-settings-entry #boolean {
+}
+
+.suggestion-settings-content-section-settings-entry #strings {
+}
+
+.suggestion-settings-content-section-settings-entry-undefined {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 2rem;
+    margin: 0.5rem;
+    color: var(--danger-color);
+}
+
+.suggestion-settings-content-section-settings-entry-undefined:hover {
+    cursor: pointer;
 }
