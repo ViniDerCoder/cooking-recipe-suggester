@@ -14,8 +14,6 @@
 }
 
 .suggestion-settings[data-hidden="false"] {
-    background-color: var(--tertiary-color-dimmed-dimmed);
-    backdrop-filter: blur(0.25rem);
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -25,7 +23,7 @@
     height: 100vh;
     overflow: hidden;
     z-index: 5;
-    animation: slideIn 0.5s ease-out forwards;
+    animation: slideIn 0.5s ease-out forwards, backDropIn 2.5s ease-out forwards;
 }
 
 @keyframes slideIn {
@@ -39,19 +37,74 @@
     }
 }
 
+@keyframes backDropIn {
+    from {
+        backdrop-filter: blur(0);
+    }
+    to {
+        backdrop-filter: blur(0.25rem);
+    }
+}
+
 .suggestion-settings-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    width: 80%;
     height: 80%;
     background-color: var(--tertiary-color-dimmed);
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: 2rem;
+    padding: 2rem;
     overflow: hidden;
-    overflow-y: scroll;
     z-index: 6;
+}
+
+.suggestion-settings-content-settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.suggestion-settings-content-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--tertiary-color);
+}
+
+.suggestion-settings-content *::-webkit-scrollbar {
+    width: 0.4em;
+}
+
+.suggestion-settings-content *::-webkit-scrollbar-track {
+    background: var(--secondary-color-dimmed);
+}
+
+.suggestion-settings-content *::-webkit-scrollbar-thumb {
+    background: var(--secondary-color)
+}
+
+.suggestion-settings-content *::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-dimmed);
+}
+
+.suggestion-settings-content-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--tertiary-color);
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+
 }
 
 .suggestion-settings-content-section-settings-entry-list {
@@ -67,15 +120,60 @@
     justify-content: space-between;
     width: 100%;
     margin-left: 1rem;
+    font-size: 1.2rem;
+    color: var(--tertiary-color);
+    background-color: var(--primary-color-dimmed-dimmed);
+    padding: 0.2rem;
+    border-radius: 0.5rem;
+    margin-top: 0.4rem;
+    transition: background-color 0.5s;
 }
 
-.suggestion-settings-content-section-settings-entry #number {
+.suggestion-settings-content-section-settings-entry:hover {
+    background-color: var(--primary-color-dimmed);
 }
 
-.suggestion-settings-content-section-settings-entry #boolean {
+.suggestion-settings-content-section-settings-entry#number input {
+    background-color: var(--tertiary-color-dimmed);
+    color: var(--secondary-color);
+    appearance: none;
+    border: var(--tertiary-color-dimmed) 0.2rem solid;
+    border-radius: 0.6rem;
+    width: 4rem;
+    height: 1.1rem;
+    text-align: right;
+    padding: 0.2rem;
+    appearance: none;
+    -moz-appearance: textfield;
 }
 
-.suggestion-settings-content-section-settings-entry #strings {
+.suggestion-settings-content-section-settings-entry#number input::-webkit-inner-spin-button,
+.suggestion-settings-content-section-settings-entry#number input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.suggestion-settings-content-section-settings-entry#number input:focus {
+    outline: none;
+    border: var(--tertiary-color) 0.2rem solid;
+}   
+
+.suggestion-settings-content-section-settings-entry#boolean input {
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0.2rem solid var(--tertiary-color-dimmed);
+    border-radius: 0.3rem;
+    background-color: var(--tertiary-color-dimmed);
+    cursor: pointer;
+    position: relative;
+}
+
+.suggestion-settings-content-section-settings-entry#boolean input:checked {
+    background-color: var(--success-color);
+}
+
+.suggestion-settings-content-section-settings-entry #strings input {
 }
 
 .suggestion-settings-content-section-settings-entry-undefined {
