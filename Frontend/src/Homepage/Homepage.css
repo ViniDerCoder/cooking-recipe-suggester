@@ -73,7 +73,7 @@
 }
 
 .homepage-header-buttons-settings:hover {
-    transform: rotate(90deg);
+    transform: rotate(90deg) scale(1.1);    
     cursor: pointer;
 }
 
@@ -92,7 +92,7 @@
 }
 
 .homepage-header-buttons-create:hover {
-    transform: rotate(90deg);
+    transform:scale(1.1);
     cursor: pointer;
     background-color: var(--tertiary-color);
     color: var(--primary-color);

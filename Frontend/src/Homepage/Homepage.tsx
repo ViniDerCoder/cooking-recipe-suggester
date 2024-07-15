@@ -8,6 +8,7 @@ import { Recipe, RecipeUserData } from '../../../Backend/src/utils/types/recipe'
 import { FaPlus } from 'react-icons/fa';
 import { basename } from '../App';
 import { IoSettingsOutline } from 'react-icons/io5';
+import SuggestionSettings from './SuggestionSettings/SuggestionSettings';
 
 
 
@@ -18,6 +19,7 @@ export default function Homepage() {
         userData: RecipeUserData;
         recipe: Recipe;
     }[]>();
+    const [settingsHidden, setSettingsHidden] = useState(true);
 
     useEffect(() => {
         const fetchSuggestions = async () => {
@@ -30,8 +32,6 @@ export default function Homepage() {
 
             if (lOwnRecipes[0] && typeof lOwnRecipes[1] !== "string") setOwnRecipes(lOwnRecipes[1]);
 
-            console.log(lSuggestions, lOwnRecipes);
-
             if(!lSuggestions[0] || !lOwnRecipes[0]) return setLoading(true);
 
             setLoading(false);
@@ -42,6 +42,7 @@ export default function Homepage() {
 
     return (
         <div className="homepage">
+            <SuggestionSettings hidden={settingsHidden}/>
             <div className="homepage-header">
                 <div className="homepage-header-title"
                     onClick={() => window.location.href = basename + "/"}
@@ -52,7 +53,7 @@ export default function Homepage() {
                         onClick={() => { window.location.href = basename + "/recipe/create" }}
                     ><FaPlus size={"2rem"}/></div>
                     <div className='homepage-header-buttons-settings'
-                        onClick={() => { window.location.href = basename + "/settings" }}
+                        onClick={() => { setSettingsHidden(false) }}
                     ><IoSettingsOutline size={"2rem"}/></div>
                 </div>
             </div>

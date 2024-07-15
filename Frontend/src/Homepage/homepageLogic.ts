@@ -5,7 +5,7 @@ import { errorFromError } from "../utils/backendConnection/utils";
 
 
 export async function getSuggestions(): Promise<[boolean, SuggestionFullRecipe | string]> {
-    const cache = JSON.parse(localStorage.getItem("suggestions") || JSON.stringify({ date: 0 }));
+    const cache = JSON.parse(sessionStorage.getItem("suggestions") || JSON.stringify({ date: 0 }));
     if(cache.date > Date.now() - 1000 * 60 * 60) return [true, cache.data];
 
     const token = getAuthToken();
@@ -24,7 +24,7 @@ export async function getSuggestions(): Promise<[boolean, SuggestionFullRecipe |
 }
 
 export async function getOwnRecipes(): Promise<[boolean, string]> {
-    const cache = JSON.parse(localStorage.getItem("own-recipes") || JSON.stringify({ date: 0 }));
+    const cache = JSON.parse(sessionStorage.getItem("own-recipes") || JSON.stringify({ date: 0 }));
     if(cache.date > Date.now() - 1000 * 60) return [true, cache.data];
 
     const token = getAuthToken();
