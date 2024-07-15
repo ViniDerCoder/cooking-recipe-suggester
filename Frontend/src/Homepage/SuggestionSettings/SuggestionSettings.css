@@ -1,0 +1,54 @@
+.suggestion-settings-root[data-hidden="true"] {
+    display: none;
+}
+
+.suggestion-settings-root[data-hidden="false"] {
+    position: absolute;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+.suggestion-settings[data-hidden="true"] {
+    display: none;
+}
+
+.suggestion-settings[data-hidden="false"] {
+    background-color: var(--tertiary-color-dimmed-dimmed);
+    backdrop-filter: blur(0.25rem);
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 5;
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: scale(0) translate(100%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translate(0, 0);
+        opacity: 1;
+    }
+}
+
+.suggestion-settings-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 80%;
+    background-color: var(--tertiary-color-dimmed);
+    border-radius: 1rem;
+    padding: 1rem;
+    overflow: hidden;
+    z-index: 6;
+}

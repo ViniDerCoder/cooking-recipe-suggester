@@ -7,7 +7,7 @@ import { getOwnRecipes, getSuggestions } from './homepageLogic';
 import { Recipe, RecipeUserData } from '../../../Backend/src/utils/types/recipe';
 import { FaPlus } from 'react-icons/fa';
 import { basename } from '../App';
-import { IoSettingsOutline } from 'react-icons/io5';
+import { IoSettings, IoSettingsOutline } from 'react-icons/io5';
 import SuggestionSettings from './SuggestionSettings/SuggestionSettings';
 
 
@@ -42,7 +42,7 @@ export default function Homepage() {
 
     return (
         <div className="homepage">
-            <SuggestionSettings hidden={settingsHidden}/>
+            <SuggestionSettings hidden={settingsHidden} setHidden={setSettingsHidden}/>
             <div className="homepage-header">
                 <div className="homepage-header-title"
                     onClick={() => window.location.href = basename + "/"}
@@ -54,7 +54,7 @@ export default function Homepage() {
                     ><FaPlus size={"2rem"}/></div>
                     <div className='homepage-header-buttons-settings'
                         onClick={() => { setSettingsHidden(false) }}
-                    ><IoSettingsOutline size={"2rem"}/></div>
+                    >{settingsHidden ? <IoSettingsOutline size={"2rem"}/> : <IoSettings size={"2rem"}/>}</div>
                 </div>
             </div>
             <div className="homepage-content">

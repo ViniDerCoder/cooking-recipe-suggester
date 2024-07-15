@@ -5,14 +5,13 @@ import { useEffect, useRef, useState } from 'react';
 import { SuggestionsSettings } from '../../../../Backend/src/utils/types/suggestion';
 import { getSuggestionSettings } from './suggestionSettingsLogic';
 
-export default function SuggestionSettings(p: {hidden: boolean}) {
-    const [hidden, setHidden] = useState(p.hidden);
+export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hidden: boolean) => void }) {
     const [loading, setLoading] = useState(true);
     const [settings, setSettings] = useState<SuggestionsSettings>();
     const isFirstRender = useRef(true);
 
     useEffect(() => {
-        if(isFirstRender.current) {
+        if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
@@ -29,8 +28,45 @@ export default function SuggestionSettings(p: {hidden: boolean}) {
     }, [])
 
     return (
-        <div className="suggestion-settings" data-hidden={hidden}>
+        <div className="suggestion-settings-root" data-hidden={p.hidden}>
+            <div className="suggestion-settings" data-hidden={p.hidden}
+                onClick={() => p.setHidden(true)}
+            >
+                <div className="suggestion-settings-content" onClick={(e) => {e.stopPropagation()}}>
+                    <div className='suggestion-settings-content-title'>Einstellungen</div>
+                    <div className="suggestuin-settings-content-section">
+                        <div className="suggestion-settings-content-section-title">Morgens</div>
+                        <div className="suggestion-settings-content-section-settings">
+                            {settings ? Object.entries(settings.meals.morning.settings).map(([key, val]) => {
+                                return <Setting title={key} value={val}/>
+                            }) : null}
+                        </div>
+                    </div>
+                    <div className="suggestuin-settings-content-section">
+                        <div className="suggestion-settings-content-section-title">Mittags</div>
+                        <div className="suggestion-settings-content-section-settings">
+                            {settings ? Object.entries(settings.meals.midday.settings).map(([key, val]) => {
+                                return <Setting title={key} value={val}/>
+                            }) : null}
+                        </div>
+                    </div>
+                    <div className="suggestuin-settings-content-section">
+                        <div className="suggestion-settings-content-section-title">Abends</div>
+                        <div className="suggestion-settings-content-section-settings">
+                            {settings ? Object.entries(settings.meals.evening.settings).map(([key, val]) => {
+                                return <Setting title={key} value={val}/>
+                            }) : null}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
 
+function Setting(props: { title: string, value: number | boolean | string[] | null }) {
+    return (
+        <div className="suggestion-settings-content-section-settings-entry">
         </div>
     )
 }
