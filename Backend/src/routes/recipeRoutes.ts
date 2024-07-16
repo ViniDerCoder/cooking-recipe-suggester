@@ -2,7 +2,7 @@ import express from 'express';
 
 import { AuthenticationUser } from '../utils/types/authentication.js';
 import { getCookedOfRecipe, getRecipeById, getUserDataOfRecipe, getUserRecipes, getUsersAdddedRecipes } from '../controller/recipes/get.js';
-import { createCustomRecipe } from '../controller/recipes/create.js';
+import { createRecipe } from '../controller/recipes/create.js';
 import { deleteRecipe } from '../controller/recipes/delete.js';
 import { editRecipeById } from '../controller/recipes/edit.js';
 import verifyRequest from '../utils/defaultVerification.js';
@@ -12,6 +12,7 @@ import { getRecipesIngredients } from '../controller/recipes/ingredients/getReci
 import { setNotesForRecipe, setRatingForRecipe } from '../controller/recipes/addUserData.js';
 import { getAllRecipeTypes, getRecipeTypeById } from '../controller/recipes/recipeTypes.js';
 import bodyParser from 'body-parser';
+import { getRecipeData } from '../controller/recipes/importRecipe.js';
 const router = express.Router();
 
 
@@ -130,6 +131,25 @@ router.get('/types/:id', limit(1000 * 30), async (req, res) => {
     else return res.status(200).send({message: "Fetching recipe type was successfull", error: undefined, data: { type: result }});
 });
 
+router.get('/import/:url', limit(1000 * 60 * 20, 5), async (req, res) => {
+    const url = req.params.url;
+
+    const result = await getRecipeData(url);
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Importing recipe was successfull", error: undefined, data: { recipe: result }});
+})
+
+router.post('/import', limit(1000 * 60 * 20, 5), async (req, res) => {
+    const user = req.body.user as AuthenticationUser;
+    const { url, recipe, ingredients } = req.body;
+
+    const result = await createRecipe(user.userId, recipe, ingredients, url);
+
+    if(typeof result === "string") return res.status(400).send({error: result});
+    else return res.status(200).send({message: "Recipe creation was successfull", error: undefined, data: { recipe: result }});
+});
+
 router.get('/:id', limit(1000 * 20, 2), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
 
@@ -143,7 +163,7 @@ router.post('/', limit(1000 * 60 * 20, 5), bodyParser.json({ limit: "100mb" }), 
     const user = req.body.user as AuthenticationUser;
     const { recipe, ingredients } = req.body
 
-    const result = await createCustomRecipe(user.userId, recipe, ingredients);
+    const result = await createRecipe(user.userId, recipe, ingredients);
 
     if(typeof result === "string") return res.status(400).send({error: result});
     else return res.status(200).send({message: "Recipe creation was successfull", error: undefined, data: { recipe: result }});

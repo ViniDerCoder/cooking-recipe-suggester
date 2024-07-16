@@ -1,14 +1,17 @@
 import { getIngredientById } from "../../database/ingredients/get.js";
 import { linkIngredientToRecipe } from "../../database/ingredients/link_ingredient_to_recipe.js";
-import { createRecipe } from "../../database/recipes/create_recipe.js";
+import { createRecipe as dbCreateRecipe } from "../../database/recipes/create_recipe.js";
 import { linkUserToRecipe } from "../../database/recipes/link_user_to_recipe.js";
 import { getRecipeTypeById } from "../../database/recipes/recipe_types.js";
 import { isRecipeCreationData, Recipe } from "../../utils/types/recipe.js";
 import { isIngredientRecipeList } from "../../utils/types/ingredient.js";
 import { isUuid } from "../../utils/types/other.js";
 import { uploadImageToImgur } from "../../utils/types/images.js";
-export async function createCustomRecipe(userId: unknown, recipe: unknown, ingredients: unknown) {
+import { validRecipeUrls } from "./importRecipe.js";
+
+export async function createRecipe(userId: unknown, recipe: unknown, ingredients: unknown, sourceUrl?: unknown) {
     if (!isUuid(userId) || !isRecipeCreationData(recipe) || !isIngredientRecipeList(ingredients)) return 'Invalid input';
+    if(sourceUrl && (typeof sourceUrl !== "string" || !sourceUrl.match(/^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/) || !validRecipeUrls.some((val) => sourceUrl.includes(val)))) return 'Invalid input';
 
     if (!getRecipeTypeById(recipe.typeId)) return 'Invalid recipe type';
 
@@ -29,7 +32,7 @@ export async function createCustomRecipe(userId: unknown, recipe: unknown, ingre
         }
     }
 
-    const dbResult = await createRecipe({
+    const dbResult = await dbCreateRecipe({
         name: recipe.name,
         description: recipe.description,
         instructions: recipe.instructions,
@@ -39,7 +42,7 @@ export async function createCustomRecipe(userId: unknown, recipe: unknown, ingre
         servings: recipe.servings,
         public: false,
         typeId: recipe.typeId,
-        sourceUrl: undefined,
+        sourceUrl: typeof sourceUrl === "string" ? sourceUrl : undefined,
         imageUrl: imageUrl
     });
 

@@ -8,17 +8,14 @@ export async function getRecipeData(url: string) {
         const response = await axios.get(url);
         let html = response.data as string;
 
-        html = html.replace(/<style.*?>.*?<\/style>/g, '');
-        html = html.replace(/<div.*?>.*?<\/div>/g, '');
-
-        let matches = html.match(/<script type="application\/ld\+json">(.|\n)*?<\/script>/g)
+        let matches = html.match(/<script type="application\/ld\+json" id="recipe-schema">(.|\n)*?<\/script>/g)
 
         if(matches === null) return undefined;
 
         const parsedMatches: any[] = []
 
         matches?.forEach((match, index) => {
-            parsedMatches.push(JSON.parse(match.replace('<script type="application/ld+json">', '').replace('</script>', '')))
+            parsedMatches.push(JSON.parse(match.replace('<script type="application/ld+json" id="recipe-schema">', '').replace('</script>', '')))
         })
 
         const recipeData = parsedMatches.find((match) => match['@type'] === 'Recipe')
@@ -30,9 +27,9 @@ export async function getRecipeData(url: string) {
             cookingTime: parseISODuration(recipeData.cookTime),
             waitingTime: parseISODuration(recipeData.prepTime),
             servings: parseInt(recipeData.recipeYield),
-            typeId: getBestMatchingType(recipeData.recipeCategory.split(",").map((cat: string) => cat.trim()), recipeData.keywords),
+            typeId: getBestMatchingType(recipeData.recipeCategory.split(',').map((category: string) => category.trim()), recipeData.keywords.split(',').map((keyword: string) => keyword.trim())),
             sourceUrl: url,
-            imageUrl: recipeData.image,
+            imageUrl: recipeData.image[0],
             ingredients: recipeData.recipeIngredient.map((ingredient: string) => getIngredient(ingredient))
         };
     

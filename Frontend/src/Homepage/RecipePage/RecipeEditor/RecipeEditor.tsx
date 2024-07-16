@@ -18,7 +18,7 @@ import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 
 type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC" | "INSTRUCTIONS"
 
-export default function RecipeEditor(p: { recipeId?: string }) {
+export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string }) {
     const [loading, setLoading] = useState<boolean>(true)
     const [recipe, setRecipe] = useState<RecipeEditData | RecipeCreationData | null>(null)
     const [ingredients, setIngredients] = useState<FullRecipeIngredient[] | null>(null)
@@ -53,7 +53,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 setLoading(false)
 
             })()
-        } else {
+        } else if(!p.sourceUrl){
             (async () => {
                 const recipeTypes = await getRecipeTypes()
                 if (recipeTypes[0] && typeof recipeTypes[1] !== "string") {
@@ -64,7 +64,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                 setLoading(false)
             })()
         }
-    }, [p.recipeId])
+    }, [p.recipeId, p.sourceUrl])
 
     if (loading) return <div className="recipe-editor">
         <div className='recipe-editor-header'>
@@ -101,7 +101,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                     /></div> : null}
                 <div className='recipe-editor-header-title'>
                     <div>Rezept Editor</div>
-                    <div className='recipe-editor-header-type'>{p.recipeId ? "Bearbeiten" : "Erstellen"}</div>
+                    <div className='recipe-editor-header-type'>{p.recipeId ? "Bearbeiten" : (p.sourceUrl ? "Importieren" : "Erstellen")}</div>
                 </div>
                 <div className='recipe-editor-header-back'
                     style={{ opacity: changesStack.length === 0 || disabledButtons.back ? 0.5 : 1 }}
