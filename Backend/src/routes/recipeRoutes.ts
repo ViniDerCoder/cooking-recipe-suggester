@@ -11,6 +11,7 @@ import { cookedRecipe, markRecipe, unmarkRecipe } from '../controller/recipes/ma
 import { getRecipesIngredients } from '../controller/recipes/ingredients/getRecipesIngredients.js';
 import { setNotesForRecipe, setRatingForRecipe } from '../controller/recipes/addUserData.js';
 import { getAllRecipeTypes, getRecipeTypeById } from '../controller/recipes/recipeTypes.js';
+import bodyParser from 'body-parser';
 const router = express.Router();
 
 
@@ -138,7 +139,7 @@ router.get('/:id', limit(1000 * 20, 2), async (req, res) => {
     else return res.status(200).send({message: "Fetching recipe was successfull", error: undefined, data: { recipe: recipe }});
 });
 
-router.post('/', limit(1000 * 60 * 20, 5), async (req, res) => {
+router.post('/', limit(1000 * 60 * 20, 5), bodyParser.json({ limit: "100mb" }), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const { recipe, ingredients } = req.body
 
@@ -148,7 +149,7 @@ router.post('/', limit(1000 * 60 * 20, 5), async (req, res) => {
     else return res.status(200).send({message: "Recipe creation was successfull", error: undefined, data: { recipe: result }});
 });
 
-router.put('/:id', limit(1000 * 60 * 20, 5), async (req, res) => {
+router.put('/:id', limit(1000 * 60 * 20, 5), bodyParser.json({ limit: "100mb" }), async (req, res) => {
     const user = req.body.user as AuthenticationUser;
     const recipeId = req.params.id;
     const { recipe, ingredients } = req.body

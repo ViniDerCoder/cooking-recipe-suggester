@@ -113,6 +113,20 @@
     opacity: 0.8;
 }
 
+.recipe-editor-content-image-info text {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+.recipe-editor-content-image-info a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+.recipe-editor-content-image-info a:hover{
+    text-decoration: underline;
+}
+
 .recipe-editor-content-texts {
     display: flex;
     flex-direction: column;

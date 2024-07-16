@@ -192,6 +192,7 @@ export default function RecipeEditor(p: { recipeId?: string }) {
                         />
                     </div>
                     <div className='recipe-editor-content-image-info'>Wähle ein Bild für dein Rezept durch Klicken des Bildes!</div>
+                    <div className='recipe-editor-content-image-info'>Dein Bild wird <text>öffentlich</text> auf <a href='https://www.imgur.com' target="_blank" rel="noopener noreferrer">Imgur</a> hochgeladen!</div>
                 </div>
                 <div className='recipe-editor-content-texts'>
                     <div className='recipe-editor-content-name'>
