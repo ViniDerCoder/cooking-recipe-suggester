@@ -20,18 +20,18 @@ export async function getRecipeData(url: string) {
             parsedMatches.push(JSON.parse(match.replace('<script type="application/ld+json">', '').replace('</script>', '')))
         })
 
-        const recipeData = parsedMatches.find((match) => match['@type'] === 'Recipe')
+        const recipeData = parsedMatches.find((match) => "name" in match)
 
         return {
             name: recipeData.name,
             description: recipeData.description,
-            instructions: recipeData.recipeInstructions.split('\n').map((instruction: string) => instruction.trim()).filter((instruction: string) => instruction.length > 0),
-            cookingTime: parseISODuration(recipeData.cookTime),
-            waitingTime: parseISODuration(recipeData.prepTime),
+            instructions: recipeData.recipeInstructions,
+            cookingTime: parseISODuration(recipeData.totalTime),
+            waitingTime: 0,
             servings: parseInt(recipeData.recipeYield),
-            typeId: getBestMatchingType(recipeData.recipeCategory.split(",").map((cat: string) => cat.trim()), recipeData.keywords),
+            typeId: undefined,
             sourceUrl: url,
-            imageUrl: recipeData.image,
+            imageUrl: recipeData.image[0],
             ingredients: recipeData.recipeIngredient.map((ingredient: string) => getIngredient(ingredient))
         };
     
@@ -40,5 +40,3 @@ export async function getRecipeData(url: string) {
         return undefined;
     }
 }
-
-console.log(await getRecipeData('https://www.chefkoch.de/rezepte/1170671223188552/Saftiges-Paprikagulasch.html'))

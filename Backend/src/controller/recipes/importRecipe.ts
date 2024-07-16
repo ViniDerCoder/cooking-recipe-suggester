@@ -1,5 +1,3 @@
-
-
 export const validRecipeUrls = [
     "chefkoch.de",
     "rewe.de"
