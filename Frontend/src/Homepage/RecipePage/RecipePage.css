@@ -190,12 +190,23 @@ body {
     border-right: 0.1rem solid var(--primary-color);
     padding: 0.3rem;
     width: 50%;
+    font-size: 1.2rem;
 } 
 
 .recipe-page-ingredients-list-item-name {
     color: var(--tertiary-color);
-    padding: 0.3rem;
+    display: flex;
+    flex-direction: column;
     width: 50%;
+    padding: 0.3rem;
+}
+
+.recipe-page-ingredients-list-item-name-title {
+    font-size: 1.2rem;
+}
+
+.recipe-page-ingredients-list-item-name-description {
+    font-size: 0.85rem;
 }
 
 .recipe-page-edit-button {

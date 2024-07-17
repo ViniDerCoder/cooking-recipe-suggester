@@ -238,7 +238,7 @@
     border: 0.14rem solid var(--secondary-color);
     text-align: right;
     padding: 0.2rem;
-    width: 4rem;
+    width: 3rem;
     appearance: none;
     -moz-appearance: textfield;
 }
@@ -290,9 +290,23 @@
     text-overflow: ellipsis;
 }
 
+.ingredient-selector-ingredient-notes {
+    display: flex;
+    margin-left: 0.3rem;
+}
+
+.ingredient-selector-ingredient-notes:hover {
+    cursor: pointer;
+}
+
 .ingredient-selector-ingredient-info {
     display: flex;
     margin-left: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.ingredient-selector-ingredient-info:hover {
+    color: var(--tertiary-color-dimmed);
 }
 
 .ingredient-selector-ingredient-remove {
@@ -302,4 +316,8 @@
     justify-self: right;
     margin-left: 0.5rem;
     right: 1rem;
+}
+
+.ingredient-selector-ingredient-remove:hover {
+    color: var(--danger-color);
 }

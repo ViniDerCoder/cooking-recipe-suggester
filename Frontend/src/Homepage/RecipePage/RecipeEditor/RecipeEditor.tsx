@@ -323,16 +323,16 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                             if (ingredientChanges.find((change) => change.ingredientId === ingr.id)) {
                                 setIngredientChanges(ingredientChanges.map((change) => {
                                     if (change.ingredientId === ingr.id && change.type === "REMOVE") {
-                                        return { type: "UPDATE", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }
+                                        return { type: "UPDATE", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit, description: ingr.description }
                                     } else if (change.ingredientId === ingr.id && change.type === "ADD") {
-                                        return { type: "ADD", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }
+                                        return { type: "ADD", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit, description: ingr.description }
                                     } else if (change.ingredientId === ingr.id && change.type === "UPDATE") {
-                                        return { type: "UPDATE", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }
+                                        return { type: "UPDATE", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit, description: ingr.description }
                                     }
                                     return change
                                 }))
                             } else {
-                                setIngredientChanges([...ingredientChanges, { type: "ADD", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit }])
+                                setIngredientChanges([...ingredientChanges, { type: "ADD", ingredientId: ingr.id, amount: ingr.amount, unit: ingr.unit, description: ingr.description }])
                             }
                             setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: ingr, oldValue: undefined }])
                         }}
@@ -357,16 +357,16 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                             if (ingredientChanges.find((change) => change.ingredientId === newIngr.id)) {
                                 setIngredientChanges(ingredientChanges.map((change) => {
                                     if (change.ingredientId === newIngr.id && change.type === "ADD") {
-                                        return { type: "ADD", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }
+                                        return { type: "ADD", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit, description: newIngr.description }
                                     } else if (change.ingredientId === newIngr.id && change.type === "UPDATE") {
-                                        return { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }
+                                        return { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit, description: newIngr.description }
                                     } else if (change.ingredientId === newIngr.id && change.type === "REMOVE") {
-                                        return { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }
+                                        return { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit, description: newIngr.description }
                                     }
                                     return change
                                 }))
                             } else {
-                                setIngredientChanges([...ingredientChanges, { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit }])
+                                setIngredientChanges([...ingredientChanges, { type: "UPDATE", ingredientId: newIngr.id, amount: newIngr.amount, unit: newIngr.unit, description: newIngr.description }])
                             }
                             setChangesStack([...changesStack, { field: "INGREDIENTS", newValue: newIngr, oldValue: oldIngr }])
                         }}

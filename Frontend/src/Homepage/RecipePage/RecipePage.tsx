@@ -176,7 +176,10 @@ export default function RecipePage(p: { recipeId: string }) {
                         {ingredients.map((ingredient) => {
                             return <div className="recipe-page-ingredients-list-item">
                                 <div className='recipe-page-ingredients-list-item-amount'>{(Math.round(ingredient.amount / recipeDataServings * (servings ? servings : recipeDataServings) * 100) / 100) + " "}{ingredient.unit}</div>
-                                <div className='recipe-page-ingredients-list-item-name'>{ingredient.name}</div>
+                                <div className='recipe-page-ingredients-list-item-name'>
+                                    <div className='recipe-page-ingredients-list-item-name-title'>{ingredient.name}</div>
+                                    <div className='recipe-page-ingredients-list-item-name-description'>{ingredient.description}</div>
+                                </div>
                             </div>
                         })}
                     </div>

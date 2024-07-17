@@ -13,6 +13,7 @@ import { TbEgg, TbEggOff, TbMeat, TbMeatOff, TbPlant2, TbPlant2Off } from 'react
 import { LuBean, LuBeanOff, LuFish, LuFishOff, LuMilk, LuMilkOff, LuNut, LuNutOff, LuWheat, LuWheatOff } from 'react-icons/lu';
 import { GiNautilusShell } from 'react-icons/gi';
 import { IoInformationCircleOutline } from "react-icons/io5";
+import { PiNotePencilBold } from "react-icons/pi";
 import Tooltip from '../../../../Defaults/Tooltip/Tooltip';
 
 const IngredientSelector = forwardRef((p: {
@@ -134,7 +135,7 @@ const IngredientSelector = forwardRef((p: {
                             <div className="ingredient-selector-new-ingredient-name">{ingr.name}</div>
                             <Tooltip
                                 element={<div className="ingredient-selector-new-ingredient-info"><IoInformationCircleOutline /></div>}
-                                message={<TooltipElementMessage ingr={ingr}/>}
+                                message={<TooltipElementMessage ingr={ingr} />}
                                 sx={{ style: { textWrap: "nowrap", right: "2rem", top: "0.25rem" } }}
                             />
                             <div className="ingredient-selector-new-ingredient-add" onClick={() => {
@@ -143,7 +144,7 @@ const IngredientSelector = forwardRef((p: {
                                     setIngredients(ingredients.filter(i => i.id !== ingr.id));
                                     p.onIngredientRemove(ingredient);
                                 } else {
-                                    const newIngr = { id: ingr.id, name: ingr.name, amount: 1, unit: undefined, properties: ingr.properties } as FullRecipeIngredient;
+                                    const newIngr = { id: ingr.id, name: ingr.name, amount: 1, unit: undefined, properties: ingr.properties, description: undefined } as FullRecipeIngredient;
                                     setIngredients([...ingredients, newIngr]);
                                     p.onIngredientAdd(newIngr);
                                 }
@@ -229,15 +230,15 @@ const IngredientSelector = forwardRef((p: {
                             const newIngr = ingredients.find(i => i.id === ingr.id)
                             if (!newIngr) return;
                             if (el.value.length === 0) {
-                                if(newIngr.amount === 1) return
+                                if (newIngr.amount === 1) return
                                 else el.value = "1"
                             }
                             if (isNaN(parseInt(el.value))) return
                             if (parseInt(el.value) < 1) {
-                                if(newIngr.amount === 1) return
+                                if (newIngr.amount === 1) return
                                 else el.value = "1"
                             }
-                            if(parseInt(el.value) === newIngr.amount) return
+                            if (parseInt(el.value) === newIngr.amount) return
                             const oldIngr = JSON.parse(JSON.stringify(ingredients.find(i => i.id === ingr.id))) as FullRecipeIngredient;
                             setIngredients(ingredients.map(i => i.id === ingr.id ? { ...ingr, amount: parseInt(el.value) } : i));
                             p.onIngredientChange({ ...newIngr, amount: parseInt(el.value) }, oldIngr);
@@ -261,8 +262,27 @@ const IngredientSelector = forwardRef((p: {
                     </div>
                     <div className="ingredient-selector-ingredient-name">{ingr.name}</div>
                     <Tooltip
+                        element={
+                            <div className="ingredient-selector-ingredient-notes"
+                            onClick={() => {
+                                const newIngr = ingredients.find(i => i.id === ingr.id)
+                                if (!newIngr) return;
+                                const newDesc = prompt("Notizen:", newIngr.description ? newIngr.description : "");
+                                if (newDesc === null) return;
+                                const oldIngr = JSON.parse(JSON.stringify(ingredients.find(i => i.id === ingr.id))) as FullRecipeIngredient;
+                                setIngredients(ingredients.map(i => i.id === ingr.id ? { ...ingr, description: newDesc } : i));
+                                p.onIngredientChange({ ...newIngr, description: newDesc }, oldIngr);
+                            }}
+                            >
+                                <PiNotePencilBold size={"1.2rem"} />
+                            </div>
+                        }
+                        message={ingr.description ? ingr.description : <em>Keine Notizen</em>}
+                        sx={{style: { textWrap: "nowrap" }}}
+                    />
+                    <Tooltip
                         element={<div className="ingredient-selector-ingredient-info"><IoInformationCircleOutline size={"1.5rem"} /></div>}
-                        message={<TooltipElementMessage ingr={ingr}/>}
+                        message={<TooltipElementMessage ingr={ingr} />}
                         sx={{ style: { textWrap: "nowrap", right: "-3rem" } }}
                     />
                     <div className="ingredient-selector-ingredient-remove" onClick={() => {
@@ -275,7 +295,7 @@ const IngredientSelector = forwardRef((p: {
     )
 })
 
-function TooltipElementMessage(p: {ingr: FullRecipeIngredient | Ingredient}) {
+function TooltipElementMessage(p: { ingr: FullRecipeIngredient | Ingredient }) {
     return (
         <div>
             {p.ingr.properties.vegan ? <TbPlant2 color='#7da811' /> : <TbPlant2Off color='#7da811' />}
