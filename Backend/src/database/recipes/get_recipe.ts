@@ -69,38 +69,19 @@ export async function getRecipesByIds(ids: Array<Uuid>) {
     else return [];
 }
 
-export async function getRecipesByFilters(recipeIds: Array<Uuid>, filters: MealSuggestionRecipeFilter) {
+export async function getRecipesWithTypeIn(recipeIds: Array<Uuid>, validTypes: Array<Uuid>) {
     if(recipeIds.length === 0) return [];
 
-    const params: Array<boolean | number | Array<Uuid>> = [recipeIds];
+    const params: Array<Array<Uuid>> = [recipeIds];
 
-    if(filters.vegan !== null)          params.push(filters.vegan);
-    if(filters.vegetarian !== null)     params.push(filters.vegetarian);
-    if(filters.glutenFree !== null)     params.push(filters.glutenFree);
-    if(filters.dairyFree !== null)      params.push(filters.dairyFree);
-    if(filters.nutFree !== null)        params.push(filters.nutFree);
-    if(filters.eggFree !== null)        params.push(filters.eggFree);
-    if(filters.fishFree !== null)       params.push(filters.fishFree);
-    if(filters.shellfishFree !== null)  params.push(filters.shellfishFree);
-    if(filters.soyFree !== null)        params.push(filters.soyFree);
-
-    if(filters.recipeTypesWhitelist.length > 0) params.push(filters.recipeTypesWhitelist);
+    if(validTypes.length > 0) params.push(validTypes);
 
     const q = ''
     + 'SELECT * '
     + 'FROM '
     + 'cooking_recipe_suggester.recipes '
     + `WHERE id IN ? `
-    + (filters.vegan !== null ? 'AND vegan = ? ' : '')
-    + (filters.vegetarian !== null ? 'AND vegetarian = ? ' : '')
-    + (filters.glutenFree !== null ? 'AND gluten_free = ? ' : '')
-    + (filters.dairyFree !== null ? 'AND dairy_free = ? ' : '')
-    + (filters.nutFree !== null ? 'AND nut_free = ? ' : '')
-    + (filters.eggFree !== null ? 'AND egg_free = ? ' : '')
-    + (filters.fishFree !== null ? 'AND fish_free = ? ' : '')
-    + (filters.shellfishFree !== null ? 'AND shellfish_free = ? ' : '')
-    + (filters.soyFree !== null ? 'AND soy_free = ? ' : '')
-    + (filters.recipeTypesWhitelist.length > 0 ? 'AND type_id IN ? ' : '')
+    + (validTypes.length > 0 ? 'AND type_id IN ? ' : '')
 
     const result = await query(q, params);
     if(typeof result === "string") return 'Error getting recipe';

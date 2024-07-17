@@ -21,24 +21,19 @@ export async function getIngredientsOfRecipe(recipeId: Uuid) {
     });
 }
 
-export async function getIngredientsOfRecipes(recipeIds: Uuid[]) {
-    if(recipeIds.length === 0) return [];
+export async function getIngredientIdsOfRecipes(recipeIds: Uuid[]) {
+    if(recipeIds.length === 0) return {} as {[recipeId: string]: Uuid[]};
     const params = [recipeIds];
     const q = ''
-    + 'SELECT * FROM '
+    + 'SELECT ingredient_id, recipe_id FROM '
     + 'cooking_recipe_suggester.recipe_ingredients '
     + 'WHERE recipe_id IN ?';
 
     const result = await query(q, params)
     if(typeof result === "string") return 'Error getting ingredients of recipes';
     else return result.rows.reduce((pVal, row) => {
-        pVal[row.recipe_id.toString('hex')] = {
-            recipeId: row.recipe_id.toString('hex'),
-            id: row.ingredient_id.toString('hex'),
-            amount: row.quantity,
-            unit: row.unit ? row.unit : null,
-            description: row.description ? row.description : null
-        } as IngredientRecipeData;
+        if(!pVal[row.recipe_id.toString('hex')]) pVal[row.recipe_id.toString('hex')] = [];
+        pVal[row.recipe_id.toString('hex')].push(row.ingredient_id.toString('hex'));
         return pVal;
-    }, {} as {[recipeId: string]: IngredientRecipeData});
+    }, {} as {[recipeId: string]: Uuid[]});
 }

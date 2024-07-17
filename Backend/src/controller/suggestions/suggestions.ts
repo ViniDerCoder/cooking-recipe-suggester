@@ -1,10 +1,12 @@
-import { getRecipeById, getRecipesByFilters, getRecipesByIds } from "../../database/recipes/get_recipe.js";
+import { getIngredientIdsOfRecipes } from "../../database/ingredients/get_ingredients_of_recipe.js";
+import { getRecipeById, getRecipesWithTypeIn, getRecipesByIds } from "../../database/recipes/get_recipe.js";
 import { getUserDataFromRecipes, listUsersAddedRecipeData } from "../../database/recipes/list_recipes.js";
 import getSettingsOfUser from "../../database/suggestions/suggestionSettings/get.js";
 import onInterval from "../../utils/listener/interval.js";
 import { isUuid, Uuid } from "../../utils/types/other.js";
 import { Recipe, RecipeUserData } from "../../utils/types/recipe.js";
 import { Suggestion, MealSuggestionsSettings, MealSuggestionRecipeFilter, MealSuggestionFullRecipe, SuggestionFullRecipe } from "../../utils/types/suggestion.js";
+import { getIngredientsByIds } from "../ingredients/get.js";
 
 let suggestions: { [key: Uuid]: Suggestion } = {}
 
@@ -109,6 +111,43 @@ async function getMealSuggestions(userId: Uuid, meal: MealSuggestionsSettings, u
     });
 
     return generateSuggestionsFromRecipes(linkedRecipes, 3);
+}
+
+async function getRecipesByFilters(recipeIds: Uuid[], filters: MealSuggestionRecipeFilter) {
+    const recipes = await getRecipesWithTypeIn(recipeIds, filters.recipeTypesWhitelist);
+    if(typeof recipes === "string") return recipes;
+
+    const recipesIngredientIds = await getIngredientIdsOfRecipes(recipes.map((recipe) => recipe.id));
+    if(typeof recipesIngredientIds === "string") return recipesIngredientIds;
+
+    const requiredIngredients: Uuid[] = []
+    Object.keys(recipesIngredientIds).forEach((ingredientId) => {
+        requiredIngredients.concat(recipesIngredientIds[ingredientId]);
+    });
+    const requiredIngredientsWithoutDuplicates = [...new Set(requiredIngredients)];
+
+    const ingredients = await getIngredientsByIds(requiredIngredientsWithoutDuplicates);
+    if(typeof ingredients === "string") return ingredients;
+
+    return recipes.filter((recipe) => {
+        const recipeIngredients = recipesIngredientIds[recipe.id];
+        const recipeIngredientProperties = recipeIngredients.map((ingredientId) => ingredients.find((ingredient) => ingredient.id === ingredientId)?.properties);
+
+        return recipeIngredientProperties.every((properties) => {
+            if(!properties) return false;
+            if(filters.vegan !== null && properties.vegan !== filters.vegan) return false;
+            if(filters.vegetarian !== null && properties.vegetarian !== filters.vegetarian) return false;
+            if(filters.glutenFree !== null && properties.glutenFree !== filters.glutenFree) return false;
+            if(filters.dairyFree !== null && properties.dairyFree !== filters.dairyFree) return false;
+            if(filters.nutFree !== null && properties.nutFree !== filters.nutFree) return false;
+            if(filters.eggFree !== null && properties.eggFree !== filters.eggFree) return false;
+            if(filters.fishFree !== null && properties.fishFree !== filters.fishFree) return false;
+            if(filters.shellfishFree !== null && properties.shellfishFree !== filters.shellfishFree) return false;
+            if(filters.soyFree !== null && properties.soyFree !== filters.soyFree) return false;
+
+            return true;
+        });
+    })
 }
 
 function generateSuggestionsFromRecipes(recipes: Array<{recipe: Recipe, userData: RecipeUserData}>, suggestions: number) {
