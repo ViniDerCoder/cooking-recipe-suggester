@@ -6,7 +6,7 @@ export async function updateIngredientInRecipe(ingredientId: Uuid, recipeId: Uui
     const q = ''
     + 'UPDATE '
     + 'cooking_recipe_suggester.recipe_ingredients '
-    + 'SET quantity = ?, unit = ? description = ? '
+    + 'SET quantity = ?, unit = ?, description = ? '
     + 'WHERE recipe_id = ? AND ingredient_id = ?';
 
     const result = await query(q, params)
