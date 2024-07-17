@@ -66,6 +66,14 @@ abstract class Recipes {
         return await BackendConnection.get('recipes/search', undefined, { search: search }, token);
     }
 
+    static async getImportationData(token: string, url: string) {
+        return await BackendConnection.get('recipes/import', url, {}, token);
+    }
+
+    static async createImportedRecipe(token: string, recipe: RecipeCreationData, ingredients: IngredientRecipeList, url: string) {
+        return await BackendConnection.post('recipes/import', undefined, { url, recipe, ingredients }, token);
+    }
+
     static async getRecipe(token: string, recipeId: string) {
         return await BackendConnection.get('recipes', recipeId, { }, token);
     }

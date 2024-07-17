@@ -84,3 +84,33 @@ export async function getRecipeTypes() {
         return [false, 'Error: ' + errorFromError(error)]
     }
 }
+
+export async function getImportationData(url: unknown) {
+    if(typeof url !== 'string') return [false, 'Invalid url']
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.getImportationData(token ? token : "", url)
+        if(result.data.recipe) return [true, result.data.recipe]
+        else return [false, result.error]
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}
+
+export async function createImportedRecipe(recipe: RecipeCreationData, ingredients: IngredientRecipeList, url: string) {
+    if(typeof recipe !== 'object' || !Array.isArray(ingredients) || typeof url !== 'string') return [false, 'Invalid recipe/ingredients/url']
+    const token = getAuthToken()
+
+    try {
+        const result = await Backend.Recipes.createImportedRecipe(token ? token : "", recipe, ingredients, url)
+        if(result.data.recipe) {
+            const cache = JSON.parse(sessionStorage.getItem("recipe-cache") || "{}")
+            sessionStorage.setItem("recipe-cache", JSON.stringify({...cache, [result.data.recipe.id]: [new Date(), result.data.recipe]}))
+            return [true, '']
+        }
+        else return [false, result.error]
+    } catch (error) {
+        return [false, 'Error: ' + errorFromError(error)]
+    }
+}

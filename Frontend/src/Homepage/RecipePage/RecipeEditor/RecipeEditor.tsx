@@ -10,7 +10,7 @@ import { createRef, useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
 import { FullRecipeIngredient, IngredientRecipeData, IngredientUpdateActionList, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
-import { createRecipe, editRecipe, getRecipeTypes } from './recipeEditorLogic';
+import { createImportedRecipe, createRecipe, editRecipe, getImportationData, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
 import { TbClockHour4, TbClockPause } from 'react-icons/tb';
 import IngredientSelector from './IngredientSelector/IngredientSelector';
@@ -31,7 +31,7 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
     const ingredientSelector = createRef<typeof IngredientSelector>()
 
     useEffect(() => {
-        if (p.recipeId) {
+        if (p.recipeId && !p.sourceUrl) {
             (async () => {
                 const [lRecipe, lIngredients, lTypes] = await Promise.all([
                     getRecipeById(p.recipeId),
@@ -53,7 +53,18 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                 setLoading(false)
 
             })()
-        } else if(!p.sourceUrl){
+        }  else if(p.sourceUrl) {
+            (async () => {
+                const recipeData = await getImportationData(p.sourceUrl)
+                
+                if(recipeData[0] && typeof recipeData[1] !== "string") {
+                    setRecipe({...recipeData[1], ingredients: undefined} as RecipeCreationData)
+                    setIngredients(recipeData[1].ingredients)
+                }
+                
+                setLoading(false)
+            })()
+        } else {
             (async () => {
                 const recipeTypes = await getRecipeTypes()
                 if (recipeTypes[0] && typeof recipeTypes[1] !== "string") {
@@ -126,6 +137,22 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                         if ("public" in recipe) {
 
                             editRecipe(p.recipeId, recipe, ingredientChanges).then(([success, error]) => {
+                                if (success) {
+                                    console.log("Success")
+                                    setChangesStack([])
+                                } else {
+                                    console.error(error)
+                                }
+                                setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
+                            })
+                        } else if(p.sourceUrl) {
+                            const cur = (ingredientSelector as React.RefObject<any>).current
+                            if(!cur) return setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
+                            
+                            const ingredients = cur.getIngredients()
+                            if(ingredients.length < 1) return setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
+
+                            createImportedRecipe(recipe, ingredients, p.sourceUrl).then(([success, error]) => {
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])

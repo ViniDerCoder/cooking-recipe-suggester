@@ -1,4 +1,6 @@
 import { getAllRecipeTypes } from "../../controller/recipes/recipeTypes.js";
+import { FullRecipeIngredient } from "../types/ingredient.js";
+import { Recipe, RecipeCreationData, RecipeImportData } from "../types/recipe.js";
 
 export function getBestMatchingType(recipeCategorys: string[], keywords: string[]) {
     const types = getAllRecipeTypes();
@@ -33,9 +35,27 @@ export function parseISODuration(duration: string) {
 
 export function getIngredient(ingredient: string) {
     const [amount, unit, ...name] = ingredient.split(' ');
+    
+    return undefined
+
     return {
         amount: parseFloat(amount),
         unit: unit ? unit : undefined,
         name: name.join(' ')
-    }
+    } as FullRecipeIngredient;
+}
+
+export function getRecipeDataFromDefaultSchema(json: any, url: string) {
+    return {
+        name: json.name,
+        description: json.description,
+        instructions: Array.isArray(json.recipeInstructions) ? json.recipeInstructions : json.recipeInstructions.split('\n').map((instruction: string) => instruction.trim()).filter((instruction: string) => instruction.length > 0),
+        cookingTime: parseISODuration(json.cookTime) || parseISODuration(json.totalTime),
+        waitingTime: parseISODuration(json.prepTime),
+        servings: parseInt(json.recipeYield),
+        typeId: getBestMatchingType(Array.isArray(json.recipeCategory) ? json.recipeCategory : json.recipeCategory.split(",").map((cat: string) => cat.trim()), Array.isArray(json.keywords) ? json.keywords : json.keywords.split(",").map((keyword: string) => keyword.trim())),
+        sourceUrl: url,
+        imageUrl: Array.isArray(json.image) ? json.image[0] : json.image,
+        ingredients: (json.recipeIngredient.map((ingredient: string) => getIngredient(ingredient))).filter((ingredient: any) => ingredient)
+    } as RecipeImportData;
 }

@@ -204,3 +204,40 @@ export function isUserRecipeEditData(any: any): any is UserRecipeEditData {
 
     return true;
 }
+
+
+export type RecipeImportData = {
+    name: string,
+    description: string,
+    instructions: Array<string>,
+    cookingTime: number,
+    waitingTime: number,
+    servings: number,
+    typeId: Uuid,
+    sourceUrl: string,
+    imageUrl: string | null | undefined,
+    ingredients: Array<{
+        amount: number,
+        unit: string | null | undefined,
+        name: string
+    }>
+}
+
+export function isRecipeImportData(any: any): any is RecipeImportData {
+    if(typeof any !== "object" || !any) return false;
+
+    if(typeof any.name !== "string") return false;
+    if(typeof any.description !== "string") return false;
+    if(!Array.isArray(any.instructions)) return false;
+    if(!any.instructions.every((instr: any) => typeof instr === "string")) return false;
+    if(typeof any.cookingTime !== "number") return false;
+    if(typeof any.waitingTime !== "number") return false;
+    if(typeof any.servings !== "number") return false;
+    if(!isUuid(any.typeId)) return false;
+    if(typeof any.sourceUrl !== "string") return false;
+    if(typeof any.imageUrl !== "string" && any.imageUrl !== null && any.imageUrl !== undefined) return false;
+    if(!Array.isArray(any.ingredients)) return false;
+    if(!any.ingredients.every((ingredient: any) => typeof ingredient === "object" && ingredient && typeof ingredient.amount === "number" && (typeof ingredient.unit === "string" || ingredient.unit === null || ingredient.unit === undefined) && typeof ingredient.name === "string")) return false;
+
+    return true;
+}

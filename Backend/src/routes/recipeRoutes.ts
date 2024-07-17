@@ -136,7 +136,7 @@ router.get('/import/:url', limit(1000 * 60 * 20, 5), async (req, res) => {
 
     const result = await getRecipeData(url);
 
-    if(typeof result === "string") return res.status(400).send({error: result});
+    if(typeof result === "string" || !result) return res.status(400).send({error: result});
     else return res.status(200).send({message: "Importing recipe was successfull", error: undefined, data: { recipe: result }});
 })
 
