@@ -8,7 +8,7 @@ import { BiSave, BiSolidSave } from "react-icons/bi";
 import { RecipeCreationData, RecipeEditData } from '../../../../../Backend/src/utils/types/recipe';
 import { createRef, useEffect, useState } from 'react';
 import { getIngredientsOfRecipe, getRecipeById } from '../recipeLogic';
-import { FullRecipeIngredient, IngredientRecipeData, IngredientUpdateActionList, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
+import { FullRecipeIngredient, IngredientRecipeData, RecipeIngredientUpdateActions } from '../../../../../Backend/src/utils/types/ingredient';
 import Tooltip from '../../../Defaults/Tooltip/Tooltip';
 import { createImportedRecipe, createRecipe, editRecipe, getImportationData, getRecipeTypes } from './recipeEditorLogic';
 import { LuUndo2 } from 'react-icons/lu';
@@ -140,6 +140,7 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])
+                                    setIngredientChanges([])
                                 } else {
                                     console.error(error)
                                 }
@@ -156,6 +157,7 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])
+                                    setIngredientChanges([])
                                 } else {
                                     console.error(error)
                                 }
@@ -175,6 +177,7 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])
+                                    setIngredientChanges([])
                                 } else {
                                     console.error(error)
                                 }

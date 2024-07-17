@@ -1,0 +1,92 @@
+.prompt-wrapper[data-active="true"] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: background-color 0.5s;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.prompt {
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    z-index: 100;
+    background-color: var(--secondary-color);
+    border: var(--primary-color) solid 0.3rem;
+    border-top: none;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    overflow: hidden;
+    transform: translate(-50%, 0);
+    transition: transform 0.3s;
+    padding: 0.5rem;
+    box-shadow: 0rem 0.3rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.prompt[data-active="false"] {
+    transform: translate(-50%, -120%);
+}
+
+.prompt div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+}
+
+.prompt p {
+    font-size: 1.2rem;
+    color: var(--tertiary-color);
+    margin: 0.5rem;
+    text-align: center;
+}
+
+.prompt button {
+    width: min-content;
+    position: relative;
+    background-color: var(--primary-color-dimmed);
+    border: var(--primary-color) solid 0.2rem;
+    color: var(--tertiary-color);
+    border-radius: 0.5rem;
+    padding: 0.2rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.prompt button:hover {
+    background-color: var(--primary-color);
+}
+
+.prompt input {
+    position: relative;
+    flex: 1;
+    background-color: var(--secondary-color);
+    color: var(--tertiary-color);
+    border: var(--primary-color) solid 0.2rem;
+    border-radius: 0.5rem;
+    padding: 0.2rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 1rem;
+    margin: 0.5rem;
+}
+
+.prompt input:focus {
+    outline: none;
+    border-color: var(--tertiary-color);
+    background-color: var(--primary-color-dimmed);
+}

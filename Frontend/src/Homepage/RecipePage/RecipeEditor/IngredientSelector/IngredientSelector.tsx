@@ -22,7 +22,7 @@ const IngredientSelector = forwardRef((p: {
     onIngredientRemove: (ingr: FullRecipeIngredient) => void,
     onIngredientChange: (newIngr: FullRecipeIngredient, oldIngr: FullRecipeIngredient) => void,
 }, ref) => {
-    const [ingredients, setIngredients] = useState(p.initialIngredients ? p.initialIngredients : []);
+    const [ingredients, setIngredients] = useState(p.initialIngredients ? p.initialIngredients.map((ingr) => { return {...ingr, amount: parseFloat(ingr.amount + "")}}) : []);
     const [newIngredients, setNewIngredients] = useState<Ingredient[]>([]);
     const [headerDown, setHeaderDown] = useState(false);
     const [visibleElements, setVisibleElements] = useState({ ingredientList: true, filter: true, newIngredientList: true });

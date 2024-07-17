@@ -10,11 +10,13 @@ import { basename } from '../App';
 import { IoSettings, IoSettingsOutline } from 'react-icons/io5';
 import SuggestionSettings from './SuggestionSettings/SuggestionSettings';
 import { BiImport } from 'react-icons/bi';
+import Prompt from '../Defaults/Prompt/Prompt';
+import React from 'react';
 
 
 
 export default function Homepage() {
-    const [loading, setLoading] = useState(true);
+    const [loading , setLoading] = useState(true);
     const [suggestions, setSuggestions] = useState<SuggestionFullRecipe>();
     const [ownRecipes, setOwnRecipes] = useState<{
         userData: RecipeUserData;
@@ -41,6 +43,8 @@ export default function Homepage() {
         fetchSuggestions();
     }, [])
 
+    const promptRef = React.createRef<typeof Prompt>();
+
     return (
         <div className="homepage">
             <SuggestionSettings hidden={settingsHidden} setHidden={setSettingsHidden}/>
@@ -54,8 +58,22 @@ export default function Homepage() {
                         onClick={() => { window.location.href = basename + "/recipe/create" }}
                     ><FaPlus size={"2rem"}/></div>
                     <div className="homepage-header-buttons-import" onClick={() => {
-                        
+                        const cur = (promptRef as React.RefObject<any>).current
+                        if(cur) cur.setActive(true)
                     }}><BiImport size={"2rem"}/></div>
+                    <Prompt 
+                        ref={promptRef}
+                        message='Bitte geben Sie die URL des Rezepts ein'
+                        onFinish={(val) => { 
+                            try { 
+                                const u = new URL(val) 
+                                window.location.href = basename + "/recipe/import/" + encodeURIComponent(u.href)
+                            } catch { 
+                                alert('Ungültige URL')
+                                return
+                            }
+                        }}
+                    />
                     <div className='homepage-header-buttons-settings'
                         onClick={() => { setSettingsHidden(false) }}
                     >{settingsHidden ? <IoSettingsOutline size={"2rem"}/> : <IoSettings size={"2rem"}/>}</div>
