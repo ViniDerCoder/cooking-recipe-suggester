@@ -15,6 +15,8 @@ import { GoBookmark, GoBookmarkFill } from "react-icons/go";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import { formatDateToDDMMYYYY } from '../../utils/date';
 import Tooltip from '../../Defaults/Tooltip/Tooltip';
+import { MdModeEdit } from 'react-icons/md';
+import { basename } from '../../App';
 
 
 export default function RecipePage(p: { recipeId: string }) {
@@ -105,6 +107,7 @@ export default function RecipePage(p: { recipeId: string }) {
         <div className="recipe-page">
             <div className="recipe-page-left">
                 {recipe.imageUrl ? <img src={recipe.imageUrl} alt={recipe.name} className="recipe-page-image" /> : null}
+                {recipe.sourceUrl ? <div className="recipe-page-source">Importiert von <a href={recipe.sourceUrl}>{new URL(recipe.sourceUrl).hostname.replace("www.", "")}</a></div> : null}
                 <div className="recipe-page-title-bar">
                     <div className="recipe-page-mark"
                         onClick={async () => {
@@ -137,7 +140,7 @@ export default function RecipePage(p: { recipeId: string }) {
                         }}
                     >{recipeCooked ? <BiSolidDish opacity={buttonsDisabled.cooked ? 0.5 : 1}/> : <BiDish opacity={buttonsDisabled.cooked ? 0.5 : 1}/>}</div>
                     </div>
-                    {visibleCookedTooltip ? <div className='recipe-page-tooltip' style={{ marginLeft: recipe.imageUrl ? "13rem" : "8rem", marginTop: recipe.imageUrl ? "23.5rem" : "3.5rem"}}>{(userRecipeData && userRecipeData.cooked.length !== 0) ? (userRecipeData.cooked.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()).map((val, ind) => <div>{`${userRecipeData.cooked.length - ind}. - ${formatDateToDDMMYYYY(val)}`}</div>)) : "Noch nicht gekocht!"}</div> : null}
+                    {visibleCookedTooltip ? <div className='recipe-page-tooltip' style={{ marginLeft: recipe.imageUrl ? "13rem" : "8rem", marginTop: ((recipe.imageUrl ? 23.5 : 3.5) + (recipe.sourceUrl ? 1 : 0)) + "rem"}}>{(userRecipeData && userRecipeData.cooked.length !== 0) ? (userRecipeData.cooked.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()).map((val, ind) => <div>{`${userRecipeData.cooked.length - ind}. - ${formatDateToDDMMYYYY(val)}`}</div>)) : "Noch nicht gekocht!"}</div> : null}
                 {userRecipeData ? <div className="recipe-page-rating">
                     {[...Array(5)].map((e, i) => {
                         return <div className="recipe-page-rating-star" onClick={async () => {
@@ -181,6 +184,11 @@ export default function RecipePage(p: { recipeId: string }) {
             </div>
             <div className="recipe-page-right">
                 <div className="recipe-page-general-info-bar">
+                    <div className="recipe-page-edit-button"
+                        onClick={() => { window.location.href = basename + `/recipe/${p.recipeId}/editor` }}
+                    >
+                        <MdModeEdit size={"2rem"} />
+                    </div>
                     <TbClockHour4 style={{
                         alignSelf: "center"
                     }} />

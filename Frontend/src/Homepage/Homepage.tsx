@@ -9,6 +9,7 @@ import { FaPlus } from 'react-icons/fa';
 import { basename } from '../App';
 import { IoSettings, IoSettingsOutline } from 'react-icons/io5';
 import SuggestionSettings from './SuggestionSettings/SuggestionSettings';
+import { BiImport } from 'react-icons/bi';
 
 
 
@@ -52,6 +53,9 @@ export default function Homepage() {
                     <div className='homepage-header-buttons-create'
                         onClick={() => { window.location.href = basename + "/recipe/create" }}
                     ><FaPlus size={"2rem"}/></div>
+                    <div className="homepage-header-buttons-import" onClick={() => {
+                        
+                    }}><BiImport size={"2rem"}/></div>
                     <div className='homepage-header-buttons-settings'
                         onClick={() => { setSettingsHidden(false) }}
                     >{settingsHidden ? <IoSettingsOutline size={"2rem"}/> : <IoSettings size={"2rem"}/>}</div>

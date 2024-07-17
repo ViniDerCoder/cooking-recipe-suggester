@@ -67,7 +67,7 @@ abstract class Recipes {
     }
 
     static async getImportationData(token: string, url: string) {
-        return await BackendConnection.get('recipes/import', url, {}, token);
+        return await BackendConnection.get('recipes/import', encodeURIComponent(url), {}, token);
     }
 
     static async createImportedRecipe(token: string, recipe: RecipeCreationData, ingredients: IngredientRecipeList, url: string) {

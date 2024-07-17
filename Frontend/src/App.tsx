@@ -18,6 +18,7 @@ function App() {
                 <Route path='/login' element={<Login />}></Route>
                 <Route path='/register' element={<Register />}></Route>
                 <Route path='/recipe/create' element={<ProtectedRoute><RecipeEditor /></ProtectedRoute>}></Route>
+                <Route path='/recipe/import/:url' element={<ProtectedRoute><RecipeImportWrapper /></ProtectedRoute>}></Route>
                 <Route path='/recipe/:id' element={<ProtectedRoute><RecipePageWrapper /></ProtectedRoute>}></Route>
                 <Route path='/recipe/:id/editor' element={<ProtectedRoute><RecipeEditorWrapper /></ProtectedRoute>}></Route>
             </Routes>
@@ -35,6 +36,12 @@ function RecipeEditorWrapper() {
     const { id } = useParams();
     if(!id) return null;
     return <RecipeEditor recipeId={id} />;
+}
+
+function RecipeImportWrapper() {
+    const { url } = useParams();
+    if(!url) return null;
+    return <RecipeEditor sourceUrl={decodeURIComponent(url)} />;
 }
 
 export default App;
