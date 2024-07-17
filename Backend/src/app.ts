@@ -19,7 +19,7 @@ const corsOptions: CorsOptions = {
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'bypass-tunnel-reminder'],
     optionsSuccessStatus: 200,
     preflightContinue: false,
 };

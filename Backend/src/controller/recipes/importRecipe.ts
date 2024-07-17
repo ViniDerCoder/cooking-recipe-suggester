@@ -8,8 +8,11 @@ export const validRecipeUrls = [
     "essen-und-trinken.de"
 ]
 
-export async function getRecipeData(url: string) {
-    if(url.includes("chefkoch.de")) return await getChefkochData(url);
-    if(url.includes("rewe.de")) return await getReweData(url);
-    if(url.includes("essen-und-trinken.de")) return await getEssenUndTrinkenData(url);
+export async function getRecipeData(url: unknown) {
+    if(typeof url !== "string") return 'Invalid input';
+    
+    const decodedUrl = decodeURIComponent(url);
+    if(url.includes("chefkoch.de")) return await getChefkochData(decodedUrl);
+    if(url.includes("rewe.de")) return await getReweData(decodedUrl);
+    if(url.includes("essen-und-trinken.de")) return await getEssenUndTrinkenData(decodedUrl);
 }
