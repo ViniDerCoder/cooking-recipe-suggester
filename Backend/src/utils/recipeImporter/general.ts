@@ -34,8 +34,7 @@ export function parseISODuration(duration: string) {
 }
 
 export function getIngredient(ingredient: string) {
-    const amount = ingredient.split(' ')[0];
-    if(Number.isNaN(parseFloat(amount))) return undefined
+    const parsedIngredient = parseIngredientInfo(ingredient);
     
     return undefined
 }
@@ -55,41 +54,48 @@ const unitDict: {[key: string]: RecipeIngredientUnit} = {
 
 
 function parseIngredientInfo(ingredient: string) {
-    const amount = ingredient.split(' ')[0].toLowerCase();
+    const amount = ingredient.split(' ')[0].toLowerCase().replace(',', '.');
     if(Number.isNaN(parseFloat(amount))) {
         if(ingredient.split(' ').length === 1) {
-            return {amount: 1, unit: undefined, name: ingredient.toLowerCase(), description: undefined};
+            return {amount: 1, unit: undefined as RecipeIngredientUnit, name: ingredient.toLowerCase().trim(), description: undefined};
         } else {
             const unit = ingredient.split(' ')[0].toLowerCase();
             if(unitDict[unit]) {
                 return {
-                    amount: 1, 
-                    unit: unitDict[unit], 
-                    name: ingredient.split(' ').slice(1).join(' ').split(',')[0].toLowerCase(), 
-                    description: ingredient.split(' ').slice(1).join(' ').split(',').slice(1).join(',').toLowerCase()
+                    amount: 1 as number, 
+                    unit: unitDict[unit]  as RecipeIngredientUnit, 
+                    name: ingredient.split(' ').slice(1).join(' ').split(',')[0].toLowerCase().trim(), 
+                    description: ingredient.split(' ').slice(1).join(' ').split(',').slice(1).join(',').toLowerCase().trim()
                 };
             } else {
                 return {
-                    amount: 1, 
-                    unit: undefined, 
-                    name: ingredient.split(',')[0].toLowerCase(), 
-                    description: ingredient.split(',').slice(1).join(',').toLowerCase()
+                    amount: 1 as number, 
+                    unit: undefined  as RecipeIngredientUnit, 
+                    name: ingredient.split(',')[0].toLowerCase().trim(), 
+                    description: ingredient.split(',').slice(1).join(',').toLowerCase().trim()
                 };
             }
         }
     } else {
+        const unit = ingredient.split(' ')[1].toLowerCase();
+        const ingr = amount.includes(',') ? ingredient.replace(",", "") : ingredient
+        if(unitDict[unit]) {
+            return {
+                amount: parseFloat(amount), 
+                unit: unitDict[unit] as RecipeIngredientUnit, 
+                name: ingr.split(' ').slice(2).join(' ').split(',')[0].toLowerCase().trim(), 
+                description: ingr.split(' ').slice(2).join(' ').split(',').slice(1).join(',').toLowerCase().trim()
+            };
+        } else {
+            return {
+                amount: parseFloat(amount), 
+                unit: undefined  as RecipeIngredientUnit, 
+                name: ingr.split(' ').slice(1).join(' ').split(',')[0].toLowerCase().trim(), 
+                description: ingr.split(' ').slice(1).join(' ').split(',').slice(1).join(',').toLowerCase().trim()
+            };
+        }
         
     }
-
-    const unit = ingredient.split(' ')[1];
-    const name = ingredient.split(' ').slice(2);
-
-    return {
-        amount: parseFloat(amount),
-        unit: unit ? unit : undefined,
-        name: name.join(' ')
-    } as FullRecipeIngredient;
-
 }
 
 export function getRecipeDataFromDefaultSchema(json: any, url: string) {
