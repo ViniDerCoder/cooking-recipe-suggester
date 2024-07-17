@@ -15,7 +15,8 @@ export async function getIngredientsOfRecipe(recipeId: Uuid) {
         return {
             id: row.ingredient_id.toString('hex'),
             amount: row.quantity,
-            unit: row.unit ? row.unit : null
+            unit: row.unit ? row.unit : null,
+            description: row.description ? row.description : null
         } as IngredientRecipeData;
     });
 }

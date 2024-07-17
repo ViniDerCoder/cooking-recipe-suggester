@@ -61,7 +61,8 @@ export function isIngredientList(any: any): any is IngredientList {
 export type IngredientRecipeData = {
     id: Uuid,
     amount: number,
-    unit: RecipeIngredientUnit
+    unit: RecipeIngredientUnit,
+    description: string | null | undefined
 }
 
 export function isIngredientRecipeData(any: any): any is IngredientRecipeData {
@@ -70,6 +71,7 @@ export function isIngredientRecipeData(any: any): any is IngredientRecipeData {
     if(!isUuid(any.id)) return false;
     if(typeof any.amount !== "number") return false;
     if(!isRecipeIngredientUnit(any.unit)) return false;
+    if(typeof any.description !== "string" && any.description !== null && any.description !== undefined) return false;
 
     return true;
 }
@@ -100,7 +102,8 @@ export type RecipeIngredientUpdateActions = {
     type: "ADD" | "UPDATE",
     ingredientId: Uuid,
     amount: number,
-    unit: RecipeIngredientUnit
+    unit: RecipeIngredientUnit,
+    description: string | null | undefined
 } | {
     type: "REMOVE",
     ingredientId: Uuid
@@ -113,6 +116,7 @@ export function isRecipeIngredientUpdateActions(any: any): any is RecipeIngredie
         if(!isUuid(any.ingredientId)) return false;
         if(typeof any.amount !== "number") return false;
         if(!isRecipeIngredientUnit(any.unit)) return false;
+        if(typeof any.description !== "string" && any.description !== null && any.description !== undefined) return false;
     } else if(any.type === "REMOVE") {
         if(!isUuid(any.ingredientId)) return false;
     } else {
@@ -210,7 +214,8 @@ export type FullRecipeIngredient = {
     name: string,
     properties: IngredientProperties,
     amount: number,
-    unit: RecipeIngredientUnit
+    unit: RecipeIngredientUnit,
+    description: string | null | undefined
 }
 
 export function isFullRecipeIngredient(any: any): any is FullRecipeIngredient {
@@ -221,6 +226,7 @@ export function isFullRecipeIngredient(any: any): any is FullRecipeIngredient {
     if(!isIngredientProperties(any.properties)) return false;
     if(typeof any.amount !== "number") return false;
     if(!isRecipeIngredientUnit(any.unit)) return false;
+    if(typeof any.description !== "string" && any.description !== null && any.description !== undefined) return false;
 
     return true;
 }

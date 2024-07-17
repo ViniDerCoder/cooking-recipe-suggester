@@ -48,7 +48,7 @@ export async function createRecipe(userId: unknown, recipe: unknown, ingredients
 
     if (typeof dbResult === "string") return dbResult;
     const valid = ingredients.map(async (ingredient, i) => {
-        const linkResult = await linkIngredientToRecipe(ingredient.id, dbResult.id, ingredient.amount, ingredient.unit ? ingredient.unit : null);
+        const linkResult = await linkIngredientToRecipe(ingredient.id, dbResult.id, ingredient.amount, ingredient.unit ? ingredient.unit : null, ingredient.description ? ingredient.description : null);
         if (typeof linkResult === "string") return linkResult;
         else return undefined;
     }).filter((result) => result).length >= 1;

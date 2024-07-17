@@ -19,7 +19,7 @@ export async function getRecipesIngredients(userId: unknown, recipeId: unknown) 
     const ingredients = await getIngredientsByIds(recipesUserData.map((data) => data.id));
     if(typeof ingredients === "string") return ingredients;
 
-    return recipesUserData.map((data) => {
+    const fullIngredients = recipesUserData.map((data) => {
         const ingredient = ingredients.find((ingredient) => ingredient.id === data.id);
         if(!ingredient) return 'Error getting ingredient';
         return {
@@ -27,7 +27,10 @@ export async function getRecipesIngredients(userId: unknown, recipeId: unknown) 
             name: ingredient.name,
             amount: data.amount,
             unit: data.unit,
-            properties: ingredient.properties
+            properties: ingredient.properties,
+            description: data.description
         } as FullRecipeIngredient;
     });
+    if(fullIngredients.some((ingr) => typeof ingr === "string")) return 'Error getting ingredient';
+    else return fullIngredients as FullRecipeIngredient[];
 }   
