@@ -1,5 +1,5 @@
 import { getAllRecipeTypes } from "../../controller/recipes/recipeTypes.js";
-import { FullRecipeIngredient } from "../types/ingredient.js";
+import { FullRecipeIngredient, RecipeIngredientUnit } from "../types/ingredient.js";
 import { Recipe, RecipeCreationData, RecipeImportData } from "../types/recipe.js";
 
 export function getBestMatchingType(recipeCategorys: string[], keywords: string[]) {
@@ -34,15 +34,62 @@ export function parseISODuration(duration: string) {
 }
 
 export function getIngredient(ingredient: string) {
-    const [amount, unit, ...name] = ingredient.split(' ');
+    const amount = ingredient.split(' ')[0];
+    if(Number.isNaN(parseFloat(amount))) return undefined
     
     return undefined
+}
+
+const unitDict: {[key: string]: RecipeIngredientUnit} = {
+    "g": "gram",
+    "kg": "kilogram",
+    "ml": "milliliter",
+    "l": "liter",
+    "tsp": "teaspoon",
+    "tbsp": "tablespoon",
+    "tasse": "cup",
+    "el": "tablespoon",
+    "tl": "teaspoon",
+    "prise": "pinch",
+}
+
+
+function parseIngredientInfo(ingredient: string) {
+    const amount = ingredient.split(' ')[0].toLowerCase();
+    if(Number.isNaN(parseFloat(amount))) {
+        if(ingredient.split(' ').length === 1) {
+            return {amount: 1, unit: undefined, name: ingredient.toLowerCase(), description: undefined};
+        } else {
+            const unit = ingredient.split(' ')[0].toLowerCase();
+            if(unitDict[unit]) {
+                return {
+                    amount: 1, 
+                    unit: unitDict[unit], 
+                    name: ingredient.split(' ').slice(1).join(' ').split(',')[0].toLowerCase(), 
+                    description: ingredient.split(' ').slice(1).join(' ').split(',').slice(1).join(',').toLowerCase()
+                };
+            } else {
+                return {
+                    amount: 1, 
+                    unit: undefined, 
+                    name: ingredient.split(',')[0].toLowerCase(), 
+                    description: ingredient.split(',').slice(1).join(',').toLowerCase()
+                };
+            }
+        }
+    } else {
+        
+    }
+
+    const unit = ingredient.split(' ')[1];
+    const name = ingredient.split(' ').slice(2);
 
     return {
         amount: parseFloat(amount),
         unit: unit ? unit : undefined,
         name: name.join(' ')
     } as FullRecipeIngredient;
+
 }
 
 export function getRecipeDataFromDefaultSchema(json: any, url: string) {

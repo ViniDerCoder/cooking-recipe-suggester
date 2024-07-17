@@ -100,7 +100,7 @@ export async function getRecipesByFilters(recipeIds: Array<Uuid>, filters: MealS
     + (filters.fishFree !== null ? 'AND fish_free = ? ' : '')
     + (filters.shellfishFree !== null ? 'AND shellfish_free = ? ' : '')
     + (filters.soyFree !== null ? 'AND soy_free = ? ' : '')
-    + (filters.recipeTypesWhitelist.length > 0 ? 'AND type_id IN (?) ' : '')
+    + (filters.recipeTypesWhitelist.length > 0 ? 'AND type_id IN ? ' : '')
 
     const result = await query(q, params);
     if(typeof result === "string") return 'Error getting recipe';
