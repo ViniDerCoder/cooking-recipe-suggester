@@ -8,17 +8,17 @@ export async function getRecipeData(url: string) {
         const response = await axios.get(url);
         let html = response.data as string;
 
-        let matches = html.match(/<script type="application\/ld\+json">(.|\n)*?<\/script>/g)
+        let matches = html.match(/<script type="application\/ld\+json" class="yoast-schema-graph">(.|\n)*?<\/script>/g)
 
         if(matches === null) return undefined;
 
         const parsedMatches: any[] = []
 
         matches?.forEach((match, index) => {
-            parsedMatches.push(JSON.parse(match.replace('<script type="application/ld+json">', '').replace('</script>', '')))
+            parsedMatches.push(JSON.parse(match.replace('<script type="application/ld+json" class="yoast-schema-graph">', '').replace('</script>', '')))
         })
 
-        const recipeData = parsedMatches.find((match) => match['@type'] === 'Recipe')
+        const recipeData = parsedMatches[0]["@graph"].find((match: any) => match['@type'] === 'Recipe')
 
         return getRecipeDataFromDefaultSchema(recipeData, url);
     
@@ -28,7 +28,7 @@ export async function getRecipeData(url: string) {
     }
 }
 
-onReady("import test chefkoch", async () => {
-    console.log("Chefkoch")
-    console.log(await getRecipeData("https://www.chefkoch.de/rezepte/1735501282565789/Der-weltbeste-Schokoladen-Blechkuchen.html"))
+onReady("import test gaumenfreundin", async () => {
+console.log("Gaumenfreundin")
+console.log(await getRecipeData("https://www.gaumenfreundin.de/cordon-bleu-selber-machen/"))
 })

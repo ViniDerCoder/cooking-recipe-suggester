@@ -1,6 +1,6 @@
 import axios from "axios"
-import { getAllRecipeTypes } from "../../controller/recipes/recipeTypes.js";
-import { getBestMatchingType, getIngredient, getRecipeDataFromDefaultSchema, parseISODuration } from "./general.js";
+import { getRecipeDataFromDefaultSchema } from "./general.js";
+import onReady from "../listener/ready.js";
 
 export async function getRecipeData(url: string) {
 
@@ -27,3 +27,8 @@ export async function getRecipeData(url: string) {
         return undefined;
     }
 }
+
+onReady("import test rewe", async () => {
+console.log("Rewe")
+console.log(await getRecipeData("https://www.rewe.de/rezepte/suesskartoffel-gnocchi-blattspinat-feta/"))
+})
