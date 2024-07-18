@@ -1,6 +1,5 @@
 import axios from "axios"
 import { getRecipeDataFromDefaultSchema } from "./general.js";
-import onReady from "../listener/ready.js";
 
 export async function getRecipeData(url: string) {
 
@@ -18,17 +17,12 @@ export async function getRecipeData(url: string) {
             parsedMatches.push(JSON.parse(match.replace('<script type="application/ld+json">', '').replace('</script>', '')))
         })
 
-        const recipeData = parsedMatches.find((match) => match['@type'] === 'Recipe')
+        const recipeData = parsedMatches.find((match) => Array.isArray(match) && match.find((subMatch) => subMatch['@type'] === 'Recipe'))
 
-        return getRecipeDataFromDefaultSchema(recipeData, url);
+        return getRecipeDataFromDefaultSchema(recipeData.find((match: any) => match['@type'] === 'Recipe'), url);
     
     } catch (error) {
         console.log(error);
         return undefined;
     }
 }
-
-onReady("import test chefkoch", async () => {
-    console.log("Chefkoch")
-    console.log(await getRecipeData("https://www.chefkoch.de/rezepte/1735501282565789/Der-weltbeste-Schokoladen-Blechkuchen.html"))
-})
