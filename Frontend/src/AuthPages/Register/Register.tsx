@@ -19,7 +19,7 @@ export default function Register() {
     return (
         <div className="register">
             <header className="register-header">
-                <div className='register-title'><strong>Register</strong></div>
+                <div className='register-title'><strong>Registrieren</strong></div>
                 {{
                     0: <EnterEmail goForward={() => setStep(1)} emailState={[email, setEmail]}/>,
                     1: <EnterVerificationCode goBack={() => setStep(0)} goForward={() => setStep(2)} email={email} verificationCodeState={[verificationCode, setVerificationCode]}/>,

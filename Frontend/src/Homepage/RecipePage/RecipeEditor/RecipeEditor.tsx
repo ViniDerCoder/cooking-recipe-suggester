@@ -16,6 +16,7 @@ import { TbClockHour4, TbClockPause } from 'react-icons/tb';
 import IngredientSelector from './IngredientSelector/IngredientSelector';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import Prompt from '../../../Defaults/Prompt/Prompt';
+import { basename } from '../../../App';
 
 type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC" | "INSTRUCTIONS"
 
@@ -67,11 +68,11 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
             })()
         } else {
             (async () => {
-                const recipeTypes = await getRecipeTypes()
-                if (recipeTypes[0] && typeof recipeTypes[1] !== "string") {
-                    setRecipeTypes(recipeTypes[1])
+                const lRecipeTypes = await getRecipeTypes()
+                if (lRecipeTypes[0] && typeof lRecipeTypes[1] !== "string") {
+                    setRecipeTypes(lRecipeTypes[1])
                 }
-                setRecipe({ name: "", description: "", cookingTime: 1, waitingTime: 0, servings: 1, imageUrl: "", typeId: "", instructions: [] } as RecipeCreationData)
+                setRecipe({ name: "", description: "", cookingTime: 1, waitingTime: 0, servings: 1, imageUrl: "", typeId: recipeTypes ? recipeTypes[0].id : "", instructions: [] } as RecipeCreationData)
                 setIngredients([])
                 setLoading(false)
             })()
@@ -149,18 +150,18 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                 <div className='recipe-editor-header-save'
                     style={{ opacity: disabledButtons.save ? 0.5 : 1 }}
                     onClick={() => {
-                        if (disabledButtons.save || changesStack.length === 0) return
+                        if (disabledButtons.save || (changesStack.length === 0 && !p.sourceUrl)) return
                         setDisabledButtons({ ...disabledButtons, save: true })
                         if (!recipe) return
                         if ("public" in recipe) {
 
-                            editRecipe(p.recipeId, recipe, ingredientChanges).then(([success, error]) => {
+                            editRecipe(p.recipeId, recipe, ingredientChanges).then(([success, msg]) => {
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])
                                     setIngredientChanges([])
                                 } else {
-                                    console.error(error)
+                                    console.error(msg)
                                 }
                                 setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                             })
@@ -171,13 +172,14 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                             const ingredients = cur.getIngredients()
                             if(ingredients.length < 1) return setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
 
-                            createImportedRecipe(recipe, ingredients, p.sourceUrl).then(([success, error]) => {
+                            createImportedRecipe(recipe, ingredients, p.sourceUrl).then(([success, msg]) => {
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])
                                     setIngredientChanges([])
+                                    window.location.href = basename + "/recipe/" + msg
                                 } else {
-                                    console.error(error)
+                                    console.error(msg)
                                 }
                                 setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                             })
@@ -191,13 +193,14 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                                 } as IngredientRecipeData
                             }).filter((ingr) => ingr !== undefined)
 
-                            createRecipe(recipe, ingredients as any).then(([success, error]) => {
+                            createRecipe(recipe, ingredients as any).then(([success, msg]) => {
                                 if (success) {
                                     console.log("Success")
                                     setChangesStack([])
                                     setIngredientChanges([])
+                                    window.location.href = basename + "/recipe/" + msg
                                 } else {
-                                    console.error(error)
+                                    console.error(msg)
                                 }
                                 setTimeout(() => setDisabledButtons({ ...disabledButtons, save: false }), 1000)
                             })

@@ -48,7 +48,7 @@ export async function getIngredient(ingredient: string) {
 
     const bestMatch = stringSimilarity.findBestMatch(parsedIngredient.name, ingredients.map((ingr) => ingr.name.toLowerCase()));
 
-    if (bestMatch.bestMatch.rating > 0.6) {
+    if (bestMatch.bestMatch.rating > 0.75) {
         return {
             id: ingredients[bestMatch.bestMatchIndex].id,
             properties: ingredients[bestMatch.bestMatchIndex].properties,

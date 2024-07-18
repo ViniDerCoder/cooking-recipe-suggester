@@ -180,8 +180,86 @@ const defaultIngredients = [
         fish_free: true,
         shellfish_free: true,
         soy_free: false
+    },
+    {
+        name: 'Reis',
+        id: 'a6b5c8d7-e2a3-4f8e-8c6b-715a3e5f3b7d',
+        vegan: true,
+        vegetarian: true,
+        gluten_free: true,
+        dairy_free: true,
+        nut_free: true,
+        egg_free: true,
+        fish_free: true,
+        shellfish_free: true,
+        soy_free: true
+    },
+    {
+        name: 'Weißzucker',
+        id: 'f1a4b7c8-6d9e-4b9c-8e7f-5a1b6c3d2e8f',
+        vegan: true,
+        vegetarian: true,
+        gluten_free: true,
+        dairy_free: true,
+        nut_free: true,
+        egg_free: true,
+        fish_free: true,
+        shellfish_free: true,
+        soy_free: true
+    },    
+    {
+        name: 'Erdnussbutter',
+        id: '1b9e50b1-7e8c-4d9c-99d3-8a5b19b8d37f',
+        vegan: true,
+        vegetarian: true,
+        gluten_free: true,
+        dairy_free: true,
+        nut_free: false,
+        egg_free: true,
+        fish_free: true,
+        shellfish_free: true,
+        soy_free: true
+    },
+    {
+        name: 'Mandeln',
+        id: '17a6c5a5-5c62-4811-8e39-ff1b7e327739',
+        vegan: true,
+        vegetarian: true,
+        gluten_free: true,
+        dairy_free: true,
+        nut_free: false,
+        egg_free: true,
+        fish_free: true,
+        shellfish_free: true,
+        soy_free: true
+    },
+    {
+        name: 'Honig',
+        id: '06d5cddc-0e6c-4144-b6ae-1a98b63c25a1',
+        vegan: false,
+        vegetarian: true,
+        gluten_free: true,
+        dairy_free: true,
+        nut_free: true,
+        egg_free: true,
+        fish_free: true,
+        shellfish_free: true,
+        soy_free: true
+    },
+    {
+        name: 'Hähnchenbrust',
+        id: '7d5f5b94-0728-4a5d-8a45-fc20737f2919',
+        vegan: false,
+        vegetarian: false,
+        gluten_free: true,
+        dairy_free: true,
+        nut_free: true,
+        egg_free: true,
+        fish_free: true,
+        shellfish_free: true,
+        soy_free: true
     }
-];
+]
 
 import query from '../query.js';
 

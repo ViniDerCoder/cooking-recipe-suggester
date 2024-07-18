@@ -7,10 +7,11 @@ import { getSuggestionSettings, updateSuggestionSettings } from './suggestionSet
 
 import { ImBlocked } from "react-icons/im";
 import { getRecipeTypes } from '../RecipePage/RecipeEditor/recipeEditorLogic';
+import { IoClose } from 'react-icons/io5';
 
 export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hidden: boolean) => void }) {
     const [loading, setLoading] = useState(true);
-    const [recipeTypes, setRecipeTypes] = useState<{id: string, name: string}[]>([]);
+    const [recipeTypes, setRecipeTypes] = useState<{ id: string, name: string }[]>([]);
     const [settings, setSettings] = useState<SuggestionsSettings>({
         userId: "1",
         meals: {
@@ -106,6 +107,9 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
                 onClick={() => p.setHidden(true)}
             >
                 <div className="suggestion-settings-content" onClick={(e) => { e.stopPropagation() }}>
+                    <div className="suggestion-settings-close" onClick={(e) => { p.setHidden(true) }}>
+                        <IoClose size={"2rem"} />
+                    </div>
                     <div className='suggestion-settings-content-fadeout' id="top"></div>
                     <div className='suggestion-settings-content-settings'>
                         <div className='suggestion-settings-content-title'>Einstellungen</div>
@@ -131,7 +135,7 @@ export default function SuggestionSettings(p: { hidden: boolean, setHidden: (hid
     )
 }
 
-function SettingsSection(props: { recipeTypes: {id: string, name: string}[], title: string, setSettings: (settings: SuggestionsSettings["meals"]["morning"]["settings"]) => void, settings: SuggestionsSettings["meals"]["morning"]["settings"] }) {
+function SettingsSection(props: { recipeTypes: { id: string, name: string }[], title: string, setSettings: (settings: SuggestionsSettings["meals"]["morning"]["settings"]) => void, settings: SuggestionsSettings["meals"]["morning"]["settings"] }) {
     return (
         <div className="suggestion-settings-content-section">
             <div className="suggestion-settings-content-section-title">{props.title}</div>
@@ -155,20 +159,20 @@ function SettingsSection(props: { recipeTypes: {id: string, name: string}[], tit
                 <Setting setValue={(value) => props.setSettings({ ...props.settings, maxPreparationTime: value })} key={"maxPreparationTime"} title={"Maximale Vorbereitungszeit (in Minuten)"} value={props.settings.maxPreparationTime} type="number" allowUndefined={true} />
 
                 <Setting recipeTypes={props.recipeTypes} setValue={(value) => props.setSettings({ ...props.settings, recipeTypesWhitelist: value })} key={"recipeTypesWhitelist"} title={"Rezept Typ Whitelist (leer für alle)"} value={props.settings.recipeTypesWhitelist} type="string[]" allowUndefined={false} />
-                <Setting recipeTypes={props.recipeTypes}setValue={(value) => props.setSettings({ ...props.settings, recipeTypesBlacklist: value })} key={"recipeTypesBlacklist"} title={"Rezept Typ Blacklist"} value={props.settings.recipeTypesBlacklist} type="string[]" allowUndefined={false} />
+                <Setting recipeTypes={props.recipeTypes} setValue={(value) => props.setSettings({ ...props.settings, recipeTypesBlacklist: value })} key={"recipeTypesBlacklist"} title={"Rezept Typ Blacklist"} value={props.settings.recipeTypesBlacklist} type="string[]" allowUndefined={false} />
             </div>
         </div>
     )
 }
 
-function Setting(props: { recipeTypes?: {id: string, name: string}[], title: string, value: number | boolean | string[] | null, setValue: (val: any) => void, type: "number" | "boolean" | "string[]", allowUndefined: boolean }) {
+function Setting(props: { recipeTypes?: { id: string, name: string }[], title: string, value: number | boolean | string[] | null, setValue: (val: any) => void, type: "number" | "boolean" | "string[]", allowUndefined: boolean }) {
     const dropDownContentRef = useRef<HTMLDivElement>(null);
     const dropDownPreviewRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (dropDownContentRef.current && dropDownPreviewRef.current && 
-                !dropDownContentRef.current.contains(event.target as Node) && 
+            if (dropDownContentRef.current && dropDownPreviewRef.current &&
+                !dropDownContentRef.current.contains(event.target as Node) &&
                 !dropDownPreviewRef.current.contains(event.target as Node)) {
                 dropDownContentRef.current.dataset.show = "false";
             }
@@ -187,8 +191,8 @@ function Setting(props: { recipeTypes?: {id: string, name: string}[], title: str
                 {props.type === "boolean" ? <input type="checkbox" checked={props.value === null ? false : props.value as boolean} onChange={() => {
                     props.setValue((props.value as boolean) ? false : true)
                 }} /> : null}
-                {props.type === "number" ? <input type="number" value={props.value === null ? "" : props.value as number} 
-                    onChange={(e) => 
+                {props.type === "number" ? <input type="number" value={props.value === null ? "" : props.value as number}
+                    onChange={(e) =>
                         props.setValue(e.target.value === "" ? 0 : parseInt(e.target.value))
                     }
                 /> : null}
@@ -197,8 +201,8 @@ function Setting(props: { recipeTypes?: {id: string, name: string}[], title: str
                         onClick={(e) => {
                             e.stopPropagation()
                             const cur = dropDownContentRef.current
-                            if(cur) cur.dataset.show = cur.dataset.show === "true" ? "false" : "true"
-                        }}  
+                            if (cur) cur.dataset.show = cur.dataset.show === "true" ? "false" : "true"
+                        }}
                     >
                         {(props.value as Array<string>).map((id) => props.recipeTypes?.find((val) => val.id === id)?.name).join(", ")}
                     </div>

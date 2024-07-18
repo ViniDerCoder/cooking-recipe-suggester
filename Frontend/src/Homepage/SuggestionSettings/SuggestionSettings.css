@@ -50,6 +50,21 @@
     }
 }
 
+.suggestion-settings-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: var(--tertiary-color);
+    transition: color 0.2s;
+    z-index: 7;
+}
+
+.suggestion-settings-close:hover {
+    cursor: pointer;
+    color: var(--danger-color);
+}
+
 .suggestion-settings-content {
     position: relative;
     display: flex;

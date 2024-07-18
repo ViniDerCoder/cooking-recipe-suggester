@@ -42,7 +42,7 @@ export async function editRecipe(recipeId: unknown, recipe: RecipeEditData, ingr
                 })
             }
             
-            return [true, '']
+            return [true, result.data.recipe.id]
         }
         else return [false, result.error]
     } catch (error) {
@@ -60,7 +60,7 @@ export async function createRecipe(recipe: RecipeCreationData, ingredients: Ingr
         if(result.data.recipe) {
             const cache = JSON.parse(sessionStorage.getItem("recipe-cache") || "{}")
             sessionStorage.setItem("recipe-cache", JSON.stringify({...cache, [result.data.recipe.id]: [new Date(), result.data.recipe]}))
-            return [true, '']
+            return [true, result.data.recipe.id]
         }
         else return [false, result.error]
     } catch (error) {
@@ -107,7 +107,7 @@ export async function createImportedRecipe(recipe: RecipeCreationData, ingredien
         if(result.data.recipe) {
             const cache = JSON.parse(sessionStorage.getItem("recipe-cache") || "{}")
             sessionStorage.setItem("recipe-cache", JSON.stringify({...cache, [result.data.recipe.id]: [new Date(), result.data.recipe]}))
-            return [true, '']
+            return [true, result.data.recipe.id]
         }
         else return [false, result.error]
     } catch (error) {

@@ -18,7 +18,7 @@ export default function Login() {
     return (
         <div className="login">
             <header className="login-header">
-                <div className='login-title'><strong>Login</strong></div>
+                <div className='login-title'><strong>Anmelden</strong></div>
                 {step === 0 ? (<EnterEmail goForward={() => setStep(1)} emailState={[email, setEmail]} />) : (<EnterVerificationCode goBack={() => setStep(0)} email={email} />)}
                 <div className='register-text'>Noch kein Account? <a className='register-link' href='./#/register'>Registrieren</a></div>
             </header>
