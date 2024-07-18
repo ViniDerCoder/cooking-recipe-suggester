@@ -15,12 +15,15 @@ import { GiNautilusShell } from 'react-icons/gi';
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { PiNotePencilBold } from "react-icons/pi";
 import Tooltip from '../../../../Defaults/Tooltip/Tooltip';
+import Prompt from '../../../../Defaults/Prompt/Prompt';
+import React from 'react';
 
 const IngredientSelector = forwardRef((p: {
     initialIngredients?: FullRecipeIngredient[],
     onIngredientAdd: (ingr: FullRecipeIngredient) => void,
     onIngredientRemove: (ingr: FullRecipeIngredient) => void,
     onIngredientChange: (newIngr: FullRecipeIngredient, oldIngr: FullRecipeIngredient) => void,
+    showPrompt: (message: string, initialVal: string | undefined, onFinish: (val: string) => void) => void
 }, ref) => {
     const [ingredients, setIngredients] = useState(p.initialIngredients ? p.initialIngredients.map((ingr) => { return {...ingr, amount: parseFloat(ingr.amount + "")}}) : []);
     const [newIngredients, setNewIngredients] = useState<Ingredient[]>([]);
@@ -265,13 +268,15 @@ const IngredientSelector = forwardRef((p: {
                         element={
                             <div className="ingredient-selector-ingredient-notes"
                             onClick={() => {
-                                const newIngr = ingredients.find(i => i.id === ingr.id)
-                                if (!newIngr) return;
-                                const newDesc = prompt("Notizen:", newIngr.description ? newIngr.description : "");
-                                if (newDesc === null) return;
-                                const oldIngr = JSON.parse(JSON.stringify(ingredients.find(i => i.id === ingr.id))) as FullRecipeIngredient;
-                                setIngredients(ingredients.map(i => i.id === ingr.id ? { ...ingr, description: newDesc } : i));
-                                p.onIngredientChange({ ...newIngr, description: newDesc }, oldIngr);
+                                const ing = ingredients.find(i => i.id === ingr.id);
+                                if (!ing) return;
+                                p.showPrompt("Notizen", ing.description ? ing.description : "", (val) => {
+                                    const newIngr = ingredients.find(i => i.id === ingr.id)
+                                    if (!newIngr) return;
+                                    const oldIngr = JSON.parse(JSON.stringify(newIngr)) as FullRecipeIngredient;
+                                    setIngredients(ingredients.map(i => i.id === ingr.id ? { ...ingr, description: val } : i));
+                                    p.onIngredientChange({ ...newIngr, description: val }, oldIngr);
+                                })
                             }}
                             >
                                 <PiNotePencilBold size={"1.2rem"} />

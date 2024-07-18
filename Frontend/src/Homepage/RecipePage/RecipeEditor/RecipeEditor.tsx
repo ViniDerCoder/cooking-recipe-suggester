@@ -15,6 +15,7 @@ import { LuUndo2 } from 'react-icons/lu';
 import { TbClockHour4, TbClockPause } from 'react-icons/tb';
 import IngredientSelector from './IngredientSelector/IngredientSelector';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa';
+import Prompt from '../../../Defaults/Prompt/Prompt';
 
 type EditorFields = "IMAGE" | "NAME" | "DESCRIPTION" | "TYPE" | "COOKINGTIME" | "WAITINGTIME" | "SERVINGS" | "INGREDIENTS" | "PUBLIC" | "INSTRUCTIONS"
 
@@ -77,6 +78,16 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
         }
     }, [p.recipeId, p.sourceUrl])
 
+    const [promptData, setPromptData] = useState<{ message: string, initialVal: string | undefined, onFinish: (val: string) => void }>({ message: "", initialVal: "", onFinish: (val: string) => {} })
+    const promptRef = createRef<typeof Prompt>()
+
+    const showPrompt = (message: string, initialVal: string | undefined, onFinish: (val: string) => void) => {
+        const cur = (promptRef as React.RefObject<any>).current
+        if (!cur) return
+        setPromptData({ message: message, initialVal: initialVal, onFinish: onFinish })
+        cur.setActive(true)
+    }
+
     if (loading) return <div className="recipe-editor">
         <div className='recipe-editor-header'>
             <div className='recipe-editor-header-title'>
@@ -97,6 +108,13 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
 
     return (
         <div className="recipe-editor">
+            <Prompt
+                ref={promptRef}
+                message={promptData.message}
+                onFinish={promptData.onFinish}
+                initialVal={promptData.initialVal}
+                onChange={(val) => setPromptData({ ...promptData, initialVal: val })}
+            />
             <div className='recipe-editor-header'>
                 {recipe && "public" in recipe ? <div className='recipe-editor-header-public'
                     style={{ opacity: disabledButtons.public ? 0.5 : 1 }}
@@ -320,6 +338,7 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
 
                 <div className='recipe-editor-content-ingredients'>
                     <IngredientSelector
+                        showPrompt={showPrompt}
                         ref={ingredientSelector}
                         initialIngredients={ingredients}
                         onIngredientAdd={(ingr: FullRecipeIngredient) => {
