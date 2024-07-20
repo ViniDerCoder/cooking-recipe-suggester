@@ -207,8 +207,8 @@ export default function RecipeEditor(p: { recipeId?: string, sourceUrl?: string 
                         }
                     }}
                 ><Tooltip
-                        element={changesStack.length !== 0 ? <BiSolidSave size={"2rem"} /> : <BiSave size={"2rem"} />}
-                        message={changesStack.length !== 0 ? "Speichern" : "Nichs zu speichern"}
+                        element={(changesStack.length !== 0 || p.sourceUrl) ? <BiSolidSave size={"2rem"} /> : <BiSave size={"2rem"} />}
+                        message={(changesStack.length !== 0 || p.sourceUrl) ? "Speichern" : "Nichs zu speichern"}
                         sx={{ style: { marginRight: "2rem" } }}
                     />
                 </div>
