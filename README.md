@@ -5,6 +5,7 @@ Cooking Recipe Suggester
 ## Description
 
 This is a project which gives cooking recipe suggestions based on saved recipes.
+Visit the site [here](https://vinidercoder.github.io/cooking-recipe-suggester/#/).
 
 ## Features
 
