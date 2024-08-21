@@ -45,6 +45,12 @@ Visit the site [here](https://vinidercoder.github.io/cooking-recipe-suggester/#/
    ```
 2. The server will automatically connect to the Cassandra database and perform the scheduled cleanup tasks. It will also insert default database values once the server is ready.
 
+## Images
+
+- Recipe Editor: ![image](https://github.com/user-attachments/assets/271279f8-dba5-4a3b-9d03-2a1777fd10bd)
+- Sample Recipe: ![image](https://github.com/user-attachments/assets/2dae5fd4-59ab-4343-8287-3337ddd70cb4)
+- Suggestion Settings: ![image](https://github.com/user-attachments/assets/9d474f67-fb19-4b1a-a276-8204dce3ce40)
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any bugs or feature requests.
